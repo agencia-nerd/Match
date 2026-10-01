@@ -7,7 +7,7 @@ defined( 'ABSPATH' ) || exit;
 get_header();
 ?>
 <div class="match-container">
-	<div class="mjb-empty">
+	<div class="mjb-empty ccs">
 		<p class="mjb-empty__title"><?php esc_html_e( 'Esta página ya no está aquí', 'match' ); ?></p>
 		<p class="mjb-empty__text"><?php esc_html_e( 'Puede que la vacante haya cerrado o que el enlace esté mal escrito.', 'match' ); ?></p>
 		<p>
