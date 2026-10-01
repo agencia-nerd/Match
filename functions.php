@@ -8,6 +8,15 @@ defined( 'ABSPATH' ) || exit;
 define( 'MATCH_VERSION', '0.1.0' );
 
 /**
+ * Versión de un asset del tema según su fecha de modificación, para que el
+ * navegador descargue de nuevo el archivo cada vez que cambia (cache busting).
+ */
+function match_asset_ver( string $path ): string {
+	$file = get_theme_file_path( $path );
+	return file_exists( $file ) ? (string) filemtime( $file ) : MATCH_VERSION;
+}
+
+/**
  * Soportes del tema.
  */
 function match_setup(): void {
@@ -52,36 +61,36 @@ function match_assets(): void {
 	);
 
 	foreach ( $css as $handle => list( $path, $deps ) ) {
-		wp_enqueue_style( $handle, get_theme_file_uri( $path ), $deps, MATCH_VERSION );
+		wp_enqueue_style( $handle, get_theme_file_uri( $path ), $deps, match_asset_ver( $path ) );
 	}
 
 	if ( is_page_template( 'template-solucion.php' ) ) {
-		wp_enqueue_style( 'match-solucion', get_theme_file_uri( 'assets/css/solucion.css' ), array( 'match-footer' ), MATCH_VERSION );
+		wp_enqueue_style( 'match-solucion', get_theme_file_uri( 'assets/css/solucion.css' ), array( 'match-footer' ), match_asset_ver( 'assets/css/solucion.css' ) );
 	}
 
 	if ( is_page_template( 'template-blog.php' ) || is_singular( 'post' ) ) {
-		wp_enqueue_style( 'match-blog', get_theme_file_uri( 'assets/css/blog.css' ), array( 'match-footer' ), MATCH_VERSION );
+		wp_enqueue_style( 'match-blog', get_theme_file_uri( 'assets/css/blog.css' ), array( 'match-footer' ), match_asset_ver( 'assets/css/blog.css' ) );
 	}
 
 	if ( is_page_template( 'template-design-system.php' ) ) {
-		wp_enqueue_style( 'match-styleguide', get_theme_file_uri( 'assets/css/styleguide.css' ), array( 'match-footer' ), MATCH_VERSION );
+		wp_enqueue_style( 'match-styleguide', get_theme_file_uri( 'assets/css/styleguide.css' ), array( 'match-footer' ), match_asset_ver( 'assets/css/styleguide.css' ) );
 	}
 
 	if ( match_is_jobboard_view() ) {
-		wp_enqueue_style( 'match-jobboard', get_theme_file_uri( 'assets/css/jobboard.css' ), array( 'match-footer' ), MATCH_VERSION );
+		wp_enqueue_style( 'match-jobboard', get_theme_file_uri( 'assets/css/jobboard.css' ), array( 'match-footer' ), match_asset_ver( 'assets/css/jobboard.css' ) );
 	}
 
-	wp_enqueue_style( 'match-style', get_stylesheet_uri(), array( 'match-header', 'match-footer' ), MATCH_VERSION );
+	wp_enqueue_style( 'match-style', get_stylesheet_uri(), array( 'match-header', 'match-footer' ), match_asset_ver( 'style.css' ) );
 
 	// Animaciones de entrada (AOS) y utilidades (Tailwind), siempre al final.
 	wp_enqueue_style( 'match-aos', get_theme_file_uri( 'assets/vendor/aos.css' ), array( 'match-style' ), '2.3.4' );
 	wp_enqueue_style( 'match-lenis', get_theme_file_uri( 'assets/vendor/lenis.css' ), array( 'match-aos' ), '1.3.26' );
-	wp_enqueue_style( 'match-tailwind', get_theme_file_uri( 'assets/css/tailwind.css' ), array( 'match-lenis' ), MATCH_VERSION );
+	wp_enqueue_style( 'match-tailwind', get_theme_file_uri( 'assets/css/tailwind.css' ), array( 'match-lenis' ), match_asset_ver( 'assets/css/tailwind.css' ) );
 
 	wp_enqueue_script( 'aos', get_theme_file_uri( 'assets/vendor/aos.js' ), array(), '2.3.4', true );
 	wp_enqueue_script( 'embla-carousel', get_theme_file_uri( 'assets/vendor/embla-carousel.umd.js' ), array(), '8.6.0', true );
 	wp_enqueue_script( 'lenis', get_theme_file_uri( 'assets/vendor/lenis.min.js' ), array(), '1.3.26', true );
-	wp_enqueue_script( 'match-app', get_theme_file_uri( 'assets/js/app.js' ), array( 'aos', 'embla-carousel', 'lenis' ), MATCH_VERSION, true );
+	wp_enqueue_script( 'match-app', get_theme_file_uri( 'assets/js/app.js' ), array( 'aos', 'embla-carousel', 'lenis' ), match_asset_ver( 'assets/js/app.js' ), true );
 	wp_localize_script(
 		'match-app',
 		'MatchJB',
