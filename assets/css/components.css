@@ -126,6 +126,83 @@
 	to { rotate: 360deg; }
 }
 
+/*
+ * CTA del hero (MATCH-CTA-BUTTON/Boton Subir CV): borde de 1 px en degradado
+ * violeta-blanco-violeta (el padding del <a> deja ver su fondo) y relleno
+ * primario en __cta-inner. Dos destellos azules recorren el contorno por
+ * dentro; en hover se frenan, el botón brilla y el borde se vuelve blanco.
+ * El recorrido, el giro del degradado y el hover los pinta app.js (clase
+ * .is-live); sin JS los destellos quedan quietos en esquinas opuestas.
+ * Mismas medidas que .match-btn: 1 + 14 + 22 + 14 + 1 = 52 px de alto.
+ */
+.match-btn--cta {
+	padding: 1px;
+	border: 0;
+	background: linear-gradient( 90deg, rgba( 135, 129, 255, 0.4 ) 0%, var(--match-blanco) 50%, rgba( 135, 129, 255, 0.4 ) 100% );
+	color: var(--match-blanco);
+}
+
+@media ( hover: hover ) {
+	.match-btn--cta:active { scale: 0.97; }
+}
+
+.match-btn__cta-inner {
+	position: relative;
+	display: flex;
+	flex: 1 1 auto;
+	align-items: center;
+	justify-content: center;
+	gap: var(--match-space-8);
+	padding: 14px var(--match-space-24);
+	border-radius: calc( var(--match-radius-16) - 1px );
+	background: var(--match-primario-500);
+	overflow: hidden;
+	isolation: isolate;
+}
+
+.match-btn__cta-blob {
+	position: absolute;
+	inset-inline-start: 0;
+	inset-block-start: 0;
+	z-index: 0;
+	width: 64px;
+	height: 64px;
+	border-radius: 50%;
+	background: #1b5cd8;
+	opacity: 0.55;
+	filter: blur( 16px );
+	pointer-events: none;
+	will-change: transform;
+}
+
+.match-btn--cta:not(.is-live) .match-btn__cta-blob { translate: -24px -24px; }
+.match-btn--cta:not(.is-live) .match-btn__cta-blob + .match-btn__cta-blob { inset: auto 0 0 auto; translate: 24px 24px; }
+
+.match-btn__cta-glow {
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	border-radius: inherit;
+	background: radial-gradient( 120% 140% at 50% 50%, rgba( 43, 108, 232, 0.55 ) 0%, rgba( 27, 92, 216, 0.25 ) 55%, rgba( 135, 129, 255, 0.12 ) 100% );
+	opacity: 0;
+	pointer-events: none;
+}
+
+.match-btn__cta-label,
+.match-btn__cta-arrow { position: relative; z-index: 1; }
+
+.match-btn__cta-arrow {
+	display: grid;
+	flex: none;
+	place-items: center;
+	width: 22px;
+	height: 22px;
+	border-radius: 50%;
+	background: var(--match-blanco);
+}
+
+.match-btn__cta-arrow svg { width: 14px; height: 14px; fill: #1a1a1a; }
+
 .match-btn--secondary {
 	background: var(--match-neutral-200);
 	border-color: var(--match-neutral-300);

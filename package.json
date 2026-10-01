@@ -6,7 +6,8 @@
   "scripts": {
     "build": "npm run build:css && npm run vendor",
     "build:css": "tailwindcss -i assets/css/tailwind.src.css -o assets/css/tailwind.css --minify",
-    "watch": "tailwindcss -i assets/css/tailwind.src.css -o assets/css/tailwind.css --watch",
+    "dev": "npm run watch",
+    "watch":"tailwindcss -i assets/css/tailwind.src.css -o assets/css/tailwind.css --watch",
     "vendor": "node scripts/vendor.mjs"
   },
   "devDependencies": {

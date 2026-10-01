@@ -673,4 +673,140 @@
 		legalSections.forEach( function ( section ) { legalObserver.observe( section ); } );
 		setActiveLegalLink( legalSections.length ? legalSections[ 0 ].id : '' );
 	}
+
+	/* --- Botón CTA del hero (.match-btn--cta) ---
+	 * Port de MATCH-CTA-BUTTON/Boton Subir CV: los dos destellos recorren el
+	 * contorno redondeado (uno frente al otro) en 8 s; en hover o foco se
+	 * frenan, el botón brilla y el borde suma un degradado cónico blanco. El
+	 * bucle solo corre mientras el botón está en pantalla. Con
+	 * prefers-reduced-motion los destellos no giran pero el hover sí responde.
+	 */
+	Array.prototype.forEach.call( document.querySelectorAll( '.match-btn--cta' ), function ( btn ) {
+		var inner = btn.querySelector( '.match-btn__cta-inner' );
+		var blobs = btn.querySelectorAll( '.match-btn__cta-blob' );
+		var glowEl = btn.querySelector( '.match-btn__cta-glow' );
+
+		if ( ! inner || blobs.length < 2 || ! glowEl ) { return; }
+
+		var DURATION = 8000;
+		var LIN_STOPS = 'rgba(135,129,255,0.4) 0%, #FFFFFF 50%, rgba(135,129,255,0.4) 100%';
+		var phi = -Math.PI / 2;
+		var speed = 1;
+		var glow = 0;
+		var paintP = 0;
+		var hover = false;
+		var raf = 0;
+		var last = 0;
+
+		var setHover = function ( value ) {
+			return function () { hover = value; };
+		};
+
+		btn.addEventListener( 'pointerenter', setHover( true ) );
+		btn.addEventListener( 'pointerleave', setHover( false ) );
+		btn.addEventListener( 'focus', setHover( true ) );
+		btn.addEventListener( 'blur', setHover( false ) );
+
+		var paint = function () {
+			var w = inner.offsetWidth;
+			var h = inner.offsetHeight;
+			var r = blobs[ 0 ].offsetWidth / 2;
+			var m = 6;
+			var W = w - 2 * m;
+			var H = h - 2 * m;
+			var rc = Math.min( 14, H / 2 );
+			var L1 = W - 2 * rc;
+			var L2 = H - 2 * rc;
+			var A = Math.PI / 2 * rc;
+			var P = 2 * L1 + 2 * L2 + 4 * A;
+			var hw = W / 2;
+			var hh = H / 2;
+			var d = ( ( phi + Math.PI / 2 ) / ( Math.PI * 2 ) ) * P + L1 / 2;
+			var segs = [
+				[ L1, function ( u ) { return [ -hw + rc + u, -hh ]; } ],
+				[ A, function ( u ) { var a = -Math.PI / 2 + u / rc; return [ hw - rc + rc * Math.cos( a ), -hh + rc + rc * Math.sin( a ) ]; } ],
+				[ L2, function ( u ) { return [ hw, -hh + rc + u ]; } ],
+				[ A, function ( u ) { var a = u / rc; return [ hw - rc + rc * Math.cos( a ), hh - rc + rc * Math.sin( a ) ]; } ],
+				[ L1, function ( u ) { return [ hw - rc - u, hh ]; } ],
+				[ A, function ( u ) { var a = Math.PI / 2 + u / rc; return [ -hw + rc + rc * Math.cos( a ), hh - rc + rc * Math.sin( a ) ]; } ],
+				[ L2, function ( u ) { return [ -hw, hh - rc - u ]; } ],
+				[ A, function ( u ) { var a = Math.PI + u / rc; return [ -hw + rc + rc * Math.cos( a ), -hh + rc + rc * Math.sin( a ) ]; } ]
+			];
+			var x = 0;
+			var y = 0;
+
+			d = ( ( d % P ) + P ) % P;
+
+			for ( var i = 0; i < segs.length; i++ ) {
+				if ( d <= segs[ i ][ 0 ] ) {
+					var pt = segs[ i ][ 1 ]( d );
+					x = pt[ 0 ];
+					y = pt[ 1 ];
+					break;
+				}
+				d -= segs[ i ][ 0 ];
+			}
+
+			blobs[ 0 ].style.transform = 'translate(' + ( w / 2 + x - r ) + 'px, ' + ( h / 2 + y - r ) + 'px)';
+			blobs[ 1 ].style.transform = 'translate(' + ( w / 2 - x - r ) + 'px, ' + ( h / 2 - y - r ) + 'px)';
+
+			// Borde: degradado lineal que gira con los destellos y, en hover,
+			// un cónico blanco que se abre desde ellos (ease-in-out cúbico).
+			var angle = Math.atan2( -y, -x ) * 180 / Math.PI;
+			var e = paintP < 0.5 ? 4 * paintP * paintP * paintP : 1 - Math.pow( -2 * paintP + 2, 3 ) / 2;
+			var th = Math.atan2( x, -y ) * 180 / Math.PI;
+			var s = e * 100;
+			var f = 1 + 34 * ( 1 - e );
+			var WH = '#FFFFFF';
+			var T = 'rgba(255,255,255,0)';
+			var lin = 'linear-gradient(' + angle + 'deg, ' + LIN_STOPS + ')';
+			var conic = 'conic-gradient(from ' + th + 'deg, ' +
+				WH + ' 0deg, ' + WH + ' ' + s + 'deg, ' + T + ' ' + ( s + f ) + 'deg, ' +
+				T + ' ' + ( 180 - s - f ) + 'deg, ' + WH + ' ' + ( 180 - s ) + 'deg, ' +
+				WH + ' ' + ( 180 + s ) + 'deg, ' + T + ' ' + ( 180 + s + f ) + 'deg, ' +
+				T + ' ' + ( 360 - s - f ) + 'deg, ' + WH + ' ' + ( 360 - s ) + 'deg, ' + WH + ' 360deg)';
+
+			btn.style.background = paintP > 0.001 ? conic + ', ' + lin : lin;
+		};
+
+		var tick = function ( now ) {
+			raf = window.requestAnimationFrame( tick );
+
+			var dt = Math.min( 64, now - last );
+			last = now;
+
+			speed += ( ( hover ? 0 : 1 ) - speed ) * ( 1 - Math.pow( 0.04, dt / 1000 ) );
+			glow += ( ( hover ? 1 : 0 ) - glow ) * ( 1 - Math.pow( 0.002, dt / 1000 ) );
+			paintP = hover ? Math.min( 1, paintP + dt / 1100 ) : Math.max( 0, paintP - dt / 700 );
+
+			btn.style.boxShadow = '0 0 ' + ( 18 * glow ) + 'px rgba(135,129,255,' + ( 0.55 * glow ) + '), 0 0 ' + ( 56 * glow ) + 'px rgba(27,92,216,' + ( 0.45 * glow ) + ')';
+			glowEl.style.opacity = glow;
+
+			if ( ! reducedMotion ) { phi += speed * ( dt / DURATION ) * Math.PI * 2; }
+
+			paint();
+		};
+
+		var start = function () {
+			if ( raf ) { return; }
+			last = performance.now();
+			raf = window.requestAnimationFrame( tick );
+		};
+
+		var stop = function () {
+			window.cancelAnimationFrame( raf );
+			raf = 0;
+		};
+
+		btn.classList.add( 'is-live' );
+		paint();
+
+		if ( 'IntersectionObserver' in window ) {
+			new IntersectionObserver( function ( entries ) {
+				if ( entries[ 0 ].isIntersecting ) { start(); } else { stop(); }
+			} ).observe( btn );
+		} else {
+			start();
+		}
+	} );
 }() );

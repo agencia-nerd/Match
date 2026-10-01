@@ -30,9 +30,16 @@ $logos     = array_intersect_key( match_client_logos(), array_flip( $home['hero_
 				<p class="match-hero__card-title"><?php echo esc_html( $home['hero_card_title'] ); ?></p>
 				<p class="match-hero__card-sub"><?php echo esc_html( $home['hero_card_sub'] ); ?></p>
 			</div>
-			<a class="match-btn match-btn--primary" href="<?php echo esc_url( match_jobs_url() ); ?>">
-				<span class="match-btn__orbit" aria-hidden="true"></span>
-				<?php echo esc_html( $home['hero_card_cta'] ); ?>
+			<a class="match-btn match-btn--cta" href="<?php echo esc_url( match_jobs_url() ); ?>">
+				<span class="match-btn__cta-inner">
+					<span class="match-btn__cta-blob" aria-hidden="true"></span>
+					<span class="match-btn__cta-blob" aria-hidden="true"></span>
+					<span class="match-btn__cta-glow" aria-hidden="true"></span>
+					<span class="match-btn__cta-label"><?php echo esc_html( $home['hero_card_cta'] ); ?></span>
+					<span class="match-btn__cta-arrow" aria-hidden="true">
+						<svg viewBox="0 0 256 256"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></svg>
+					</span>
+				</span>
 			</a>
 		</div>
 
