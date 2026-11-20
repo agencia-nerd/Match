@@ -16,15 +16,19 @@
  * y las facetas se calculan en memoria sobre las filas de ejemplo de
  * match_demo_jobs(), que llevan sus propios valores de filtro. Así la
  * sección se puede revisar completa, filtros incluidos.
+ *
+ * Submarca: no es taxonomía. Sale de match_job_submarcas() (meta del CRM,
+ * campo manual o filtro match/job_submarcas), así que se filtra en PHP
+ * sobre los ids. Cuando el CRM envíe la submarca no hay que tocar nada aquí.
  */
 
 defined( 'ABSPATH' ) || exit;
 
 /** Filas que muestra la portada. */
-const MATCH_HOME_JOBS = 4;
+const MATCH_HOME_JOBS = 6;
 
 /** Parámetros de filtro, en el orden de la barra. */
-const MATCH_JOBS_PARAMS = array( 'ubicacion', 'nivel', 'modalidad', 'industria' );
+const MATCH_JOBS_PARAMS = array( 'ubicacion', 'nivel', 'modalidad', 'industria', 'submarca' );
 
 /**
  * Parámetros de filtro y su taxonomía. Vacío si el plugin no está activo.
@@ -54,8 +58,16 @@ function match_jobs_demo_filtered( array $filters ): array {
 		array_filter(
 			match_demo_jobs(),
 			function ( array $job ) use ( $filters ): bool {
-				foreach ( $filters as $param => $slug ) {
-					if ( sanitize_title( $job['filters'][ $param ] ?? '' ) !== $slug ) {
+				// Cada filtro admite varios valores (OR); entre filtros es AND.
+				foreach ( $filters as $param => $slugs ) {
+					$slugs = (array) $slugs;
+					if ( 'submarca' === $param ) {
+						if ( ! array_intersect( $slugs, array_column( $job['submarcas'], 'slug' ) ) ) {
+							return false;
+						}
+						continue;
+					}
+					if ( ! in_array( sanitize_title( $job['filters'][ $param ] ?? '' ), $slugs, true ) ) {
 						return false;
 					}
 				}
@@ -68,16 +80,33 @@ function match_jobs_demo_filtered( array $filters ): array {
 /**
  * Filtros activos, saneados, a partir de $_GET o de un arreglo dado.
  *
- * @return array<string,string> param => slug
+ * Cada parámetro llega como "param=slug" o "param[]=a&param[]=b". Por defecto
+ * se queda con un solo valor (el archivo de vacantes elige uno por filtro);
+ * con $multi devuelve todos, que es lo que usa la portada.
+ *
+ * @return array<string,string|string[]> param => slug (o lista de slugs con $multi)
  */
-function match_jobs_current_filters( ?array $source = null ): array {
+function match_jobs_current_filters( ?array $source = null, bool $multi = false ): array {
 	$source  = $source ?? $_GET; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- filtros públicos de lectura.
 	$filters = array();
 
 	foreach ( MATCH_JOBS_PARAMS as $param ) {
-		$value = isset( $source[ $param ] ) ? sanitize_title( wp_unslash( (string) $source[ $param ] ) ) : '';
-		if ( '' !== $value ) {
-			$filters[ $param ] = $value;
+		$values = array();
+		foreach ( (array) ( $source[ $param ] ?? array() ) as $raw ) {
+			if ( ! is_scalar( $raw ) ) {
+				continue;
+			}
+			$value = sanitize_title( wp_unslash( (string) $raw ) );
+			if ( 'submarca' === $param ) {
+				$value = match_submarca_slug( $value );
+			}
+			if ( '' !== $value && ! in_array( $value, $values, true ) ) {
+				$values[] = $value;
+			}
+		}
+
+		if ( $values ) {
+			$filters[ $param ] = $multi ? $values : $values[0];
 		}
 	}
 
@@ -109,6 +138,57 @@ function match_jobs_tax_query( array $filters ): array {
 }
 
 /**
+ * Ids de vacantes con la submarca elegida (dentro de los demás filtros), o
+ * null si no se filtra por submarca.
+ */
+function match_jobs_submarca_ids( array $filters ): ?array {
+	if ( empty( $filters['submarca'] ) ) {
+		return null;
+	}
+
+	$ids = get_posts(
+		array(
+			'post_type'      => MJB_Helpers::job_post_type(),
+			'posts_per_page' => -1,
+			'fields'         => 'ids',
+			'no_found_rows'  => true,
+			'tax_query'      => match_jobs_tax_query( $filters ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+		)
+	);
+
+	$wanted = (array) $filters['submarca'];
+
+	return array_values( array_filter( $ids, fn( int $id ): bool => (bool) array_intersect( $wanted, array_column( match_job_submarcas( $id ), 'slug' ) ) ) );
+}
+
+/**
+ * Argumentos de WP_Query para un conjunto de filtros (taxonomías + submarca).
+ */
+function match_jobs_query_args( array $filters ): array {
+	$args = array( 'tax_query' => match_jobs_tax_query( $filters ) ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+	$ids  = match_jobs_submarca_ids( $filters );
+	if ( null !== $ids ) {
+		$args['post__in'] = $ids ?: array( 0 );
+	}
+
+	return $args;
+}
+
+/**
+ * Ids (hasta 500) de las vacantes que cumplen unos filtros, para las facetas.
+ */
+function match_jobs_facet_ids( array $filters ): array {
+	return get_posts(
+		array(
+			'post_type'      => MJB_Helpers::job_post_type(),
+			'posts_per_page' => 500,
+			'fields'         => 'ids',
+			'no_found_rows'  => true,
+		) + match_jobs_query_args( $filters )
+	);
+}
+
+/**
  * Vacantes para la portada.
  *
  * @return array{ jobs: array, total: int, demo: bool }
@@ -125,8 +205,7 @@ function match_jobs_list( array $filters, int $count = MATCH_HOME_JOBS ): array 
 			'posts_per_page' => $count,
 			'orderby'        => 'date',
 			'order'          => 'DESC',
-			'tax_query'      => match_jobs_tax_query( $filters ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
-		)
+		) + match_jobs_query_args( $filters )
 	);
 
 	$jobs = array_map( fn( WP_Post $post ): array => match_job_data( $post->ID ), $query->posts );
@@ -150,10 +229,13 @@ function match_jobs_facets( array $filters ): array {
 			$others = array_diff_key( $filters, array( $param => true ) );
 			$counts = array();
 			foreach ( match_jobs_demo_filtered( $others ) as $job ) {
-				$name = $job['filters'][ $param ];
-				$slug = sanitize_title( $name );
-				$counts[ $slug ] = $counts[ $slug ] ?? array( 'slug' => $slug, 'name' => $name, 'count' => 0 );
-				$counts[ $slug ]['count']++;
+				$names = 'submarca' === $param
+					? array_column( $job['submarcas'], 'label', 'slug' )
+					: array( sanitize_title( $job['filters'][ $param ] ) => $job['filters'][ $param ] );
+				foreach ( $names as $slug => $name ) {
+					$counts[ $slug ] = $counts[ $slug ] ?? array( 'slug' => $slug, 'name' => $name, 'count' => 0 );
+					$counts[ $slug ]['count']++;
+				}
 			}
 			usort( $counts, fn( array $a, array $b ): int => $b['count'] <=> $a['count'] ?: strcasecmp( $a['name'], $b['name'] ) );
 			$facets[ $param ] = array_values( $counts );
@@ -163,15 +245,7 @@ function match_jobs_facets( array $filters ): array {
 
 	foreach ( match_jobs_filter_map() as $param => $taxonomy ) {
 		$others = array_diff_key( $filters, array( $param => true ) );
-		$ids    = get_posts(
-			array(
-				'post_type'      => MJB_Helpers::job_post_type(),
-				'posts_per_page' => 500,
-				'fields'         => 'ids',
-				'no_found_rows'  => true,
-				'tax_query'      => match_jobs_tax_query( $others ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
-			)
-		);
+		$ids    = match_jobs_facet_ids( $others );
 
 		$counts = array();
 		if ( $ids ) {
@@ -190,6 +264,17 @@ function match_jobs_facets( array $filters ): array {
 		$facets[ $param ] = array_values( $counts );
 	}
 
+	// Submarca: se cuenta vacante por vacante con match_job_submarcas().
+	$counts = array();
+	foreach ( match_jobs_facet_ids( array_diff_key( $filters, array( 'submarca' => true ) ) ) as $id ) {
+		foreach ( match_job_submarcas( $id ) as $submarca ) {
+			$counts[ $submarca['slug'] ] = $counts[ $submarca['slug'] ] ?? array( 'slug' => $submarca['slug'], 'name' => $submarca['label'], 'count' => 0 );
+			$counts[ $submarca['slug'] ]['count']++;
+		}
+	}
+	usort( $counts, fn( array $a, array $b ): int => $b['count'] <=> $a['count'] ?: strcasecmp( $a['name'], $b['name'] ) );
+	$facets['submarca'] = array_values( $counts );
+
 	return $facets;
 }
 
@@ -197,6 +282,10 @@ function match_jobs_facets( array $filters ): array {
  * Nombre legible de un término elegido (aunque ya no aparezca en las facetas).
  */
 function match_jobs_term_name( string $param, string $slug ): string {
+	if ( 'submarca' === $param ) {
+		return match_submarcas_catalog()[ $slug ] ?? $slug;
+	}
+
 	if ( match_jobs_demo_mode() ) {
 		foreach ( match_demo_jobs() as $job ) {
 			$name = $job['filters'][ $param ] ?? '';
@@ -217,7 +306,7 @@ function match_jobs_term_name( string $param, string $slug ): string {
  * URL del archivo de vacantes con los filtros actuales.
  */
 function match_jobs_archive_url( array $filters ): string {
-	return $filters ? add_query_arg( array_map( 'rawurlencode', $filters ), match_jobs_url() ) : match_jobs_url();
+	return $filters ? add_query_arg( map_deep( $filters, 'rawurlencode' ), match_jobs_url() ) : match_jobs_url();
 }
 
 /**
@@ -227,8 +316,8 @@ function match_jobs_render_rows( array $jobs ): string {
 	ob_start();
 
 	if ( $jobs ) {
-		foreach ( $jobs as $index => $job ) {
-			get_template_part( 'template-parts/job', 'row', array( 'job' => $job, 'open' => 0 === $index ) );
+		foreach ( $jobs as $job ) {
+			get_template_part( 'template-parts/job', 'row', array( 'job' => $job ) );
 		}
 	} else {
 		?>
@@ -265,7 +354,7 @@ function match_jobs_count_html( int $shown, int $total ): string {
 }
 
 /**
- * GET /wp-json/match/v1/jobs?ubicacion=&nivel=&modalidad=&industria=
+ * GET /wp-json/match/v1/jobs?ubicacion=&nivel=&modalidad=&industria=&submarca=
  */
 function match_jobs_rest_routes(): void {
 	register_rest_route(
@@ -275,11 +364,11 @@ function match_jobs_rest_routes(): void {
 			'methods'             => WP_REST_Server::READABLE,
 			'permission_callback' => '__return_true',
 			'args'                => array_fill_keys(
-				array( 'ubicacion', 'nivel', 'modalidad', 'industria' ),
-				array( 'type' => 'string', 'sanitize_callback' => 'sanitize_title' )
+				MATCH_JOBS_PARAMS,
+				array( 'type' => array( 'string', 'array' ) ) // Un valor o varios (param[]=a&param[]=b); se sanea en match_jobs_current_filters().
 			),
 			'callback'            => function ( WP_REST_Request $request ): WP_REST_Response {
-				$filters = match_jobs_current_filters( $request->get_params() );
+				$filters = match_jobs_current_filters( $request->get_params(), true );
 				$list    = match_jobs_list( $filters );
 				$shown   = count( $list['jobs'] );
 

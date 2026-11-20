@@ -14,7 +14,7 @@ Tema del sitio de [Match](https://match.win) (consultora de headhunting ejecutiv
    - **Inicio** (asignarla como portada estática) → `front-page.php`.
    - **Soluciones** → hijas **Executive** y **Outplacement** con la plantilla *Solución*.
    - **Design System** con la plantilla *Design System* (guía visual de tokens y componentes; opcional).
-4. Asignar menús en Apariencia → Menús: `primary`, `footer_jobs`, `footer_nav`, `footer_social`. Sin menús asignados el tema pinta los ítems del diseño.
+4. Asignar menús en Apariencia → Menús: `footer_jobs`, `footer_nav`, `footer_social`. Sin menús asignados el tema pinta los ítems del diseño. El menú del header es fijo (Inicio, Soluciones, Blog): el mega menú de Soluciones lista las páginas hijas de `/soluciones/` y sus textos se editan en cada una, pestaña "Menú de soluciones" del grupo PCF "Solución — Contenido". `/soluciones/` redirige a `/#soluciones`.
 5. Personalizador → **Match — Contacto**: teléfono, correo, RUC y razón social (pie y formulario).
 
 Sin build en producción: se sirven los archivos compilados que van en el repo (`assets/css/tailwind.css`, `assets/vendor/`). Para desarrollar:
@@ -46,7 +46,7 @@ template-design-system.php
 package.json, scripts/    Build de Tailwind y copia de vendors (npm run build)
 archive-match_job.php, single-match_job.php   Listado y detalle de vacante
 template-parts/
-  header/navbar.php       Barra de navegación (submenú, versión móvil)
+  header/navbar.php       Barra de navegación (mega menú de Soluciones, tarjeta mobile)
   footer/footer.php       Pie de página
   hero.php, section-*.php Secciones de la portada
   job-row.php             Fila de vacante expandible de la portada
@@ -54,7 +54,7 @@ template-parts/
   jobboard/*.php          Barra lateral, tarjeta de vacante y caja de CV del panel
 assets/
   css/                    Ver "CSS" abajo
-  js/app.js               Vanilla JS: menú móvil, acordeón, filas, AOS, Embla, Lenis, toast
+  js/app.js               Vanilla JS: mega menú y menú móvil, acordeón, filas, AOS, Embla, Lenis, toast
   vendor/                 AOS, Embla y Lenis copiados por `npm run vendor`
   css/tailwind.src.css    Entrada de Tailwind (tokens con @theme inline)
   fonts/                  Poppins y Open Sauce (SIL OFL), servidas localmente
@@ -97,7 +97,7 @@ Convención BEM con prefijo `match-`. Los iconos SVG se inyectan inline con `mat
 
 ## Contenido editorial
 
-Los textos de la portada y de las internas están en las plantillas y en `inc/soluciones-data.php` mientras no exista un CPT o campos personalizados. Para agregar una solución: crear la página hija de *Soluciones* con la plantilla *Solución* y añadir su bloque en `match_solucion_data()` con la misma clave que el slug. La clave `theme` define la paleta: `template-solucion.php` la pone como clase `match-sol--{theme}` en `<body>` y `solucion.css` redefine ahí las variables `--sol-*` (Executive es la base; Outplacement cambia a celeste). Los assets propios de cada solución van en `assets/img/{slug}/`.
+Los textos de la portada y de las internas están en las plantillas y en `inc/soluciones-data.php` mientras no exista un CPT o campos personalizados. Las páginas de solución pueden usar las plantillas independientes `template-executive.php`, `template-personnel.php`, `template-outplacement.php` y `template-assessment.php` (la plantilla compartida `template-solucion.php` se conserva por compatibilidad). Cada una carga las mismas secciones reutilizables y obtiene sus datos por el slug mediante `match_solucion_data()`. La clave `theme` define la paleta: la plantilla pone como clase `match-sol--{theme}` en `<body>` y `solucion.css` redefine ahí las variables `--sol-*` (Executive es la base; Outplacement cambia a celeste). Los assets propios de cada solución van en `assets/img/{slug}/`.
 
 Vacantes en la portada: `match_jobs_list()` (`inc/jobs-filters.php`) trae las últimas del Job Board con los filtros de la URL. Sin vacantes sincronizadas (o sin plugin) entra el **modo demo**: seis filas de ejemplo (`match_demo_jobs()`) con valores de filtro propios, y lista y facetas se calculan en memoria, así los filtros también se pueden revisar sin CRM.
 
@@ -122,7 +122,9 @@ Flujo de acceso (todo en `inc/jobboard.php`, sobre el login nativo):
 - `wp_login_url()` devuelve la página de login del tema, así el navbar y el plugin apuntan al diseño. `wp-login.php` por GET sin acción redirige allí; `lostpassword`, `register` y `logout` siguen en `wp-login.php`.
 - El formulario envía a `wp-login.php`. Credenciales incorrectas vuelven con `?login=failed`; al entrar se redirige al panel (`login_redirect`), salvo administradores. Un usuario identificado que abra el login va al panel.
 - Por ahora la barra de administración está oculta para todos en el frontend (`match_hide_admin_bar`); la condición original para editores queda en el comentario.
-- "Continuar con Google" queda deshabilitado hasta conectar un proveedor OAuth: devolver la URL con el filtro `match/google_login_url`.
+- **"Continuar con Google"** (login y registro, `inc/google-auth.php`): OAuth 2.0 propio, sin plugins. Busca la cuenta por meta `match_google_sub` y luego por correo verificado; si existe inicia sesión (mismo destino que el login por correo). Si no existe la crea con `match_insert_candidate()` (la misma del registro por correo, con nombre y apellido de Google, sin el correo para fijar contraseña) y pasa al paso 2, subir CV. Para activarlo:
+  1. Google Cloud → APIs & Services → Credentials → OAuth client ID (Web application), scopes `openid email profile`. Redirect URI autorizada (una por entorno): `https://<dominio>/wp-admin/admin-post.php?action=match_google_callback`.
+  2. En `wp-config.php`: `define( 'MATCH_GOOGLE_CLIENT_ID', '…' );` y `define( 'MATCH_GOOGLE_CLIENT_SECRET', '…' );`. Sin ellas el botón sigue deshabilitado (filtro `match/google_login_url` vacío).
 - **Modal de bienvenida** (`template-parts/jobboard/onboarding.php`, Figma 4409:159): se abre una sola vez por usuario al entrar al panel. Al cerrarlo, `app.js` avisa por AJAX (`match_onboarding_done`) y queda en user meta `match_onboarding_done`; `?onboarding=1` lo fuerza para revisarlo. "Completar perfil" apunta al perfil nativo hasta que exista la página de perfil (filtro `match/profile_url`).
 - "Regístrate ahora" (login) y "Registrarse" (sidebar sin sesión) apuntan a `/job-board/registro/` si esa página existe (`match_registro_page_url()`), si no al formulario de contacto — igual que antes, mismo fallback.
 

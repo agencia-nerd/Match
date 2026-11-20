@@ -4,7 +4,8 @@
  *
  * Postulaciones del candidato (Figma: Job-Board/Mis procesos 4105:97;
  * vacío 4406:3). Exige sesión. Datos de match_user_applications(): las
- * postulaciones del plugin o, en modo demo, cinco filas de ejemplo.
+ * postulaciones del plugin o, en modo demo, cinco filas de ejemplo. Cada
+ * tarjeta abre su panel "Detalle del proceso" (status-drawer.php).
  */
 defined( 'ABSPATH' ) || exit;
 
@@ -26,6 +27,8 @@ get_header( 'jobboard' );
 		<div class="match-jb__body match-jb__body--list">
 			<header class="match-jb-list__head" data-aos="fade-up">
 				<h1 class="match-jb-list__title"><?php esc_html_e( 'Postulaciones', 'match' ); ?></h1>
+				<?php // «Ordenar por» solo tiene sentido con postulaciones que ordenar (J15). ?>
+				<?php if ( $rows ) : ?>
 				<form class="match-jb-sort" method="get">
 					<label class="match-jb-sort__label">
 						<span><?php esc_html_e( 'Ordenar por:', 'match' ); ?></span>
@@ -39,22 +42,39 @@ get_header( 'jobboard' );
 					</label>
 					<noscript><button class="match-jb__btn match-jb__btn--light match-jb__btn--sm" type="submit"><?php esc_html_e( 'Aplicar', 'match' ); ?></button></noscript>
 				</form>
+				<?php endif; ?>
 			</header>
 
 			<hr class="match-jb__rule">
 
 			<?php if ( $rows ) : ?>
 				<div class="match-jb-list" data-aos="fade-up" data-aos-delay="80">
-					<?php foreach ( $rows as $row ) : ?>
-						<?php get_template_part( 'template-parts/jobboard/application-row', null, $row ); ?>
+					<?php foreach ( $rows as $i => $row ) : ?>
+						<?php get_template_part( 'template-parts/jobboard/application-row', null, $row + array( 'drawer' => 'match-status-drawer-' . $i ) ); ?>
 					<?php endforeach; ?>
 				</div>
+
+				<?php
+				// Un panel por postulación (Figma 5548:5587), fuera de la lista
+				// para no alterar el :nth-child de la entrada escalonada.
+				foreach ( $rows as $i => $row ) {
+					get_template_part(
+						'template-parts/jobboard/status-drawer',
+						null,
+						array(
+							'id'  => 'match-status-drawer-' . $i,
+							'job' => $row['job'],
+							'row' => $row,
+						)
+					);
+				}
+				?>
 			<?php else : ?>
 				<div class="match-jb-empty match-jb-empty--page" data-aos="fade-up" data-aos-delay="80">
 					<span class="match-jb-empty__icon" aria-hidden="true"><?php echo match_icon( 'briefcase' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
 					<p class="match-jb-empty__title"><?php esc_html_e( 'Aún no tienes postulaciones', 'match' ); ?></p>
 					<p class="match-jb-empty__text"><?php esc_html_e( 'Cuando apliques a una vacante, podrás hacer seguimiento de tu proceso desde aquí.', 'match' ); ?></p>
-					<a class="match-jb__btn match-jb__btn--dark" href="<?php echo esc_url( match_jobs_url() ); ?>"><?php esc_html_e( 'Postular ahora', 'match' ); ?></a>
+					<a class="match-jb__btn match-jb__btn--dark" href="<?php echo esc_url( match_jobs_url() ); ?>"><?php esc_html_e( 'Explorar vacantes', 'match' ); ?></a>
 				</div>
 			<?php endif; ?>
 		</div>

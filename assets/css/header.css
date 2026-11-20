@@ -1,162 +1,498 @@
-/* Match — cabecera (Figma: Navbar, node 3502:3320) */
+/* Match — cabecera (Figma: Navbar, node 3502:3320; mega menú y menú mobile: reference-match-nav) */
 
 .match-navbar {
-	position: sticky;
-	inset-block-start: 0;
-	z-index: 50;
-	background: var(--match-neutral-100);
-	transition: box-shadow 0.2s ease;
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 50;
+    background: var(--match-neutral-100);
+    transition:
+        box-shadow 0.2s ease,
+        translate 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.match-navbar.is-stuck { box-shadow: 0 1px 0 var(--match-azul-100); }
+.match-navbar.is-stuck {
+    box-shadow: 0 1px 0 var(--match-azul-100);
+}
+
+/* Se oculta al bajar con el scroll y vuelve al subir (app.js) */
+.match-navbar.is-hidden {
+    translate: 0 -100%;
+}
 
 .match-navbar__inner {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: var(--match-space-24);
-	min-height: var(--match-navbar-h);
-	padding: var(--match-space-16) var(--match-space-40);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--match-space-24);
+    min-height: var(--match-navbar-h);
+    padding: var(--match-space-16) var(--match-space-40);
 }
 
-.match-navbar__left { display: flex; align-items: center; gap: var(--match-space-56); }
+.match-navbar__left {
+    display: flex;
+    align-items: center;
+    gap: var(--match-space-56);
+}
 
 .match-navbar__logo {
-	display: inline-flex;
-	align-items: center;
-	width: 140px;
-	height: 46px;
-	color: var(--match-negro);
-	text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    width: 140px;
+    height: 46px;
+    color: var(--match-negro);
+    text-decoration: none;
 }
 
 .match-navbar__logo svg,
-.match-navbar__logo img { width: 100%; height: auto; }
-
-/* --- NavPill --- */
-.match-nav__list {
-	display: flex;
-	align-items: center;
-	gap: var(--match-space-32);
-	margin: 0;
-	padding: var(--match-space-8);
-	list-style: none;
-	border-radius: var(--match-radius-24);
+.match-navbar__logo img {
+    width: 100%;
+    height: auto;
 }
 
-.match-nav__list li { position: relative; }
-
-.match-nav__list a,
-.match-nav__link {
-	display: inline-flex;
-	align-items: center;
-	gap: var(--match-space-4);
-	padding: var(--match-space-8) var(--match-space-16);
-	border-radius: var(--match-radius-8);
-	font-size: var(--match-fs-nav);
-	font-weight: 500;
-	line-height: var(--match-lh-nav);
-	color: var(--match-azul-400);
-	text-decoration: none;
-	white-space: nowrap;
-	transition: color 0.15s ease;
+/* El SVG trae fill="white"; en el navbar el texto va en --match-negro */
+.match-navbar__logo svg [fill='white'] {
+    fill: currentColor;
 }
 
-.match-nav__list .current-menu-item > a,
-.match-nav__list .current-menu-ancestor > a,
-.match-nav__list a:hover,
-.match-nav__link:hover { color: var(--match-azul-900); }
-
-.match-nav__chevron { flex: 0 0 auto; width: 20px; height: 20px; transition: rotate 0.15s ease; }
-.match-nav__list li:hover > a .match-nav__chevron,
-.match-nav__list li:focus-within > a .match-nav__chevron { rotate: 180deg; }
-
-/* --- Submenú --- */
-.match-nav__list .sub-menu {
-	position: absolute;
-	inset-block-start: calc( 100% + var(--match-space-4) );
-	inset-inline-start: 0;
-	min-width: 220px;
-	margin: 0;
-	padding: var(--match-space-8);
-	list-style: none;
-	background: var(--match-blanco);
-	border: 0.5px solid var(--match-azul-100);
-	border-radius: var(--match-radius-16);
-	box-shadow: var(--match-shadow-btn);
-	opacity: 0;
-	visibility: hidden;
-	translate: 0 4px;
-	transition: opacity 0.15s ease, translate 0.15s ease, visibility 0.15s;
+/* --- Menú de escritorio --- */
+.match-nav {
+    display: flex;
+    align-items: center;
+    gap: var(--match-space-56);
 }
 
-.match-nav__list li:hover > .sub-menu,
-.match-nav__list li:focus-within > .sub-menu { opacity: 1; visibility: visible; translate: 0 0; }
+.match-nav__link,
+.match-sol__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--match-space-8);
+    padding: 0;
+    border: 0;
+    background: none;
+    font-family: inherit;
+    font-size: var(--match-fs-nav);
+    font-weight: 500;
+    line-height: var(--match-lh-nav);
+    color: var(--match-azul-400);
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
 
-.match-nav__list .sub-menu a { display: flex; width: 100%; }
+.match-nav__link:hover,
+.match-nav__link.is-current,
+.match-sol__btn:hover,
+.match-sol__btn.is-current,
+.match-sol.is-open .match-sol__btn {
+    color: var(--match-azul-900);
+}
+
+.match-nav__chevron {
+    flex: 0 0 auto;
+    transition: rotate 0.25s ease;
+}
+.match-sol.is-open .match-nav__chevron,
+[aria-expanded='true'] > .match-nav__chevron {
+    rotate: 180deg;
+}
+
+/* --- Mega menú de Soluciones ---
+ * Se posiciona respecto a la barra (sticky) o, en la portada, al bloque
+ * izquierdo de la pestaña (position:relative en home.css): en ambos casos
+ * arranca en el borde izquierdo y al pie de la barra. Los 24 px de arriba
+ * son un "puente" transparente para que el cursor llegue del botón al panel
+ * sin disparar el mouseleave. */
+.match-mega {
+    position: absolute;
+    inset-block-start: calc(100% - 24px);
+    inset-inline-start: 37px;
+    z-index: 30;
+    padding-block-start: 36px;
+    visibility: hidden;
+    translate: 0 -10px;
+    clip-path: inset(0 -80px 100% -80px);
+    transition:
+        clip-path 0.2s cubic-bezier(0.4, 0, 1, 1),
+        translate 0.2s cubic-bezier(0.4, 0, 1, 1),
+        visibility 0s linear 0.2s;
+}
+
+.match-sol.is-open .match-mega {
+    visibility: visible;
+    translate: 0 0;
+    clip-path: inset(0 -80px -100px -80px);
+    transition:
+        clip-path 0.42s cubic-bezier(0.65, 0, 0.35, 1),
+        translate 0.42s cubic-bezier(0.65, 0, 0.35, 1),
+        visibility 0s;
+}
+
+.match-mega__panel {
+    display: grid;
+    grid-template-columns: 320px minmax(0, 1fr);
+    gap: var(--match-space-8);
+    width: min(1040px, calc(100vw - 96px));
+    padding: 10px;
+    background: var(--match-blanco);
+    border: 1px solid #e6e6ea;
+    border-radius: var(--match-radius-24);
+    box-shadow:
+        0 40px 80px -30px rgba(8, 8, 16, 0.55),
+        0 12px 24px -12px rgba(8, 8, 16, 0.22);
+}
+
+.match-mega__list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 4px;
+}
+
+.match-mega__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--match-space-16);
+    padding: 18px;
+    border-radius: var(--match-radius-16);
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.match-mega__txt {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.match-mega__name {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--match-azul-900);
+    letter-spacing: -0.005em;
+    transition: color 0.2s ease;
+}
+.match-mega__sub {
+    font-size: 13px;
+    color: #7a7a88;
+    transition: color 0.2s ease;
+}
+.match-mega__arrow {
+    flex: none;
+    color: var(--match-blanco);
+    opacity: 0;
+    translate: -6px 0;
+    transition:
+        opacity 0.2s ease,
+        translate 0.2s ease;
+}
+.match-mega__arrow svg {
+    display: block;
+}
+
+.match-mega__item.is-active {
+    background: var(--c);
+}
+.match-mega__item.is-active .match-mega__name {
+    color: var(--match-blanco);
+}
+.match-mega__item.is-active .match-mega__sub {
+    color: rgba(255, 255, 255, 0.78);
+}
+.match-mega__item.is-active .match-mega__arrow {
+    opacity: 1;
+    translate: 0 0;
+}
+.match-mega__item:focus-visible {
+    outline: 2px solid var(--c);
+    outline-offset: 2px;
+}
+
+.match-mega__preview {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 36px 40px;
+    background: #f5f5f7;
+    border-radius: 18px;
+}
+
+.match-mega__preview-inner {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--match-space-16);
+}
+.match-mega__eyebrow {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--match-azul-400);
+}
+.match-mega__body {
+    max-width: 540px;
+    margin: 0;
+    font-size: 21px;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: -0.01em;
+    color: #060527; /* primario/900 de Figma (sin token) */
+    text-wrap: pretty;
+}
+/* Partes entre *asteriscos* del campo nav_body (match_bold_text): mismo color, Semibold */
+.match-mega__body strong {
+    font-weight: 600;
+}
+.match-mega__body:empty {
+    display: none;
+}
+.match-mega__links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 28px;
+    margin-block-start: auto;
+}
+
+/* Enlace con flecha que pasa a spinner al hacer clic (app.js: .is-loading) */
+.match-mega__link {
+    display: flex;
+    align-items: center;
+    gap: var(--match-space-8);
+    padding-block-end: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #6b6b76;
+    text-decoration: none;
+    background: linear-gradient(var(--match-azul-900), var(--match-azul-900)) left bottom / 0% 1px no-repeat;
+    transition:
+        gap 0.3s ease,
+        color 0.25s ease,
+        background-size 0.35s ease;
+}
+
+.match-mega__link[hidden] {
+    display: none;
+}
+.match-mega__link:hover {
+    gap: 13px;
+    color: var(--match-azul-900);
+    background-size: 100% 1px;
+}
+.match-mega__link-icon {
+    position: relative;
+    display: flex;
+    flex: none;
+    width: 16px;
+    height: 16px;
+}
+.match-mega__link-icon svg {
+    position: absolute;
+    inset: 0;
+    transition:
+        opacity 0.2s ease,
+        scale 0.25s ease;
+}
+
+.match-mega__spinner {
+    position: absolute;
+    inset: 1px;
+    border: 1.5px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 999px;
+    opacity: 0;
+    scale: 0.6;
+    transition:
+        opacity 0.2s ease,
+        scale 0.25s ease;
+    animation: match-spin 0.7s linear infinite;
+}
+
+.match-mega__link.is-loading .match-mega__link-icon svg {
+    opacity: 0;
+    scale: 0.6;
+}
+.match-mega__link.is-loading .match-mega__spinner {
+    opacity: 1;
+    scale: 1;
+}
+
+@keyframes match-spin {
+    to {
+        rotate: 360deg;
+    }
+}
 
 /* --- Sección derecha --- */
-.match-navbar__right { display: flex; align-items: center; gap: var(--match-space-24); }
-.match-navbar__sep { width: 1px; height: 20px; background: var(--match-azul-300); }
-.match-navbar__right .match-btn { gap: var(--match-space-12); }
+.match-navbar__right {
+    display: flex;
+    align-items: center;
+    gap: var(--match-space-24);
+}
+.match-navbar__right .match-btn {
+    gap: var(--match-space-12);
+}
 
-/* --- Toggle móvil --- */
+/* --- Hamburguesa (mobile) --- */
 .match-navbar__toggle {
-	display: none;
-	width: 44px;
-	height: 44px;
-	border: 0;
-	background: transparent;
-	cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--match-negro);
+    cursor: pointer;
+    transition: color 0.35s ease;
 }
 
-.match-navbar__bars,
-.match-navbar__bars::before,
-.match-navbar__bars::after {
-	display: block;
-	width: 22px;
-	height: 2px;
-	background: var(--match-negro);
-	content: "";
-	transition: rotate 0.2s ease, translate 0.2s ease, opacity 0.2s ease;
+.match-navbar__toggle .match-navbar__burger {
+    display: block;
+}
+.match-navbar__toggle .match-navbar__close,
+.match-navbar__toggle[aria-expanded='true'] .match-navbar__burger {
+    display: none;
+}
+.match-navbar__toggle[aria-expanded='true'] .match-navbar__close {
+    display: block;
 }
 
-.match-navbar__bars { position: relative; margin-inline: auto; }
-.match-navbar__bars::before { position: absolute; inset-block-start: -7px; }
-.match-navbar__bars::after  { position: absolute; inset-block-start: 7px; }
-
-.match-navbar__toggle[aria-expanded="true"] .match-navbar__bars { background: transparent; }
-.match-navbar__toggle[aria-expanded="true"] .match-navbar__bars::before { translate: 0 7px; rotate: 45deg; }
-.match-navbar__toggle[aria-expanded="true"] .match-navbar__bars::after  { translate: 0 -7px; rotate: -45deg; }
-
-/* --- Panel móvil --- */
-.match-navbar__mobile {
-	display: grid;
-	gap: var(--match-space-24);
-	padding: var(--match-space-24) var(--match-gutter) var(--match-space-40);
-	border-block-start: 1px solid var(--match-azul-100);
+/* Botón de sesión de la barra mobile (en escritorio va en __right) */
+.match-navbar__account {
+    display: none;
 }
 
-.match-navbar__mobile[hidden] { display: none; }
-
-.match-nav__list--stacked { flex-direction: column; align-items: stretch; gap: var(--match-space-8); padding: 0; }
-.match-nav__list--stacked a { white-space: normal; }
-.match-nav__list--stacked .match-nav__chevron { margin-inline-start: auto; }
-
-.match-nav__list--stacked .sub-menu {
-	position: static;
-	opacity: 1;
-	visibility: visible;
-	translate: none;
-	box-shadow: none;
-	border: 0;
-	padding: 0 0 0 var(--match-space-16);
+/* --- Menú mobile: tarjeta flotante bajo la barra (app.js la anima) --- */
+.match-mmenu {
+    position: absolute;
+    inset-block-start: calc(100% - 4px);
+    inset-inline: 12px;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - var(--match-navbar-h) - 16px);
+    max-height: calc(100svh - var(--match-navbar-h) - 16px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 10px;
+    background: var(--match-neutral-100);
+    border-radius: 22px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
 }
 
-.match-navbar__mobile-actions { display: grid; gap: var(--match-space-12); }
-.match-navbar__mobile-actions .match-btn { width: 100%; }
+.match-mmenu[hidden] {
+    display: none;
+}
 
-body.has-open-nav { overflow: hidden; }
+.match-mmenu__link {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 52px;
+    padding: 0 var(--match-space-16);
+    border: 0;
+    background: none;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: start;
+    color: #5c5c68;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.match-mmenu__link.is-current,
+.match-mmenu__acc[aria-expanded='true'] {
+    color: var(--match-azul-900);
+}
+
+.match-mmenu__login {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    gap: var(--match-space-12);
+    min-height: 52px;
+    margin-block-start: 6px;
+    border: 1px solid #6e6e78;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--match-azul-900);
+    text-decoration: none;
+}
+
+.match-msol {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    gap: 2px;
+    margin: 0 6px 6px;
+    padding: 6px;
+    background: var(--match-blanco);
+    border: 1px solid #e6e6ea;
+    border-radius: var(--match-radius-16);
+}
+
+.match-msol[hidden] {
+    display: none;
+}
+
+.match-msol__item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 60px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.match-msol__item:active {
+    background: #f2f2f5;
+}
+.match-msol__dot {
+    flex: none;
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--c);
+}
+.match-msol__name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--match-azul-900);
+}
+.match-msol__sub {
+    font-size: 13px;
+    color: #7a7a88;
+}
+
+/* Segundo enlace de una solución (ej. "Ver programas VIP") */
+.match-msol__extra {
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 44px;
+    margin: 0 0 6px 17px;
+    padding: 10px 14px 10px 22px;
+    border-left: 1px solid #dadae0;
+    border-radius: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: #5c5c68;
+}
+
+/* clip (no hidden): no crea contenedor de scroll, así el navbar sticky
+ * sigue pegado al viewport aunque Lenis ponga overflow:clip en <html>. */
+body.has-open-nav {
+    overflow: clip;
+}
 
 /*
  * El menú de escritorio (nav + enlaces + botón de sesión, todo en una sola
@@ -165,14 +501,54 @@ body.has-open-nav { overflow: hidden; }
  * (scroll horizontal en toda la página). El toggle móvil entra antes, a los
  * 1279px, con margen de sobra — mismo punto de corte que el acordeón de
  * soluciones (ver home.css) para que ambos cambien de modo juntos.
+ * La referencia usa 1099px; aquí se mantiene 1279px por ese desborde.
  */
-@media ( max-width: 1279px ) {
-	.match-navbar__inner { padding-inline: var(--match-space-24); }
-	.match-nav, .match-navbar__right { display: none; }
-	.match-navbar__toggle { display: block; }
+@media (max-width: 1279px) {
+    .match-navbar__inner {
+        padding-inline: var(--match-space-24);
+    }
+    /* Figma mobile: hamburguesa a la izquierda, sesión a la derecha, sin logo */
+    .match-navbar__left,
+    .match-navbar__right {
+        display: none;
+    }
+    .match-navbar__toggle {
+        display: flex;
+        order: -1;
+        margin-inline-start: calc(-1 * var(--match-space-12));
+    }
+    .match-navbar__account {
+        display: inline-flex;
+        gap: var(--match-space-12);
+        padding: 10px 20px;
+        transition:
+            background-color 0.35s ease,
+            border-color 0.35s ease,
+            color 0.35s ease,
+            box-shadow 0.35s ease;
+    }
 }
 
-@media ( prefers-reduced-motion: reduce ) {
-	.match-navbar, .match-nav__list a, .match-nav__chevron, .match-nav__list .sub-menu,
-	.match-navbar__bars, .match-navbar__bars::before, .match-navbar__bars::after { transition: none; }
+@media (min-width: 1280px) {
+    .match-mmenu {
+        display: none !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .match-navbar,
+    .match-navbar__account,
+    .match-navbar__toggle,
+    .match-nav__link,
+    .match-sol__btn,
+    .match-nav__chevron,
+    .match-mega,
+    .match-sol.is-open .match-mega,
+    .match-mega__item,
+    .match-mega__name,
+    .match-mega__sub,
+    .match-mega__arrow,
+    .match-mega__link {
+        transition: none;
+    }
 }

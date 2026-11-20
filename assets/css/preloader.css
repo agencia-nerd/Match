@@ -1,0 +1,133 @@
+/* ==========================================================================
+   MATCH · Preloader
+   Sin dependencias. Escala con --mp-u (1 unidad = 1/140 del ancho del logo).
+   Oculto por defecto: solo se ve con html.match-preloading, que pone
+   match_preloader_boot() (functions.php) en la primera entrada de la sesión.
+   Sin JS o con la cookie ya puesta, nunca aparece.
+   ========================================================================== */
+
+html.match-preloading,
+html.match-preloading body { overflow: hidden; }
+
+.match-preloader {
+  /* Personalizables */
+  --mp-bg-1: #FFFFFF;
+  --mp-bg-2: #F7F7F8;
+  --mp-bg-3: #EFEFF1;
+  --mp-ink: #1C1C1C;
+  --mp-pct-color: #55555B;
+  --mp-bar-color: #B8B8BD;
+  --mp-u: min(clamp(1.7px, 0.16vw + 1.1px, 3.2px), 0.6vh);
+
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+  display: none;
+  place-items: center;
+  background: radial-gradient(ellipse 75% 65% at 50% 46%, var(--mp-bg-1) 0%, var(--mp-bg-2) 55%, var(--mp-bg-3) 100%);
+  -webkit-user-select: none;
+  user-select: none;
+  will-change: transform;
+}
+
+html.match-preloading .match-preloader { display: grid; }
+
+.mp-grain {
+  position: absolute;
+  inset: -50%;
+  opacity: 0.1;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  background-size: 160px 160px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.mp-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 85% 75% at 50% 48%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.05) 100%);
+}
+
+.mp-stage { position: relative; opacity: 0; will-change: transform, opacity, filter; }
+
+.mp-lockup {
+  display: flex;
+  align-items: flex-end;
+  gap: calc(var(--mp-u) * 9);
+  transform: translateX(37.142857%);
+}
+
+.mp-iso {
+  position: relative;
+  flex: none;
+  width: calc(var(--mp-u) * 36);
+  height: calc(var(--mp-u) * 22);
+  perspective: calc(var(--mp-u) * 200);
+}
+
+.mp-cube,
+.mp-face {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.mp-face-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  opacity: 0; /* oculto hasta que el JS lo muestre */
+}
+
+.mp-iso-svg {
+  display: block;
+  width: calc(var(--mp-u) * 36);
+  height: calc(var(--mp-u) * 22);
+}
+
+.mp-word {
+  display: block;
+  flex: none;
+  width: calc(var(--mp-u) * 95);
+  height: calc(var(--mp-u) * 25);
+  overflow: hidden;
+  clip-path: inset(0 100% 0 0);
+}
+.mp-word path { fill: var(--mp-ink); }
+
+.mp-progress { position: absolute; inset: 0; pointer-events: none; opacity: 0; }
+
+.mp-pct {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + var(--mp-u) * 34);
+  transform: translateX(-50%);
+  font-family: 'Poppins', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: clamp(11px, 0.2vw + 10px, 13px);
+  letter-spacing: 0.04em;
+  color: var(--mp-pct-color);
+  font-variant-numeric: tabular-nums;
+}
+
+.mp-track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: rgba(28, 28, 28, 0.04);
+}
+
+.mp-bar {
+  height: 100%;
+  background: var(--mp-bar-color);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+}

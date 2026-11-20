@@ -17,7 +17,7 @@ $status = isset( $_GET['newsletter'] ) ? sanitize_key( wp_unslash( $_GET['newsle
 				<span class="is-muted"><?php esc_html_e( 'empiezan por estar bien informado', 'match' ); ?></span>
 			</h2>
 			<div class="match-newsletter__bullet">
-				<span class="match-newsletter__plus" aria-hidden="true"><?php echo match_icon( 'plus-circle' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
+				<span class="match-newsletter__plus" aria-hidden="true"><?php echo match_icon( 'isotipo-circle' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
 				<div>
 					<p class="match-newsletter__bullet-title"><?php esc_html_e( 'Únete a nuestra red', 'match' ); ?></p>
 					<p class="match-newsletter__bullet-text"><?php esc_html_e( 'Recibe historias, tendencias y aprendizajes directamente en tu correo.', 'match' ); ?></p>
@@ -45,7 +45,7 @@ $status = isset( $_GET['newsletter'] ) ? sanitize_key( wp_unslash( $_GET['newsle
 				<p class="match-newsletter__notice match-newsletter__notice--error" role="alert"><?php esc_html_e( 'No pudimos registrarte. Revisa tu correo e inténtalo de nuevo.', 'match' ); ?></p>
 			<?php endif; ?>
 
-			<button class="match-btn match-btn--primary match-newsletter__submit" type="submit"><?php esc_html_e( 'Suscribirme', 'match' ); ?></button>
+			<button class="match-btn match-btn--cta match-newsletter__submit" type="submit"><?php echo match_cta_inner( __( 'Suscribirme', 'match' ), false ); // phpcs:ignore WordPress.Security.EscapeOutput ?></button>
 		</form>
 	</div>
 </section>

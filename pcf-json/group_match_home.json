@@ -21,7 +21,7 @@
         },
         {
             "default_value": "",
-            "placeholder": "Sé parte de la base de datos ejecutiva",
+            "placeholder": "Somos la consultora de recursos humanos y headhunter en Lima que conecta a profesionales destacados con puestos estratégicos en las empresas líderes de Latinoamérica.",
             "prepend": "",
             "append": "",
             "maxlength": "",
@@ -59,7 +59,7 @@
         },
         {
             "default_value": "",
-            "placeholder": "Las empresas líderes nos confían sus búsquedas.",
+            "placeholder": "Sé parte de nuestra red de ejecutivos.",
             "maxlength": "",
             "rows": 2,
             "new_lines": "",
@@ -88,21 +88,45 @@
             "max_size": "",
             "mime_types": "",
             "key": "field_home_hero_photo",
-            "label": "Foto de fondo",
+            "label": "Foto de fondo del hero",
             "name": "hero_photo",
             "type": "image",
-            "instructions": "",
+            "instructions": "JPG o WebP horizontal, 1920 × 1080 px, máx. 400 KB. El sujeto a la derecha: la izquierda queda tapada por el degradado y el texto. Vacío: la foto del diseño.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "40",
+                "width": "50",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "return_format": "url",
+            "library": "all",
+            "preview_size": "medium",
+            "min_width": "",
+            "min_height": "",
+            "max_width": "",
+            "max_height": "",
+            "min_size": "",
+            "max_size": "",
+            "mime_types": "",
+            "key": "field_home_hero_photo_2",
+            "label": "Segunda foto de fondo del hero (opcional)",
+            "name": "hero_photo_2",
+            "type": "image",
+            "instructions": "Mismo formato que la primera: JPG o WebP horizontal, 1920 × 1080 px, máx. 400 KB. Si la subes, el fondo alterna entre las dos fotos con un fundido suave. Vacío: solo se ve la primera foto, sin animación.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
                 "class": "",
                 "id": ""
             }
         },
         {
             "default_value": "",
-            "placeholder": "Da el primer paso",
+            "placeholder": "Tu futuro empieza aquí",
             "prepend": "",
             "append": "",
             "maxlength": "",
@@ -126,10 +150,29 @@
             "append": "",
             "maxlength": "",
             "key": "field_home_hero_card_cta",
-            "label": "Tarjeta — botón",
+            "label": "Tarjeta — botón principal",
             "name": "hero_card_cta",
             "type": "text",
             "instructions": "Enlaza al Job Board.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "30",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "default_value": "",
+            "placeholder": "Conoce nuestras soluciones",
+            "prepend": "",
+            "append": "",
+            "maxlength": "",
+            "key": "field_home_hero_card_cta_2",
+            "label": "Tarjeta — botón secundario",
+            "name": "hero_card_cta_2",
+            "type": "text",
+            "instructions": "Enlaza a la sección de soluciones de la portada.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -227,7 +270,7 @@
         },
         {
             "default_value": "",
-            "placeholder": "Empresas que confiaron en Match,",
+            "placeholder": "Las empresas que lideran Latinoamérica nos confían su búsqueda de ejecutivos",
             "prepend": "",
             "append": "",
             "maxlength": "",
@@ -346,7 +389,7 @@
         },
         {
             "default_value": "",
-            "placeholder": "No son solo palabras.",
+            "placeholder": "Lo dicen empresas que encontraron hoy a los líderes de su futuro.",
             "prepend": "",
             "append": "",
             "maxlength": "",
@@ -607,7 +650,7 @@
         },
         {
             "default_value": "",
-            "placeholder": "Vacantes activas",
+            "placeholder": "Nuestras vacantes disponibles",
             "prepend": "",
             "append": "",
             "maxlength": "",
@@ -792,7 +835,7 @@
                     "label": "Descripción",
                     "name": "text",
                     "type": "textarea",
-                    "instructions": "",
+                    "instructions": "Encierra entre asteriscos lo que va en negrita blanca: *Alta dirección y C-level.* Encontramos a los ejecutivos…",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -826,7 +869,7 @@
                     }
                 },
                 {
-                    "default_value": "rgba(15,11,89,0.81)",
+                    "default_value": "rgba(6,6,48,0.92)",
                     "enable_opacity": 1,
                     "return_format": "string",
                     "key": "field_home_soluciones_overlay",
@@ -1003,7 +1046,7 @@
                 },
                 {
                     "default_value": "",
-                    "placeholder": "Nuestro récord end-to-end.",
+                    "placeholder": "",
                     "prepend": "",
                     "append": "",
                     "maxlength": "",
@@ -1077,75 +1120,15 @@
             "sub_fields": [
                 {
                     "default_value": "",
-                    "placeholder": "Presentación de candidatos:",
-                    "prepend": "",
-                    "append": "",
-                    "maxlength": "",
-                    "key": "field_home_m_split_label",
-                    "label": "Etiqueta",
-                    "name": "label",
-                    "type": "text",
-                    "instructions": "",
-                    "required": 1,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "60",
-                        "class": "",
-                        "id": ""
-                    }
-                },
-                {
-                    "default_value": "",
-                    "placeholder": "1 hora récord",
-                    "prepend": "",
-                    "append": "",
-                    "maxlength": "",
-                    "key": "field_home_m_split_value",
-                    "label": "Cifra",
-                    "name": "value",
-                    "type": "text",
-                    "instructions": "",
-                    "required": 1,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "40",
-                        "class": "",
-                        "id": ""
-                    }
-                }
-            ],
-            "min": 0,
-            "max": 2,
-            "layout": "table",
-            "button_label": "Agregar dato",
-            "pagination": 0,
-            "rows_per_page": 20,
-            "key": "field_home_m_split",
-            "label": "Tarjeta doble",
-            "name": "m_split",
-            "type": "repeater",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            }
-        },
-        {
-            "sub_fields": [
-                {
-                    "default_value": "",
                     "placeholder": "100%",
                     "prepend": "",
                     "append": "",
                     "maxlength": "",
                     "key": "field_home_m_gauge_value",
-                    "label": "Cifra",
+                    "label": "Porcentaje del medidor",
                     "name": "value",
                     "type": "text",
-                    "instructions": "",
+                    "instructions": "Ej. «97%». El anillo se llena con ese número (el anillo completo es 100 %). Si no lleva número, el anillo se ve completo.",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -1211,35 +1194,16 @@
             "sub_fields": [
                 {
                     "default_value": "",
-                    "placeholder": "91%",
+                    "placeholder": "",
                     "prepend": "",
                     "append": "",
                     "maxlength": "",
                     "key": "field_home_m_stats_value",
-                    "label": "Cifra",
+                    "label": "Cifra de la tarjeta",
                     "name": "value",
                     "type": "text",
-                    "instructions": "",
-                    "required": 1,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "20",
-                        "class": "",
-                        "id": ""
-                    }
-                },
-                {
-                    "default_value": "",
-                    "placeholder": "HiPo o Top Performer",
-                    "prepend": "",
-                    "append": "",
-                    "maxlength": "",
-                    "key": "field_home_m_stats_title",
-                    "label": "Título",
-                    "name": "title",
-                    "type": "text",
-                    "instructions": "",
-                    "required": 1,
+                    "instructions": "Opcional. Grande, en azul oscuro (ej. «9.98/10», «00», «2.5 AÑOS»).",
+                    "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
                         "width": "30",
@@ -1253,31 +1217,50 @@
                     "prepend": "",
                     "append": "",
                     "maxlength": "",
-                    "key": "field_home_m_stats_text",
-                    "label": "Descripción",
-                    "name": "text",
+                    "key": "field_home_m_stats_title",
+                    "label": "Título de la tarjeta",
+                    "name": "title",
                     "type": "text",
-                    "instructions": "",
+                    "instructions": "Opcional. Debajo de la cifra, en negrita (ej. «Garantías Ejecutadas»).",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
-                        "width": "50",
+                        "width": "70",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "maxlength": "",
+                    "rows": 2,
+                    "new_lines": "",
+                    "key": "field_home_m_stats_text",
+                    "label": "Texto de la tarjeta",
+                    "name": "text",
+                    "type": "textarea",
+                    "instructions": "Opcional. Texto gris al pie de la tarjeta. Recomendado: hasta 3 líneas.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
                         "class": "",
                         "id": ""
                     }
                 }
             ],
             "min": 0,
-            "max": 2,
+            "max": 0,
             "layout": "table",
             "button_label": "Agregar tarjeta",
             "pagination": 0,
             "rows_per_page": 20,
             "key": "field_home_m_stats",
-            "label": "Tarjetas con cifra grande",
+            "label": "Tarjetas con cifra",
             "name": "m_stats",
             "type": "repeater",
-            "instructions": "",
+            "instructions": "Tarjetas blancas de la columna derecha. La primera va arriba a la izquierda (junto al medidor); las demás, debajo, de dos en dos. Recomendado: 3 para formar la grilla de 2 × 2 del diseño. Cada una: cifra grande (ej. «9.98/10»), título (ej. «NPS») y texto gris al pie; los tres opcionales. Si no hay ninguna, se usan las del diseño.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -1448,5 +1431,5 @@
     "active": true,
     "description": "Contenido de la portada (front-page.php). Los names replican las claves de inc/home-data.php; los campos vacíos usan el texto fijo del diseño.",
     "show_in_rest": true,
-    "modified": 1790022863
+    "modified": 1794533971
 }

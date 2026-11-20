@@ -1,0 +1,1179 @@
+{
+    "key": "group_match_programas",
+    "title": "Programas — Contenido",
+    "fields": [
+        {
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0,
+            "key": "field_prog_tab_hero",
+            "label": "Hero",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "default_value": "",
+            "placeholder": "",
+            "maxlength": 200,
+            "rows": 3,
+            "new_lines": "",
+            "key": "field_prog_descripcion",
+            "label": "Descripción del hero",
+            "name": "prog_descripcion",
+            "type": "textarea",
+            "instructions": "Texto corto que aparece debajo del título grande, centrado. Recomendado: 1 o 2 líneas (hasta 200 caracteres). El título y las migas («Outplacement / Programas») salen solos del título de la página y de su página madre. Si queda vacío, no se muestra el texto.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "sub_fields": [
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": 24,
+                    "key": "field_prog_enlace_texto",
+                    "label": "Texto del botón",
+                    "name": "texto",
+                    "type": "text",
+                    "instructions": "Nombre del programa, una o dos palabras (máx. 24 caracteres).",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": "",
+                    "key": "field_prog_enlace_destino",
+                    "label": "Destino del botón",
+                    "name": "destino",
+                    "type": "text",
+                    "instructions": "Para llevar a una tarjeta de programa, escribe su ID tal cual (ej. «regular» o «#regular»): la página baja hasta esa tarjeta y la resalta un momento. El ID de cada tarjeta se define en la pestaña Programas. También acepta una URL completa. Si queda vacío, el botón no lleva a ningún lado.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    }
+                }
+            ],
+            "min": 0,
+            "max": 0,
+            "layout": "table",
+            "button_label": "Agregar enlace",
+            "pagination": 0,
+            "rows_per_page": 20,
+            "key": "field_prog_enlaces",
+            "label": "Enlaces a los programas del hero",
+            "name": "prog_enlaces",
+            "type": "repeater",
+            "instructions": "Botones redondeados debajo de la descripción (ej. Regular · Executive · Legacy), unidos por una línea. Al hacer clic llevan a otra sección de la página o a otra URL. Puedes agregar los que necesites; en pantallas angostas pasan a una segunda fila. Si no hay ninguno, la fila de botones no se muestra.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "return_format": "id",
+            "library": "all",
+            "preview_size": "medium",
+            "min_width": "",
+            "min_height": "",
+            "max_width": "",
+            "max_height": "",
+            "min_size": "",
+            "max_size": "",
+            "mime_types": "jpg,jpeg,png,webp",
+            "key": "field_prog_imagen",
+            "label": "Imagen principal del hero",
+            "name": "prog_imagen",
+            "type": "image",
+            "instructions": "Foto grande con esquinas redondeadas al final del hero. Formato JPG o WebP, 3200 × 1400 px (proporción 16:7), máximo 500 KB. Si subes otra proporción, la foto se recorta al centro para llenar la caja; la caja no cambia de forma. En tablet y móvil la caja es más alta (16:9 y 4:3), deja lo importante al centro. Si queda vacío, no se muestra la imagen.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0,
+            "key": "field_prog_tab_programas",
+            "label": "Programas",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": 30,
+            "key": "field_prog_eyebrow",
+            "label": "Etiqueta de la sección Programas",
+            "name": "prog_eyebrow",
+            "type": "text",
+            "instructions": "Texto pequeño con el ícono de Match, a la izquierda del titular (ej. «Programas»). Máx. 30 caracteres. Si queda vacío, se ve solo el ícono.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "34",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": 40,
+            "key": "field_prog_titulo",
+            "label": "Titular de la sección Programas (1.ª línea)",
+            "name": "prog_titulo",
+            "type": "text",
+            "instructions": "Primera línea del titular grande, en azul oscuro (ej. «Elige el programa»). Máx. 40 caracteres. Si queda vacío, no se muestra.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "33",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": 40,
+            "key": "field_prog_titulo_2",
+            "label": "Titular de la sección Programas (2.ª línea)",
+            "name": "prog_titulo_2",
+            "type": "text",
+            "instructions": "Segunda línea del titular, en celeste (ej. «ideal para ti.»). Máx. 40 caracteres. Si queda vacío, el titular queda en una sola línea.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "33",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "sub_fields": [
+                {
+                    "return_format": "id",
+                    "library": "all",
+                    "preview_size": "medium",
+                    "min_width": "",
+                    "min_height": "",
+                    "max_width": "",
+                    "max_height": "",
+                    "min_size": "",
+                    "max_size": "",
+                    "mime_types": "jpg,jpeg,png,webp",
+                    "key": "field_prog_card_imagen",
+                    "label": "Imagen de la tarjeta",
+                    "name": "imagen",
+                    "type": "image",
+                    "instructions": "Foto en la parte de arriba de la tarjeta. JPG o WebP, 1040 × 600 px, máximo 200 KB. Si tiene otra proporción, se recorta al centro para llenar la caja (la caja no cambia de forma). Si queda vacío, se ve un recuadro gris.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "30",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": 40,
+                    "key": "field_prog_card_titulo",
+                    "label": "Título del programa",
+                    "name": "titulo",
+                    "type": "text",
+                    "instructions": "Nombre del programa en negrita (ej. «Programa Regular»). Máx. 40 caracteres. Obligatorio: sin título la tarjeta no se muestra.",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "35",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "#",
+                    "append": "",
+                    "maxlength": 30,
+                    "key": "field_prog_card_ancla",
+                    "label": "ID de la tarjeta (para los botones del hero)",
+                    "name": "ancla",
+                    "type": "text",
+                    "instructions": "Nombre corto, sin espacios ni tildes (ej. «regular»). Los botones del hero que tengan este mismo nombre en «Destino del botón» llevan a esta tarjeta y la resaltan. Si queda vacío, se usa el título (ej. «programa-regular»).",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "35",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": 60,
+                    "key": "field_prog_card_subtitulo",
+                    "label": "Subtítulo del programa",
+                    "name": "subtitulo",
+                    "type": "text",
+                    "instructions": "Frase corta en celeste debajo del título (ej. «Recolócate más rápido.»). Máx. 60 caracteres. Si queda vacío, no se muestra.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "35",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "maxlength": 110,
+                    "rows": 2,
+                    "new_lines": "",
+                    "key": "field_prog_card_descripcion",
+                    "label": "Descripción del programa",
+                    "name": "descripcion",
+                    "type": "textarea",
+                    "instructions": "Para quién es el programa. Máximo 2 líneas (110 caracteres); si se pasa, el texto se corta con «…». Si queda vacío, queda el espacio en blanco.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "sub_fields": [
+                        {
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": 10,
+                            "key": "field_prog_dato_valor",
+                            "label": "Cifra del dato",
+                            "name": "valor",
+                            "type": "text",
+                            "instructions": "En negrita (ej. «16», «1 mes», «40 min»). Máx. 10 caracteres.",
+                            "required": 1,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            }
+                        },
+                        {
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": 20,
+                            "key": "field_prog_dato_etiqueta",
+                            "label": "Etiqueta del dato",
+                            "name": "etiqueta",
+                            "type": "text",
+                            "instructions": "Texto pequeño debajo de la cifra (ej. «sesiones»). Máx. 20 caracteres.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            }
+                        }
+                    ],
+                    "min": 0,
+                    "max": 3,
+                    "layout": "table",
+                    "button_label": "Agregar dato",
+                    "pagination": 0,
+                    "rows_per_page": 20,
+                    "key": "field_prog_card_datos",
+                    "label": "Datos del programa",
+                    "name": "datos",
+                    "type": "repeater",
+                    "instructions": "Hasta 3 cifras en fila, entre dos líneas (ej. 16 · sesiones, 1 mes · acompañamiento, 40 min · por sesión). Si no hay datos, la fila no se muestra.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "sub_fields": [
+                        {
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": 60,
+                            "key": "field_prog_item_texto",
+                            "label": "Texto del destacado",
+                            "name": "texto",
+                            "type": "text",
+                            "instructions": "Una línea corta (ej. «CV de impacto y branding personal»). Máx. 60 caracteres.",
+                            "required": 1,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            }
+                        }
+                    ],
+                    "min": 0,
+                    "max": 0,
+                    "layout": "table",
+                    "button_label": "Agregar destacado",
+                    "pagination": 0,
+                    "rows_per_page": 20,
+                    "key": "field_prog_card_items",
+                    "label": "Destacados del programa",
+                    "name": "items",
+                    "type": "repeater",
+                    "instructions": "Lista con viñetas celestes de lo que incluye el programa. Puedes agregar los que necesites; las tarjetas vecinas crecen a la par. Si no hay ninguno, la lista no se muestra.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "default_value": "Solicitar información",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": 30,
+                    "key": "field_prog_card_boton_texto",
+                    "label": "Texto del botón de la tarjeta",
+                    "name": "boton_texto",
+                    "type": "text",
+                    "instructions": "Botón azul al pie de la tarjeta (ej. «Solicitar información»). Máx. 30 caracteres. Si queda vacío, la tarjeta no lleva botón.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": "",
+                    "key": "field_prog_card_boton_destino",
+                    "label": "Destino del botón de la tarjeta",
+                    "name": "boton_destino",
+                    "type": "text",
+                    "instructions": "A dónde lleva el botón. Escribe #contacto para bajar al formulario de esta página: el programa de esta tarjeta queda elegido en «Programa de interés». También acepta otra sección (#id) o una URL completa. Si queda vacío, lleva al formulario (#contacto).",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    }
+                }
+            ],
+            "min": 0,
+            "max": 0,
+            "layout": "block",
+            "button_label": "Agregar programa",
+            "pagination": 0,
+            "rows_per_page": 20,
+            "key": "field_prog_programas",
+            "label": "Tarjetas de programas",
+            "name": "prog_programas",
+            "type": "repeater",
+            "instructions": "Una tarjeta por programa, en filas de tres (en tablet y móvil, una debajo de otra). Las tarjetas de una misma fila siempre miden lo mismo: si una tiene más texto o más destacados, las demás crecen a la par. Si no hay ninguna tarjeta, la sección completa no se muestra.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "collapsed": "field_prog_card_titulo"
+        },
+        {
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0,
+            "key": "field_prog_tab_pq",
+            "label": "Por qué Match",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": 30,
+            "key": "field_prog_pq_eyebrow",
+            "label": "Etiqueta de la sección Por qué Match",
+            "name": "prog_pq_eyebrow",
+            "type": "text",
+            "instructions": "Texto pequeño con el ícono de Match, a la izquierda del titular (ej. «Por qué Match»). Máx. 30 caracteres. Si queda vacío, se ve solo el ícono.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "34",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": 40,
+            "key": "field_prog_pq_titulo",
+            "label": "Titular de Por qué Match (1.ª línea)",
+            "name": "prog_pq_titulo",
+            "type": "text",
+            "instructions": "Primera línea del titular grande, en azul oscuro (ej. «El coaching»). Máx. 40 caracteres. Si queda vacío, no se muestra.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "33",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": 40,
+            "key": "field_prog_pq_titulo_2",
+            "label": "Titular de Por qué Match (2.ª línea)",
+            "name": "prog_pq_titulo_2",
+            "type": "text",
+            "instructions": "Segunda línea del titular, en celeste (ej. «en nuestras venas.»). Máx. 40 caracteres. Si queda vacío, el titular queda en una sola línea.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "33",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "sub_fields": [
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": 40,
+                    "key": "field_prog_pq_dest_etiqueta",
+                    "label": "Título decorativo de la tarjeta azul",
+                    "name": "etiqueta",
+                    "type": "text",
+                    "instructions": "Texto arriba a la izquierda de la tarjeta (ej. «Récord de recolocación»). Máx. 40 caracteres. Si queda vacío, no se muestra.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": 6,
+                    "key": "field_prog_pq_dest_numero",
+                    "label": "Número grande de la tarjeta azul",
+                    "name": "numero",
+                    "type": "text",
+                    "instructions": "Solo la cifra (ej. «3»). Máx. 6 caracteres. Es la que se anima al contar.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "30",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": 14,
+                    "key": "field_prog_pq_dest_unidad",
+                    "label": "Texto junto al número de la tarjeta azul",
+                    "name": "unidad",
+                    "type": "text",
+                    "instructions": "Va a la derecha del número, en mayúsculas y más pequeño (ej. «semanas» → SEMANAS). Máx. 14 caracteres. Si queda vacío, se ve solo el número.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "70",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "maxlength": 140,
+                    "rows": 2,
+                    "new_lines": "",
+                    "key": "field_prog_pq_dest_descripcion",
+                    "label": "Descripción de la tarjeta azul",
+                    "name": "descripcion",
+                    "type": "textarea",
+                    "instructions": "Texto debajo del número. Máx. 140 caracteres (unas 3 líneas). Si queda vacío, no se muestra.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "return_format": "id",
+                    "library": "all",
+                    "preview_size": "medium",
+                    "min_width": "",
+                    "min_height": "",
+                    "max_width": "",
+                    "max_height": "",
+                    "min_size": "",
+                    "max_size": "",
+                    "mime_types": "png,webp",
+                    "key": "field_prog_pq_dest_foto",
+                    "label": "Foto de la tarjeta azul",
+                    "name": "foto",
+                    "type": "image",
+                    "instructions": "Persona recortada (fondo transparente) que va a la derecha de la tarjeta, pegada abajo y asomando un poco por arriba, como en la sección de métricas del inicio. PNG o WebP con transparencia, vertical, 912 × 1364 px (proporción 456:682), máx. 300 KB. En móvil se oculta. Si queda vacío, no se muestra.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    }
+                }
+            ],
+            "layout": "block",
+            "key": "field_prog_pq_destacado",
+            "label": "Tarjeta azul destacada",
+            "name": "prog_pq_destacado",
+            "type": "group",
+            "instructions": "La tarjeta grande azul a la izquierda. El número cuenta desde 0 cuando el usuario llega a la sección. Si el número y la primera cifra quedan vacíos, la sección completa no se muestra.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0,
+            "key": "field_prog_tab_pq_cifras",
+            "label": "Por qué Match — cifras",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "sub_fields": [
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": 8,
+                    "key": "field_prog_pq_c1_valor",
+                    "label": "Cifra de la tarjeta 1",
+                    "name": "valor",
+                    "type": "text",
+                    "instructions": "Ej. «+99k». Máx. 8 caracteres. Se anima el número; los símbolos (+, k, %, x…) se mantienen. Si queda vacío, no se muestra.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "30",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": 32,
+                    "key": "field_prog_pq_c1_subtitulo",
+                    "label": "Subtítulo de la tarjeta 1",
+                    "name": "subtitulo",
+                    "type": "text",
+                    "instructions": "En azul debajo de la cifra (ej. «Contactos especializados»). Máx. 32 caracteres. Si queda vacío, no se muestra.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "70",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "maxlength": 90,
+                    "rows": 2,
+                    "new_lines": "",
+                    "key": "field_prog_pq_c1_descripcion",
+                    "label": "Descripción de la tarjeta 1",
+                    "name": "descripcion",
+                    "type": "textarea",
+                    "instructions": "Texto gris al pie de la tarjeta. Máx. 90 caracteres (2–3 líneas). Si queda vacío, no se muestra.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    }
+                }
+            ],
+            "layout": "block",
+            "key": "field_prog_pq_cifra_1",
+            "label": "Cifra 1 (arriba a la izquierda)",
+            "name": "prog_pq_cifra_1",
+            "type": "group",
+            "instructions": "Primera tarjeta blanca, a la derecha de la tarjeta azul. La cifra cuenta desde 0 al llegar a la sección.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "sub_fields": [
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "%",
+                    "min": 0,
+                    "max": 100,
+                    "step": 1,
+                    "key": "field_prog_pq_pct_valor",
+                    "label": "Porcentaje del anillo",
+                    "name": "valor",
+                    "type": "number",
+                    "instructions": "Número de 0 a 100, sin el símbolo % (ej. 71). Si queda vacío, el anillo se ve vacío con 0 %.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "30",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": 32,
+                    "key": "field_prog_pq_pct_subtitulo",
+                    "label": "Subtítulo del porcentaje",
+                    "name": "subtitulo",
+                    "type": "text",
+                    "instructions": "En azul debajo del anillo (ej. «Más rápidos que el mercado»). Máx. 32 caracteres. Si queda vacío, no se muestra.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "70",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "maxlength": 90,
+                    "rows": 2,
+                    "new_lines": "",
+                    "key": "field_prog_pq_pct_descripcion",
+                    "label": "Descripción del porcentaje",
+                    "name": "descripcion",
+                    "type": "textarea",
+                    "instructions": "Texto gris centrado al pie. Máx. 90 caracteres (2 líneas). Si queda vacío, no se muestra.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    }
+                }
+            ],
+            "layout": "block",
+            "key": "field_prog_pq_porcentaje",
+            "label": "Porcentaje con anillo (arriba a la derecha)",
+            "name": "prog_pq_porcentaje",
+            "type": "group",
+            "instructions": "Tarjeta con el anillo: el anillo completo vale 100 % y se pinta en celeste la parte que indiques. El anillo se llena y el número cuenta al llegar a la sección.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "sub_fields": [
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": 8,
+                    "key": "field_prog_pq_c2_valor",
+                    "label": "Cifra de la tarjeta 2",
+                    "name": "valor",
+                    "type": "text",
+                    "instructions": "Ej. «7/10». Máx. 8 caracteres. Se anima el primer número; el resto se mantiene. Si queda vacío, no se muestra.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "30",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": 32,
+                    "key": "field_prog_pq_c2_subtitulo",
+                    "label": "Subtítulo de la tarjeta 2",
+                    "name": "subtitulo",
+                    "type": "text",
+                    "instructions": "En azul debajo de la cifra (ej. «Paquete salarial»). Máx. 32 caracteres. Si queda vacío, no se muestra.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "70",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "maxlength": 90,
+                    "rows": 2,
+                    "new_lines": "",
+                    "key": "field_prog_pq_c2_descripcion",
+                    "label": "Descripción de la tarjeta 2",
+                    "name": "descripcion",
+                    "type": "textarea",
+                    "instructions": "Texto gris al pie de la tarjeta. Máx. 90 caracteres (2–3 líneas). Si queda vacío, no se muestra.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    }
+                }
+            ],
+            "layout": "block",
+            "key": "field_prog_pq_cifra_2",
+            "label": "Cifra 2 (abajo a la izquierda)",
+            "name": "prog_pq_cifra_2",
+            "type": "group",
+            "instructions": "Tarjeta blanca de abajo a la izquierda. La cifra cuenta desde 0 al llegar a la sección.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "sub_fields": [
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": 8,
+                    "key": "field_prog_pq_c3_valor",
+                    "label": "Cifra de la tarjeta 3",
+                    "name": "valor",
+                    "type": "text",
+                    "instructions": "Ej. «x3». Máx. 8 caracteres. Se anima el número; los símbolos se mantienen. Si queda vacío, no se muestra.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "30",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": 32,
+                    "key": "field_prog_pq_c3_subtitulo",
+                    "label": "Subtítulo de la tarjeta 3",
+                    "name": "subtitulo",
+                    "type": "text",
+                    "instructions": "En azul debajo de la cifra (ej. «Más posibilidades»). Máx. 32 caracteres. Si queda vacío, no se muestra.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "70",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "maxlength": 90,
+                    "rows": 2,
+                    "new_lines": "",
+                    "key": "field_prog_pq_c3_descripcion",
+                    "label": "Descripción de la tarjeta 3",
+                    "name": "descripcion",
+                    "type": "textarea",
+                    "instructions": "Texto gris al pie de la tarjeta. Máx. 90 caracteres (2–3 líneas). Si queda vacío, no se muestra.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    }
+                }
+            ],
+            "layout": "block",
+            "key": "field_prog_pq_cifra_3",
+            "label": "Cifra 3 (abajo a la derecha)",
+            "name": "prog_pq_cifra_3",
+            "type": "group",
+            "instructions": "Tarjeta blanca de abajo a la derecha. La cifra cuenta desde 0 al llegar a la sección.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0,
+            "key": "field_prog_tab_faq",
+            "label": "Preguntas frecuentes",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": 30,
+            "key": "field_prog_faq_eyebrow",
+            "label": "Texto decorativo de Preguntas frecuentes",
+            "name": "prog_faq_eyebrow",
+            "type": "text",
+            "instructions": "Texto pequeño en gris sobre el titular (ej. «outplacement®»). Máx. 30 caracteres. Si queda vacío, no se muestra.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "34",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": 30,
+            "key": "field_prog_faq_titulo",
+            "label": "Titular de Preguntas frecuentes (1.ª línea)",
+            "name": "prog_faq_titulo",
+            "type": "text",
+            "instructions": "Primera línea del titular, en azul (ej. «Preguntas»). Máx. 30 caracteres. Si queda vacío, no se muestra.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "33",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": 30,
+            "key": "field_prog_faq_titulo_2",
+            "label": "Titular de Preguntas frecuentes (2.ª línea)",
+            "name": "prog_faq_titulo_2",
+            "type": "text",
+            "instructions": "Segunda línea del titular, en celeste (ej. «frecuentes.»). Máx. 30 caracteres. Si queda vacío, el titular queda en una sola línea.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "33",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "default_value": "",
+            "placeholder": "",
+            "maxlength": 120,
+            "rows": 2,
+            "new_lines": "",
+            "key": "field_prog_faq_descripcion",
+            "label": "Descripción breve de Preguntas frecuentes",
+            "name": "prog_faq_descripcion",
+            "type": "textarea",
+            "instructions": "Texto gris en la columna izquierda; en escritorio queda al pie, alineado con la última pregunta. Máx. 120 caracteres. Si queda vacío, no se muestra.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "sub_fields": [
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": 100,
+                    "key": "field_prog_faq_pregunta",
+                    "label": "Pregunta",
+                    "name": "pregunta",
+                    "type": "text",
+                    "instructions": "Texto en negrita que se ve siempre (ej. «¿Dónde se lleva a cabo el programa?»). Máx. 100 caracteres. Obligatoria.",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "default_value": "",
+                    "tabs": "visual",
+                    "toolbar": "basic",
+                    "media_upload": 0,
+                    "delay": 1,
+                    "key": "field_prog_faq_respuesta",
+                    "label": "Respuesta de la pregunta",
+                    "name": "respuesta",
+                    "type": "wysiwyg",
+                    "instructions": "Se muestra al abrir la pregunta. Puedes usar negritas, listas y enlaces. Recomendado: 1 a 3 párrafos cortos. Si queda vacío, la pregunta se abre sin texto.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    }
+                }
+            ],
+            "min": 0,
+            "max": 0,
+            "layout": "block",
+            "button_label": "Agregar pregunta",
+            "pagination": 0,
+            "rows_per_page": 20,
+            "key": "field_prog_faq_items",
+            "label": "Preguntas y respuestas",
+            "name": "prog_faq_items",
+            "type": "repeater",
+            "instructions": "Cada fila es una pregunta del acordeón; arrastra las filas para cambiar el orden. La primera se muestra abierta y, al abrir otra, la anterior se cierra. También se envían a Google como preguntas frecuentes. Si no hay ninguna, la sección completa no se muestra.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "collapsed": "field_prog_faq_pregunta"
+        },
+        {
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0,
+            "key": "field_prog_tab_contacto",
+            "label": "Contacto",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "default_value": "",
+            "placeholder": "",
+            "maxlength": 110,
+            "rows": 2,
+            "new_lines": "",
+            "key": "field_prog_contacto_lead",
+            "label": "Texto de apoyo de Hablemos",
+            "name": "prog_contacto_lead",
+            "type": "textarea",
+            "instructions": "Frase en blanco debajo de «Hablemos.», en la sección de contacto al final de la página. Máx. 110 caracteres (2 líneas). Si queda vacío, se usa: «Cuéntanos tu caso — hablemos del programa que mejor se ajusta a tu situación.». El formulario muestra un selector «Programa de interés» con los títulos de las tarjetas de la pestaña Programas; se actualiza solo.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "template-programas.php"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "acf_after_title",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "field",
+    "hide_on_screen": [
+        "the_content"
+    ],
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "modified": 1795044949
+}

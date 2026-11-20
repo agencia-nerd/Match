@@ -9,10 +9,13 @@ $logos = match_client_logos();
 ?>
 <section class="match-sol-hero">
 	<h1 class="match-sol-hero__title" data-aos="fade-up"><?php echo esc_html( $args['title'] ); ?>.</h1>
-
+	<?php if ( ! empty( $args['subtitle'] ) ) : ?>
+		<p class="match-sol-hero__subtitle" data-aos="fade-up" data-aos-delay="80"><?php echo esc_html( $args['subtitle'] ); ?></p>
+	<?php endif; ?>
+	
 	<div class="match-sol-hero__lead" data-aos="fade-up" data-aos-delay="150">
 		<p class="match-sol-hero__kicker">
-			<?php echo match_icon( 'plus-circle' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+			<?php echo match_icon( 'isotipo-circle' ); // Isotipo, no «+»: el «+» se leía como desplegable. phpcs:ignore WordPress.Security.EscapeOutput ?>
 			<?php echo esc_html( $args['kicker'] ); ?>
 		</p>
 		<p class="match-sol-hero__text">

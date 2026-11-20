@@ -63,6 +63,16 @@
 /* --- Wordmark grande --- */
 .match-footer__wordmark { width: min( 569px, 100% ); margin: 0; color: var(--match-negro); }
 .match-footer__wordmark svg { display: block; width: 100%; height: auto; overflow: visible; }
+/* El SVG trae las letras en blanco; aquí van en --match-negro (#1C1C1C). El isotipo conserva su degradado. */
+.match-footer__wordmark path[fill="white"] { fill: currentColor; }
+/*
+ * Isotipo: color propio de la página (o del Personalizador fuera de las
+ * soluciones); si no, el de la paleta de la solución (--sol-iso, en
+ * solucion.css); si no, el degradado de 60° del pie.
+ */
+.match-footer__wordmark.has-iso-color path[fill^="url("] { fill: var(--footer-iso); }
+.match-footer__wordmark:not( .has-iso-color ) path[fill^="url("] { fill: var(--sol-iso, url( #match-footer-iso-gradient )); }
+.match-footer__defs { position: absolute; width: 0; height: 0; overflow: hidden; }
 /* Las piezas se mueven desde app.js (parallax con el scroll) */
 .match-footer__wordmark path { will-change: translate, opacity; }
 

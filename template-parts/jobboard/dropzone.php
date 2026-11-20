@@ -17,5 +17,6 @@ defined( 'ABSPATH' ) || exit;
 		<?php esc_html_e( 'Subir CV', 'match' ); ?>
 		<input class="screen-reader-text" type="file" name="cv" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" data-dropzone-input>
 	</label>
-	<p class="match-jb-drop__hint" data-dropzone-hint><?php esc_html_e( 'Arrastra tu archivo aquí · PDF o Word · máx. 5 MB', 'match' ); ?></p>
+	<?php // En mobile / pantallas táctiles no se arrastra: app.js usa el texto sin «Arrastra tu archivo aquí» (J13). ?>
+	<p class="match-jb-drop__hint" data-dropzone-hint data-hint-touch="<?php esc_attr_e( 'PDF o Word · máx. 5 MB', 'match' ); ?>"><?php esc_html_e( 'Arrastra tu archivo aquí · PDF o Word · máx. 5 MB', 'match' ); ?></p>
 </div>

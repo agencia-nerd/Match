@@ -90,6 +90,25 @@
         {
             "default_value": "",
             "placeholder": "",
+            "maxlength": "",
+            "rows": 2,
+            "new_lines": "",
+            "key": "field_sol_subtitle",
+            "label": "Descripción debajo del título del hero",
+            "name": "subtitle",
+            "type": "textarea",
+            "instructions": "Opcional. Frase en gris justo debajo del título grande de la solución (ej. «Executive.»). Recomendado: una línea, hasta unos 70 caracteres; si es más larga, baja de línea. Si queda vacío, no se muestra.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "default_value": "",
+            "placeholder": "",
             "prepend": "",
             "append": "",
             "maxlength": "",
@@ -295,6 +314,30 @@
             }
         },
         {
+            "return_format": "url",
+            "library": "all",
+            "preview_size": "medium",
+            "min_width": "",
+            "min_height": "",
+            "max_width": "",
+            "max_height": "",
+            "min_size": "",
+            "max_size": "",
+            "mime_types": "jpg,jpeg,png,webp,svg",
+            "key": "field_sol_cases_bg",
+            "label": "Imagen de fondo del recuadro de casos de éxito",
+            "name": "cases_bg",
+            "type": "image",
+            "instructions": "Fondo del recuadro redondeado que contiene el carrusel de casos. Se recorta para cubrir todo el recuadro (centrada), así que deja lo importante en el centro. Formato SVG, JPG o WebP; en foto, 2400 × 1000 px y máximo 400 KB; en SVG, proporción aproximada 12:5 y máximo 200 KB. Los textos van en blanco encima: usa una imagen oscura o con poco contraste. Si queda vacío, se usa el color de la paleta con los halos difuminados del diseño.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
             "sub_fields": [
                 {
                     "default_value": "",
@@ -306,8 +349,8 @@
                     "label": "Cita",
                     "name": "quote",
                     "type": "textarea",
-                    "instructions": "",
-                    "required": 1,
+                    "instructions": "Opcional. Cita grande en blanco, con sus comillas. Para separar en dos párrafos deja una línea en blanco (Enter dos veces). Recomendado: hasta 300 caracteres. Si queda vacío, no se muestra.",
+                    "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
                         "width": "",
@@ -325,7 +368,7 @@
                     "label": "Contexto",
                     "name": "text",
                     "type": "textarea",
-                    "instructions": "",
+                    "instructions": "Opcional. Párrafo de apoyo en texto normal debajo de la cita. Si queda vacío, no se muestra (el diseño actual no lo usa).",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -344,8 +387,8 @@
                     "label": "Cargo",
                     "name": "role",
                     "type": "text",
-                    "instructions": "",
-                    "required": 1,
+                    "instructions": "Opcional. Cargo de quien da la cita, en negrita junto al logo del cliente (ej. «Director de Operaciones»). Si queda vacío, no se muestra. La fila del cliente aparece si hay cargo, empresa o logo.",
+                    "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
                         "width": "50",
@@ -363,7 +406,7 @@
                     "label": "Empresa · sector",
                     "name": "company",
                     "type": "text",
-                    "instructions": "",
+                    "instructions": "Opcional. Empresa y país o sector, en gris debajo del cargo (ej. «Aleatica, Perú»). Si queda vacío, no se muestra.",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -388,6 +431,63 @@
                     "name": "logo",
                     "type": "image",
                     "instructions": "Opcional. Sin logo se muestra el isotipo de Match.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": "",
+                    "key": "field_sol_cases_highlight_value",
+                    "label": "Título destacado del caso",
+                    "name": "highlight_value",
+                    "type": "text",
+                    "instructions": "Opcional. Título grande bajo el logo de la solución, a la izquierda (ej. «x3»). Si es largo, pasa a una segunda línea. Si queda vacío, no se muestra.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "maxlength": "",
+                    "rows": 2,
+                    "new_lines": "",
+                    "key": "field_sol_cases_highlight_sub",
+                    "label": "Descripción mediana del título destacado",
+                    "name": "highlight_sub",
+                    "type": "textarea",
+                    "instructions": "Opcional. Texto mediano (20 px) con el mismo estilo del título destacado: tipografía de titulares, en negrita y blanco. Va bajo el logo, debajo del título si lo hay y encima de la descripción pequeña. Respeta los saltos de línea. Se muestra aunque los demás estén vacíos. Si queda vacío, no se muestra.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "maxlength": "",
+                    "rows": 2,
+                    "new_lines": "",
+                    "key": "field_sol_cases_highlight_label",
+                    "label": "Descripción pequeña del título destacado",
+                    "name": "highlight_label",
+                    "type": "textarea",
+                    "instructions": "Opcional. Texto pequeño (16 px) en blanco suave bajo el logo, al final del bloque destacado: debajo del título y de la descripción mediana si los hay (ej. «más posibilidades para conseguir mejores ofertas de empleo.»). Se muestra aunque los demás estén vacíos. Si queda vacío, no se muestra.",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -438,7 +538,7 @@
                         }
                     ],
                     "min": 0,
-                    "max": 3,
+                    "max": 4,
                     "layout": "table",
                     "button_label": "Agregar cifra",
                     "pagination": 0,
@@ -447,7 +547,7 @@
                     "label": "Cifras del caso",
                     "name": "stats",
                     "type": "repeater",
-                    "instructions": "Opcional, hasta 3.",
+                    "instructions": "Opcional, hasta 4. Se muestran en una fila al pie del caso, bajo una línea, repartidas a todo el ancho (en tablet y móvil, en 2 × 2). Cada cifra lleva un valor corto (ej. «9.98/10», «2.5 años») y su etiqueta (ej. «NPS»). Si no hay ninguna, la fila y la línea no se muestran.",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -457,7 +557,7 @@
                     }
                 }
             ],
-            "min": 1,
+            "min": 0,
             "max": 0,
             "layout": "block",
             "button_label": "Agregar caso",
@@ -467,7 +567,7 @@
             "label": "Casos",
             "name": "cases",
             "type": "repeater",
-            "instructions": "Carrusel del diferenciador. Con más de un caso aparecen flechas y puntos.",
+            "instructions": "Carrusel del diferenciador. Con más de un caso aparecen flechas y puntos. Todas las piezas del caso son opcionales y solo se muestran si tienen contenido: cifra destacada bajo el logo (variante Outplacement) y/o fila de cifras al pie (variante Executive). Si no hay ningún caso, la sección no se muestra.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -486,6 +586,25 @@
             "name": "",
             "type": "tab",
             "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": "",
+            "key": "field_sol_levels_brand",
+            "label": "Etiqueta sobre el titular de perfiles",
+            "name": "levels_brand",
+            "type": "text",
+            "instructions": "Opcional. Texto pequeño encima del titular de la sección de perfiles (ej. «executive»). Si queda vacío, se usa el nombre de la solución en minúsculas con ® (ej. «outplacement®»).",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -662,6 +781,303 @@
             "placement": "top",
             "endpoint": 0,
             "selected": 0,
+            "key": "field_sol_tab_audiences",
+            "label": "Perfiles — tarjetas con detalle",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "sub_fields": [
+                {
+                    "return_format": "id",
+                    "library": "all",
+                    "preview_size": "medium",
+                    "min_width": "",
+                    "min_height": "",
+                    "max_width": "",
+                    "max_height": "",
+                    "min_size": "",
+                    "max_size": "",
+                    "mime_types": "jpg,jpeg,png,webp",
+                    "key": "field_sol_aud_image",
+                    "label": "Imagen de la tarjeta de perfil",
+                    "name": "image",
+                    "type": "image",
+                    "instructions": "Opcional. Foto en la parte de arriba de la tarjeta, con un velo oscuro suave. JPG o WebP, 1520 × 640 px, máximo 300 KB. Si tiene otra proporción, se recorta al centro (la caja no cambia de forma). Si queda vacío, la tarjeta empieza por el texto.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": "",
+                    "key": "field_sol_aud_title",
+                    "label": "Título de la tarjeta de perfil",
+                    "name": "title",
+                    "type": "text",
+                    "instructions": "Opcional. En negrita, arriba del texto (ej. «Para empresas»). Si queda vacío, no se muestra.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": "",
+                    "key": "field_sol_aud_subtitle",
+                    "label": "Descripción corta de la tarjeta de perfil",
+                    "name": "subtitle",
+                    "type": "text",
+                    "instructions": "Opcional. Frase debajo del título, en el color de acento de la solución (celeste en Outplacement, gris en Assessment). Ej. «Una salida bien hecha hoy es tu reputación mañana.». Si queda vacío, no se muestra.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "maxlength": "",
+                    "rows": 4,
+                    "new_lines": "",
+                    "key": "field_sol_aud_text",
+                    "label": "Segunda descripción corta de la tarjeta de perfil",
+                    "name": "text",
+                    "type": "textarea",
+                    "instructions": "Opcional. Texto gris debajo de la descripción corta. Para separarlo en párrafos deja una línea en blanco (Enter dos veces). Si queda vacío, no se muestra.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "default_value": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "maxlength": "",
+                    "key": "field_sol_aud_list_title",
+                    "label": "Título de la lista de la tarjeta de perfil",
+                    "name": "list_title",
+                    "type": "text",
+                    "instructions": "Opcional. Texto en negrita sobre la lista (ej. «Logra:» o «Solución ideal si estás buscando:»). Si queda vacío, se muestran solo los ítems.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "sub_fields": [
+                        {
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": "",
+                            "key": "field_sol_aud_item_title",
+                            "label": "Título del ítem",
+                            "name": "title",
+                            "type": "text",
+                            "instructions": "Opcional (ej. «Desvinculación Responsable»).",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            }
+                        },
+                        {
+                            "default_value": "",
+                            "placeholder": "",
+                            "maxlength": "",
+                            "rows": 2,
+                            "new_lines": "",
+                            "key": "field_sol_aud_item_text",
+                            "label": "Texto del ítem",
+                            "name": "text",
+                            "type": "textarea",
+                            "instructions": "Opcional. Una o dos líneas debajo del título.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            }
+                        }
+                    ],
+                    "min": 0,
+                    "max": 0,
+                    "layout": "table",
+                    "button_label": "Agregar ítem",
+                    "pagination": 0,
+                    "rows_per_page": 20,
+                    "key": "field_sol_aud_items",
+                    "label": "Ítems de la lista de la tarjeta de perfil",
+                    "name": "items",
+                    "type": "repeater",
+                    "instructions": "Opcional. Cada ítem lleva una viñeta celeste, un título en negrita y un texto gris debajo; ambos opcionales. Si no hay ítems, la lista no se muestra.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "sub_fields": [
+                        {
+                            "default_value": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "maxlength": "",
+                            "key": "field_sol_aud_group_title",
+                            "label": "Título del grupo",
+                            "name": "title",
+                            "type": "text",
+                            "instructions": "Opcional. En negrita sobre los ítems del grupo. Si queda vacío, se muestran solo los ítems.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            }
+                        },
+                        {
+                            "sub_fields": [
+                                {
+                                    "default_value": "",
+                                    "placeholder": "",
+                                    "prepend": "",
+                                    "append": "",
+                                    "maxlength": "",
+                                    "key": "field_sol_aud_group_item_text",
+                                    "label": "Texto del ítem del grupo",
+                                    "name": "text",
+                                    "type": "text",
+                                    "instructions": "Ej. «Personalidad & Comportamiento».",
+                                    "required": 0,
+                                    "conditional_logic": 0,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    }
+                                }
+                            ],
+                            "min": 0,
+                            "max": 0,
+                            "layout": "table",
+                            "button_label": "Agregar ítem",
+                            "pagination": 0,
+                            "rows_per_page": 20,
+                            "key": "field_sol_aud_group_items",
+                            "label": "Ítems del grupo",
+                            "name": "items",
+                            "type": "repeater",
+                            "instructions": "Opcional. Una línea por ítem, con viñeta.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            }
+                        }
+                    ],
+                    "min": 0,
+                    "max": 0,
+                    "layout": "block",
+                    "button_label": "Agregar grupo",
+                    "pagination": 0,
+                    "rows_per_page": 20,
+                    "key": "field_sol_aud_groups",
+                    "label": "Grupos de la lista de la tarjeta de perfil",
+                    "name": "groups",
+                    "type": "repeater",
+                    "instructions": "Opcional. Listas agrupadas: cada grupo lleva un título en negrita y debajo sus ítems con viñeta (ej. «Informe individual psicolaboral profundo, con reportes de:» + Personalidad & Comportamiento…). Se muestran debajo de la lista simple de arriba, si la hay. Si no hay grupos, no se muestra nada.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    }
+                },
+                {
+                    "return_format": "array",
+                    "key": "field_sol_aud_button",
+                    "label": "Botón de la tarjeta de perfil",
+                    "name": "button",
+                    "type": "link",
+                    "instructions": "Opcional. Botón azul al pie de la tarjeta: escribe el texto y el enlace. Para bajar al formulario de esta página usa #contacto; para otra página, su dirección (ej. /soluciones/outplacement/programas/). Si queda vacío, la tarjeta no lleva botón.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    }
+                }
+            ],
+            "min": 0,
+            "max": 0,
+            "layout": "block",
+            "button_label": "Agregar tarjeta",
+            "pagination": 0,
+            "rows_per_page": 20,
+            "key": "field_sol_audiences",
+            "label": "Tarjetas de perfiles con detalle",
+            "name": "audiences",
+            "type": "repeater",
+            "instructions": "Opcional. Si agregas al menos una tarjeta, la sección de Perfiles usa este diseño (foto, textos, lista y botón, en columnas de dos) en lugar de las fotos con etiqueta de la pestaña Perfiles. El titular y el alcance siguen saliendo de la pestaña Perfiles. Todas las piezas de la tarjeta son opcionales y solo se muestran si tienen contenido. Las tarjetas de una misma fila miden lo mismo y el botón queda siempre al pie.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "collapsed": "field_sol_aud_title"
+        },
+        {
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0,
             "key": "field_sol_tab_clientes",
             "label": "Clientes",
             "name": "",
@@ -698,12 +1114,12 @@
             "label": "Logos de clientes",
             "name": "clients",
             "type": "checkbox",
-            "instructions": "Grilla “Nuestros clientes” (se ve mejor en múltiplos de 3).",
+            "instructions": "Grilla «Nuestros clientes» (se ve mejor en múltiplos de 3). Los logos salen en la web en el orden en que los marques: cada casilla marcada muestra su número. También puedes arrastrar las casillas para cambiar el orden. Guarda la página para aplicarlo.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
                 "width": "",
-                "class": "",
+                "class": "pcf-ordered",
                 "id": ""
             }
         },
@@ -956,11 +1372,155 @@
             "label": "Pregunta del aviso flotante",
             "name": "toast",
             "type": "text",
+            "instructions": "Título del aviso que flota abajo a la derecha. Una pregunta corta (máx. ~35 caracteres) para que entre en una o dos líneas.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "default_value": "",
+            "placeholder": "Headhunting boutique para alta dirección y C-level.",
+            "maxlength": "",
+            "rows": 2,
+            "new_lines": "",
+            "key": "field_sol_toast_text",
+            "label": "Descripción del aviso flotante",
+            "name": "toast_text",
+            "type": "textarea",
+            "instructions": "Línea de apoyo bajo la pregunta (máx. ~60 caracteres). Vacío: se usa el texto del diseño de cada solución.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "default_value": "",
+            "placeholder": "Agendar consultoría",
+            "prepend": "",
+            "append": "",
+            "maxlength": "",
+            "key": "field_sol_toast_cta",
+            "label": "Botón del aviso flotante",
+            "name": "toast_cta",
+            "type": "text",
+            "instructions": "Abre el formulario emergente con «Empresa» marcado. Vacío: «Agendar consultoría». Si la solución tiene página de Programas (hija), el aviso muestra «Ver programas» y «Para empresas» en su lugar.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0,
+            "key": "field_sol_tab_nav",
+            "label": "Menú de soluciones",
+            "name": "",
+            "type": "tab",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
                 "width": "",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": 60,
+            "key": "field_sol_nav_sub",
+            "label": "Etiqueta bajo el nombre de la solución en el menú",
+            "name": "nav_sub",
+            "type": "text",
+            "instructions": "Aparece debajo del nombre de la solución (el título de esta página) en la lista del mega menú de «Soluciones» y en el menú mobile. Ej.: «Headhunting & Executive Search». Hasta 60 caracteres. Si queda vacío se usa el texto por defecto de la solución, o solo el nombre.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": 60,
+            "key": "field_sol_nav_eyebrow",
+            "label": "Etiqueta sobre la descripción del mega menú",
+            "name": "nav_eyebrow",
+            "type": "text",
+            "instructions": "Texto corto en mayúsculas pequeñas, encima de la descripción grande, en el panel derecho del mega menú (solo escritorio). Normalmente repite la etiqueta de la izquierda. Hasta 60 caracteres. Si queda vacío se repite la «Etiqueta bajo el nombre».",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "default_value": "",
+            "placeholder": "",
+            "maxlength": 260,
+            "rows": 3,
+            "new_lines": "",
+            "key": "field_sol_nav_body",
+            "label": "Descripción grande de la solución en el mega menú",
+            "name": "nav_body",
+            "type": "textarea",
+            "instructions": "Párrafo grande del panel derecho del mega menú (solo escritorio), visible al pasar el cursor por esta solución. Recomendado: 160–220 caracteres (máx. 260) para que entre sin cortes. Si queda vacío se usa el texto por defecto de la solución, o no se muestra párrafo. Para resaltar una parte en negrita, enciérrala entre asteriscos: «Encontramos *ejecutivos de alta dirección* para tu empresa». Los asteriscos no se muestran.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "return_format": "array",
+            "key": "field_sol_nav_extra",
+            "label": "Segundo enlace de la solución en el mega menú (opcional)",
+            "name": "nav_extra",
+            "type": "link",
+            "instructions": "Enlace adicional junto a «Conocer {nombre}» en el mega menú; en mobile aparece como sub-ítem bajo la solución. Ej.: «Ver programas VIP». Escribe el texto en «Texto del enlace». Mientras la página no exista puedes poner «#» como URL: se muestra pero no navega. Si queda vacío solo se muestra el enlace principal.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "default_value": "",
+            "enable_opacity": 0,
+            "return_format": "string",
+            "key": "field_sol_nav_color",
+            "label": "Color de la solución en el menú",
+            "name": "nav_color",
+            "type": "color_picker",
+            "instructions": "Fondo del ítem activo en la lista del mega menú (el texto va en blanco, así que usa un color oscuro o intenso) y punto de color en el menú mobile. Si queda vacío se usa el color por defecto de la solución.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
                 "class": "",
                 "id": ""
             }
@@ -972,6 +1532,34 @@
                 "param": "page_template",
                 "operator": "==",
                 "value": "template-solucion.php"
+            }
+        ],
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "template-executive.php"
+            }
+        ],
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "template-outplacement.php"
+            }
+        ],
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "template-personnel.php"
+            }
+        ],
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "template-assessment.php"
             }
         ]
     ],
@@ -990,5 +1578,5 @@
     "active": true,
     "description": "Contenido de las internas de solución (Executive, Outplacement y futuras). Los names replican las claves de inc/soluciones-data.php.",
     "show_in_rest": true,
-    "modified": 1790009960
+    "modified": 1794934057
 }

@@ -14,6 +14,7 @@
 	--match-violeta:      #8781ff; /* borde luminoso de los botones primarios */
 
 	/* --- Celeste: el azul del isotipo --- */
+	--match-celeste-50:  #e6f0ff; /* fondo de las notificaciones sin leer */
 	--match-celeste-500: #0086f1;
 	--match-celeste-600: #006fc7;
 	--match-celeste-700: #02589d; /* titulares de Outplacement */
@@ -45,6 +46,12 @@
 	--match-neutral-500: #2c2c2c;
 	--match-negro:       #1c1c1c;
 	--match-blanco:      #ffffff;
+
+	/* --- Submarcas (etiquetas de vacante) --- */
+	--match-submarca-executive:    linear-gradient(90deg, #0f0b59, #002fac);
+	--match-submarca-personnel:    #8c31ff;
+	--match-submarca-outplacement: #003fe6; /* acento de la página Outplacement (solucion.css); confirmar en Figma */
+	--match-submarca-assessment:   #1c1c1c; /* acento de la página Assessment (solucion.css); confirmar en Figma */
 
 	/* --- Semánticos --- */
 	--match-exito:  #059669;
@@ -135,5 +142,37 @@
 		--match-fs-h2: 30px;
 		--match-fs-h2-xl: 44px;
 		--match-fs-h4: 20px;
+	}
+}
+
+/*
+ * Tipografía fluida de escritorio (>1024 px). Cada token llega a su tamaño de
+ * diseño a 1920 px y baja solo hacia 1280 px (a 1440 px ≈ ¾ del máximo). Por
+ * debajo de 1025 px mandan los valores fijos de arriba, así que mobile y
+ * tablet no cambian. Todo el sitio (Home, soluciones, Job Board) usa estas
+ * variables; cualquier tamaño nuevo debe salir de aquí y no de px sueltos.
+ *
+ *            1280    1440    1920
+ *  h2-xl      73      83     110
+ *  stat       64      72      96
+ *  h2         37      42      56
+ *  h3         30      30      40
+ *  stat-lg    44      48      64
+ *  h4         20      20      24
+ *  xxl        17      17      20
+ *  body-lg    16      16      18
+ *  body       15      15      16
+ */
+@media ( min-width: 1025px ) {
+	:root {
+		--match-fs-h2-xl:  clamp( 64px, 5.73vw, 110px );
+		--match-fs-stat:   clamp( 64px, 5vw, 96px );
+		--match-fs-h2:     clamp( 36px, 2.92vw, 56px );
+		--match-fs-h3:     clamp( 30px, 2.08vw, 40px );
+		--match-fs-stat-lg: clamp( 44px, 3.34vw, 64px );
+		--match-fs-h4:     clamp( 20px, 1.25vw, 24px );
+		--match-fs-xxl:    clamp( 17px, 1.04vw, 20px );
+		--match-fs-body-lg: clamp( 16px, 0.94vw, 18px );
+		--match-fs-body:   clamp( 15px, 0.834vw, 16px );
 	}
 }

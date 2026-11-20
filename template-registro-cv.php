@@ -17,6 +17,11 @@ if ( ! is_user_logged_in() ) {
 
 $notice = match_registro_cv_notice();
 
+// Si el registro empezó desde «Postular ahora», «Lo hago después» también
+// vuelve a esa vacante (el formulario de postular pide el CV ahí mismo).
+$later = isset( $_COOKIE['match_apply_return'] ) ? wp_validate_redirect( esc_url_raw( rawurldecode( wp_unslash( $_COOKIE['match_apply_return'] ) ) ), '' ) : '';
+$later = $later ?: match_jobboard_url();
+
 get_header( 'jobboard' );
 ?>
 <main id="main" class="match-login-page">
@@ -48,6 +53,15 @@ get_header( 'jobboard' );
 					<span class="match-register-drop__hint" data-dropzone-hint><?php esc_html_e( 'PDF · máx. 5 MB', 'match' ); ?></span>
 					<input class="screen-reader-text" type="file" name="cv" accept=".pdf,application/pdf" data-dropzone-input>
 				</label>
+				<?php // Con el archivo elegido, la caja se cambia por esta franja (Figma: Confirmación CV, node 6136:5500; app.js). ?>
+				<div class="match-register-file" data-dropzone-file role="status" hidden>
+					<span class="match-register-file__check" aria-hidden="true">✓</span>
+					<span class="match-register-file__text">
+						<span class="match-register-file__name" data-dropzone-file-name></span>
+						<span class="match-register-file__state"><?php esc_html_e( 'Cargado correctamente', 'match' ); ?></span>
+					</span>
+					<button class="match-register-file__change" type="button" data-dropzone-change><?php esc_html_e( 'Cambiar', 'match' ); ?></button>
+				</div>
 				<p class="match-register-drop__note"><?php esc_html_e( 'Solo Match y las empresas a las que postules verán tu CV.', 'match' ); ?></p>
 			</div>
 
@@ -55,13 +69,11 @@ get_header( 'jobboard' );
 			<?php wp_nonce_field( 'match_register_cv', '_match_nonce' ); ?>
 
 			<div class="match-login-card__submit">
-				<button class="match-btn match-btn--primary" type="submit">
-					<span class="match-btn__orbit" aria-hidden="true"></span>
-					<?php esc_html_e( 'Continuar', 'match' ); ?>
-					<span class="match-btn__icon"><?php echo match_icon( 'arrow' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
+				<button class="match-btn match-btn--cta" type="submit">
+					<?php echo match_cta_inner( __( 'Continuar', 'match' ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 				</button>
 				<p class="match-login-card__register">
-					<a href="<?php echo esc_url( match_jobboard_url() ); ?>"><?php esc_html_e( 'Lo hago después', 'match' ); ?></a>
+					<a href="<?php echo esc_url( $later ); ?>"><?php esc_html_e( 'Lo hago después', 'match' ); ?></a>
 				</p>
 			</div>
 		</form>

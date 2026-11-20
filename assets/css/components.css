@@ -213,6 +213,30 @@
 
 .match-btn--secondary:hover { background: var(--match-blanco); }
 
+/*
+ * Outline sobre fondo oscuro o vidrio (Figma: Button-Outline, node 6128:228):
+ * acompaña al CTA principal como acción secundaria. Mismo alto que .match-btn.
+ */
+.match-btn--outline {
+	background: rgba( 255, 255, 255, 0.12 );
+	border-color: rgba( 255, 255, 255, 0.45 );
+	color: var(--match-blanco);
+	box-shadow: 0 0 24px rgba( 255, 255, 255, 0.25 );
+}
+
+.match-btn--outline:focus-visible {
+	outline: 2px solid var(--match-blanco);
+	outline-offset: 2px;
+}
+
+@media ( hover: hover ) {
+	.match-btn--outline:hover {
+		background: rgba( 255, 255, 255, 0.2 );
+		border-color: var(--match-blanco);
+	}
+	.match-btn--outline:active { scale: 0.97; }
+}
+
 /* Botón redondo de 48 px (expandir / contraer en las tarjetas de vacante) */
 .match-btn--round {
 	width: 48px;
@@ -262,6 +286,34 @@
 .match-pill--filter:hover { border-color: currentColor; }
 .match-pill--filter svg { width: 24px; height: 24px; }
 
+/* ============ Submarcas de una vacante (Figma 5528:5519) ============ */
+.match-submarcas {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin: 0 0 var(--match-space-8);
+	padding: 0;
+	list-style: none;
+}
+
+.match-submarca {
+	display: inline-flex;
+	padding: 2px var(--match-space-8);
+	border-radius: 4px;
+	font-family: var(--match-font-text);
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 18px;
+	white-space: nowrap;
+	color: var(--match-blanco);
+	background: var(--match-primario-500);
+}
+
+.match-submarca--executive    { background: var(--match-submarca-executive); }
+.match-submarca--personnel    { background: var(--match-submarca-personnel); }
+.match-submarca--outplacement { background: var(--match-submarca-outplacement); }
+.match-submarca--assessment   { background: var(--match-submarca-assessment); }
+
 /* ============ Tarjeta de vidrio (hero y contacto) ============ */
 .match-glass {
 	backdrop-filter: blur( var(--match-blur-glass) );
@@ -269,7 +321,7 @@
 	background: rgba( 255, 255, 255, 0.12 );
 	border: 0.5px solid var(--match-blanco);
 	border-radius: var(--match-radius-24);
-	padding: var(--match-space-32);
+	/* padding: var(--match-space-32); */
 	color: var(--match-blanco);
 }
 
@@ -502,4 +554,268 @@
 	.match-legal__layout { grid-template-columns: 1fr; }
 	.match-legal__toc { position: static; }
 	.match-legal__toc-list { max-height: none; overflow-y: visible; }
+}
+
+/* ============ Aviso «Inicia sesión para guardar vacantes» (Figma J20) ============
+ * <dialog> global (template-parts/jobboard/save-modal.php), sin depender de jobboard.css. */
+.match-save-modal {
+	width: min(440px, calc(100% - 2 * var(--match-space-24)));
+	margin: auto;
+	padding: 0;
+	border: 0;
+	border-radius: var(--match-radius-16);
+	background: var(--match-blanco);
+	color: var(--match-negro);
+	box-shadow: 0 16px 24px rgba(0, 0, 0, 0.14);
+}
+
+.match-save-modal::backdrop {
+	background: rgba(0, 0, 0, 0.7);
+	-webkit-backdrop-filter: blur(6px);
+	backdrop-filter: blur(6px);
+}
+
+.match-save-modal[open] {
+	animation: match-save-modal-in 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes match-save-modal-in {
+	from { opacity: 0; scale: 0.96; translate: 0 8px; }
+}
+
+.match-save-modal__panel {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: var(--match-space-16);
+	padding: var(--match-space-40);
+}
+
+.match-save-modal__close {
+	position: absolute;
+	inset-block-start: var(--match-space-16);
+	inset-inline-end: var(--match-space-16);
+	display: grid;
+	place-items: center;
+	width: 40px;
+	height: 40px;
+	padding: 0;
+	border: 0;
+	border-radius: var(--match-radius-full);
+	background: transparent;
+	color: var(--match-neutral-300);
+	cursor: pointer;
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.match-save-modal__close:hover,
+.match-save-modal__close:focus-visible { background: var(--match-neutral-100); color: var(--match-negro); }
+.match-save-modal__close svg { width: 20px; height: 20px; }
+
+.match-save-modal__title {
+	margin: 0;
+	padding-inline-end: var(--match-space-40);
+	font-size: var(--match-fs-xxl);
+	font-weight: 600;
+	line-height: var(--match-lh-h4);
+}
+
+.match-save-modal__text { margin: 0; color: var(--match-neutral-400); }
+.match-save-modal .match-btn { align-self: stretch; justify-content: center; margin-block-start: var(--match-space-8); }
+
+.match-save-modal__alt {
+	margin: 0;
+	text-align: center;
+	font-size: var(--match-fs-tag);
+	color: var(--match-neutral-400);
+}
+
+.match-save-modal__alt a { font-weight: 600; color: var(--match-negro); text-underline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+	.match-save-modal[open] { animation: none; }
+}
+
+/* ============ Formulario emergente de contacto ============
+ * <dialog> de soluciones y programas (template-parts/contact-modal.php),
+ * Figma: Modal — Contacto, node 6153:1293. Mismo markup que «Hablemos»
+ * (.match-toggle, .match-field), aquí en su versión clara: los selectores van
+ * dentro de .match-contact-modal para ganarle a home.css, que carga después. */
+.match-contact-modal {
+	width: min(486px, calc(100% - 2 * var(--match-space-16)));
+	max-height: calc(100dvh - 2 * var(--match-space-16));
+	margin: auto;
+	padding: 0;
+	border: 0;
+	border-radius: var(--match-radius-16);
+	background: var(--match-blanco);
+	color: var(--match-azul-600);
+	box-shadow: 0 66px 166px rgba(0, 0, 0, 0.15);
+	overflow-y: auto;
+	overscroll-behavior: contain;
+}
+
+.match-contact-modal::backdrop {
+	background: rgba(0, 0, 0, 0.7);
+	-webkit-backdrop-filter: blur(6px);
+	backdrop-filter: blur(6px);
+}
+
+.match-contact-modal[open] {
+	animation: match-save-modal-in 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.match-contact-modal__panel {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: var(--match-space-32);
+	padding: var(--match-space-32);
+}
+
+.match-contact-modal__head {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	padding-inline-end: var(--match-space-40); /* aire para el botón cerrar */
+}
+
+.match-contact-modal__about {
+	margin: 0;
+	font-size: 13px;
+	color: var(--match-azul-500);
+}
+
+.match-contact-modal__title {
+	margin: 0;
+	font-size: var(--match-fs-xxl);
+	font-weight: 600;
+	line-height: normal;
+	color: #060527; /* Figma primario/900 */
+}
+
+/* Cerrar: no está en el Figma; se deja discreto por accesibilidad (además de Esc y clic fuera). */
+.match-contact-modal__close {
+	position: absolute;
+	inset-block-start: var(--match-space-24);
+	inset-inline-end: var(--match-space-24);
+	display: grid;
+	place-items: center;
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	border: 0;
+	border-radius: var(--match-radius-full);
+	background: transparent;
+	color: var(--match-azul-400);
+	cursor: pointer;
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.match-contact-modal__close:hover,
+.match-contact-modal__close:focus-visible { background: var(--match-azul-50); color: var(--match-azul-600); }
+.match-contact-modal__close svg { width: 18px; height: 18px; }
+
+/* Perfil: pista gris clara y opción activa en degradado grafito */
+.match-contact-modal .match-toggle__label,
+.match-contact-modal .match-field__label {
+	font-size: 13px;
+	color: var(--match-azul-600);
+}
+
+.match-contact-modal .match-toggle__group {
+	background: var(--match-azul-50);
+	border: 0;
+}
+
+.match-contact-modal .match-toggle__opt {
+	color: var(--match-azul-600);
+	font-size: 13px;
+}
+
+.match-contact-modal .match-toggle__opt.is-active {
+	background: linear-gradient(90deg, #303340 0%, #454757 100%);
+	color: var(--match-blanco);
+}
+
+/* Campos */
+.match-contact-modal .match-field__input {
+	background: var(--match-azul-50);
+	border-color: var(--match-azul-200);
+	color: var(--match-negro);
+}
+
+.match-contact-modal .match-field__input::placeholder { color: var(--match-azul-400); }
+.match-contact-modal .match-field__input:focus-visible { outline-color: var(--match-primario-500); }
+
+.match-contact-modal .match-contacto__submit { gap: var(--match-space-16); }
+.match-contact-modal .match-btn--cta { align-self: stretch; }
+
+.match-contact-modal .match-contacto__legal {
+	font-size: 13px;
+	color: var(--match-azul-400);
+}
+
+.match-contact-modal .match-contacto__legal a { color: inherit; }
+
+.match-contact-modal .match-contacto__notice { background: var(--match-azul-50); color: var(--match-azul-600); }
+.match-contact-modal .match-contacto__notice--error { background: #fde8e8; color: #9b1c1c; }
+
+@media (max-width: 640px) {
+	.match-contact-modal__panel {
+		gap: var(--match-space-24);
+		padding: var(--match-space-24) var(--match-space-16);
+	}
+	.match-contact-modal__close {
+		inset-block-start: var(--match-space-16);
+		inset-inline-end: var(--match-space-16);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.match-contact-modal[open] { animation: none; }
+}
+
+/* ============ Página 404 (Figma J21) ============ */
+.match-404 {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--match-space-16);
+	padding-block: 160px;
+	text-align: center;
+}
+
+.match-404__mark svg { width: 56px; height: auto; display: block; }
+
+.match-404__code {
+	margin: 0;
+	font-family: var(--match-font-display);
+	font-size: clamp(96px, 16vw, 160px);
+	font-weight: 600;
+	line-height: 1;
+	color: var(--match-neutral-200);
+}
+
+.match-404__title {
+	margin: 0;
+	font-family: var(--match-font-display);
+	font-size: clamp(28px, 4vw, 40px);
+	font-weight: 600;
+	line-height: 1.2;
+	color: var(--match-negro);
+}
+
+.match-404__text { margin: 0; max-width: 46ch; color: var(--match-neutral-400); }
+
+.match-404__actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: var(--match-space-12, 12px);
+	margin-block-start: var(--match-space-16);
+}
+
+@media (max-width: 767px) {
+	.match-404 { padding-block: 96px; }
 }

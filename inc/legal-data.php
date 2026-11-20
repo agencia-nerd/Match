@@ -16,8 +16,8 @@ defined( 'ABSPATH' ) || exit;
  * Texto fijo de una página legal por slug; null si no existe.
  */
 function match_legal_data( string $slug ): ?array {
-	$razon = get_theme_mod( 'match_razon_social', 'MATCH CONSULTORES SAC' );
-	$ruc   = get_theme_mod( 'match_ruc', '20508540788' );
+	$razon = get_theme_mod( 'match_razon_social', 'MATCH GROUP S.A.C.' );
+	$ruc   = get_theme_mod( 'match_ruc', '20613126725' );
 	$email = get_theme_mod( 'match_email', 'conversemos@match.win' );
 
 	$data = array(

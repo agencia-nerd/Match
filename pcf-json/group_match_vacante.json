@@ -1,0 +1,49 @@
+{
+    "key": "group_match_vacante",
+    "title": "Vacante — Submarcas",
+    "fields": [
+        {
+            "choices": {
+                "executive": "Executive",
+                "personnel": "Personnel"
+            },
+            "default_value": [],
+            "return_format": "value",
+            "layout": "vertical",
+            "toggle": 0,
+            "allow_custom": 0,
+            "save_custom": 0,
+            "key": "field_vacante_submarcas",
+            "label": "Submarcas de la vacante",
+            "name": "submarcas",
+            "type": "checkbox",
+            "instructions": "Opcional. Etiquetas de color que aparecen arriba del nombre de la empresa y del puesto en todas las vistas de la vacante: portada, panel, guardados, listado, mis procesos y detalle. Puedes marcar una o varias. Solo se usa mientras el CRM no envíe la submarca; cuando el CRM la envíe, se muestra la del CRM y esta casilla se ignora. Si no marcas ninguna, no aparece ninguna etiqueta.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "match_job"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "side",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "field",
+    "hide_on_screen": [],
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "modified": 1791913867
+}

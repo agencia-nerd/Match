@@ -9,7 +9,7 @@
  */
 defined( 'ABSPATH' ) || exit;
 
-$current = match_jobs_current_filters();
+$current = match_jobs_current_filters( null, true );
 $list    = match_jobs_list( $current );
 $facets  = match_jobs_facets( $current );
 $jobs    = $list['jobs'];
@@ -19,37 +19,50 @@ $filters = array(
 	'nivel'     => array( __( 'Nivel', 'match' ), 'filter-level' ),
 	'modalidad' => array( __( 'Modalidad', 'match' ), 'filter-mode' ),
 	'industria' => array( __( 'Industria', 'match' ), 'filter-industry' ),
+	'submarca'  => array( __( 'Submarca', 'match' ), 'filter-submarca' ), // Temporal: quitar esta línea para ocultar el filtro.
 );
 ?>
 <section class="match-vacantes-section" id="vacantes">
 	<div class="match-vacantes">
 		<?php match_section_head( match_home()['v_eyebrow'], match_home()['v_title'], '', 'h2-xl', true ); ?>
 
-		<div class="match-vacantes__body" data-aos="fade-up" data-aos-delay="100">
-			<div class="match-vacantes__toolbar">
+		<div class="match-vacantes__body">
+			<div class="match-vacantes__toolbar" data-reveal="up">
 				<div class="match-vacantes__bar">
-					<form class="match-vacantes__filters" method="get" action="<?php echo esc_url( match_jobs_url() ); ?>" data-jobs-form data-endpoint="<?php echo esc_url( rest_url( 'match/v1/jobs' ) ); ?>">
-						<div class="match-vacantes__pills">
+					<form class="match-vacantes__filters" method="get" action="<?php echo esc_url( match_jobs_url() ); ?>" data-jobs-form data-filters-box data-endpoint="<?php echo esc_url( rest_url( 'match/v1/jobs' ) ); ?>">
+						<?php // Mobile (J06): un botón «Filtros · n» despliega los filtros; en escritorio no se ve. ?>
+						<button class="match-filters-toggle" type="button" aria-expanded="false" aria-controls="match-vacantes-pills" data-filters-toggle data-label="<?php esc_attr_e( 'Filtros', 'match' ); ?>">
+							<span data-filters-toggle-label><?php echo count( $current ) ? esc_html( sprintf( /* translators: %d: filtros activos */ __( 'Filtros · %d', 'match' ), count( $current ) ) ) : esc_html__( 'Filtros', 'match' ); ?></span>
+							<?php echo match_icon( 'chevron' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+						</button>
+						<div class="match-vacantes__pills" id="match-vacantes-pills" data-filter-group>
 							<?php foreach ( $filters as $param => list( $label, $icon ) ) : ?>
 								<?php
+								// Un solo <select multiple> es la base (datos y envío); en escritorio
+								// app.js dibuja encima el desplegable con casillas, en mobile se usa
+								// el selector nativo del teléfono.
 								$options  = $facets[ $param ] ?? array();
-								$selected = $current[ $param ] ?? '';
-								$in_list  = in_array( $selected, array_column( $options, 'slug' ), true );
-								$active   = $selected ? match_jobs_term_name( $param, $selected ) : '';
+								$selected = (array) ( $current[ $param ] ?? array() );
+								$known    = array_column( $options, 'slug' );
+								$names    = array_map( fn( string $slug ): string => match_jobs_term_name( $param, $slug ), $selected );
+								$text     = 1 === count( $names ) ? $names[0] : ( $names ? $label . ' · ' . count( $names ) : $label );
 								?>
-								<label class="match-filter<?php echo $selected ? ' is-active' : ''; ?>">
-									<?php echo match_icon( $icon ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-									<span data-filter-label><?php echo esc_html( $active ?: $label ); ?></span>
-									<select name="<?php echo esc_attr( $param ); ?>" data-label="<?php echo esc_attr( $label ); ?>" onchange="this.form.submit()" aria-label="<?php echo esc_attr( $label ); ?>">
-										<option value=""><?php echo esc_html( $label ); ?></option>
+								<div class="match-filter<?php echo $selected ? ' is-active' : ''; ?>" data-filter>
+									<button class="match-filter__toggle" type="button" aria-haspopup="true" aria-expanded="false">
+										<?php echo match_icon( $icon ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+										<span data-filter-label><?php echo esc_html( $text ); ?></span>
+									</button>
+									<select name="<?php echo esc_attr( $param ); ?>[]" multiple data-param="<?php echo esc_attr( $param ); ?>" data-label="<?php echo esc_attr( $label ); ?>" onchange="this.form.submit()" aria-label="<?php echo esc_attr( $label ); ?>">
 										<?php foreach ( $options as $option ) : ?>
-											<option value="<?php echo esc_attr( $option['slug'] ); ?>" data-name="<?php echo esc_attr( $option['name'] ); ?>"<?php selected( $selected, $option['slug'] ); ?>><?php echo esc_html( $option['name'] ); ?> (<?php echo (int) $option['count']; ?>)</option>
+											<option value="<?php echo esc_attr( $option['slug'] ); ?>" data-name="<?php echo esc_attr( $option['name'] ); ?>" data-count="<?php echo (int) $option['count']; ?>"<?php selected( in_array( $option['slug'], $selected, true ) ); ?>><?php echo esc_html( $option['name'] ); ?> (<?php echo (int) $option['count']; ?>)</option>
 										<?php endforeach; ?>
-										<?php if ( $selected && ! $in_list ) : ?>
-											<option value="<?php echo esc_attr( $selected ); ?>" data-name="<?php echo esc_attr( $active ); ?>" selected><?php echo esc_html( $active ); ?> (0)</option>
-										<?php endif; ?>
+										<?php foreach ( $selected as $i => $slug ) : ?>
+											<?php if ( ! in_array( $slug, $known, true ) ) : ?>
+												<option value="<?php echo esc_attr( $slug ); ?>" data-name="<?php echo esc_attr( $names[ $i ] ); ?>" data-count="0" selected><?php echo esc_html( $names[ $i ] ); ?> (0)</option>
+											<?php endif; ?>
+										<?php endforeach; ?>
 									</select>
-								</label>
+								</div>
 							<?php endforeach; ?>
 						</div>
 
@@ -73,7 +86,7 @@ $filters = array(
 				</p>
 			</div>
 
-			<div class="match-vacantes__list" data-jobs-list aria-busy="false">
+			<div class="match-vacantes__list" data-jobs-list aria-busy="false" data-reveal="rows">
 				<?php echo match_jobs_render_rows( $jobs ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 			</div>
 		</div>

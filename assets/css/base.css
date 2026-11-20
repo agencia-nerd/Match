@@ -33,6 +33,30 @@ a { color: var(--match-primario-500); }
 	white-space: nowrap;
 }
 
+/* WordPress (block-library) vuelve visible .screen-reader-text:focus arriba a la
+   izquierda (patrón "saltar al contenido"). Un input file oculto dentro de una
+   dropzone recibe foco al hacer clic en su label y mostraba el "Examinar… No se
+   ha seleccionado ningún archivo" nativo. Se mantiene oculto también con foco. */
+input[type="file"].screen-reader-text:focus,
+input[type="file"].screen-reader-text:focus-visible {
+	position: absolute;
+	inset: auto;
+	width: 1px; height: 1px;
+	margin: -1px; padding: 0;
+	overflow: hidden;
+	clip: rect( 0 0 0 0 );
+	clip-path: inset( 50% );
+	white-space: nowrap;
+	background: none;
+	outline: 0;
+}
+
+/* El foco se señala en la dropzone que contiene el input. */
+label:has( > input[type="file"].screen-reader-text:focus-visible ) {
+	outline: 2px solid var(--match-primario-500);
+	outline-offset: 2px;
+}
+
 .skip-link:focus {
 	position: fixed;
 	inset-block-start: 8px;
@@ -84,6 +108,9 @@ a { color: var(--match-primario-500); }
 
 /* --- Layout de secciones --- */
 .match-section { padding-block: var(--match-space-140); }
+@media (min-width: 1025px) and (max-width: 1440px) {
+	.match-section { padding-block: 112px; }
+}
 .match-section--tight { padding-block: var(--match-space-80); }
 .match-section--light { background: var(--match-azul-50); }
 .match-section--paper { background: var(--match-neutral-100); }

@@ -76,7 +76,7 @@ function match_solucion_data( string $slug ): ?array {
 			'years'   => '(2020-26)',
 			'reviews' => array(
 				array(
-					'text'  => __( 'Tengo el mejor de los conceptos del servicio de Match. Es inclusive mucho mejor que otras consultoras trasnacionales, tienen real conocimiento del mercado. Sus candidatos mejoraron mis expectativas referente a su competencia.', 'match' ),
+					'text'  => __( 'Tengo el mejor de los conceptos del servicio de Match. Es inclusive mucho mejor que otras consultoras transnacionales, tienen real conocimiento del mercado. Sus candidatos mejoraron mis expectativas referente a su competencia.', 'match' ),
 					'name'  => 'Christopher Candamo',
 					'role'  => __( 'Global Project Manager · Alfa Laval, Suecia', 'match' ),
 					'photo' => $img( 'executive/cliente-alfa-laval.png' ),
@@ -85,7 +85,7 @@ function match_solucion_data( string $slug ): ?array {
 				),
 				array(
 					'text'  => __( 'Match funciona bien en momentos muy críticos. Fue de gran soporte con posiciones estratégicas del área técnica comercial. Su trabajo fue vital para que el negocio funcione. Lo hicieron súper rápido y bastante acertado.', 'match' ),
-					'name'  => 'Jose Chavez',
+					'name'  => 'José Chávez',
 					'role'  => __( 'Director de Operaciones · Uvirtual, México', 'match' ),
 					'photo' => $img( 'executive/cliente-uvirtual.png' ),
 					'bg'    => '#e0e0e0',
@@ -94,7 +94,6 @@ function match_solucion_data( string $slug ): ?array {
 			),
 			'reviews_photo' => $img( 'executive/testimonios-dark.webp' ),
 			'contact_lead'  => __( 'Cuéntanos qué necesitas — hablemos de tu próxima búsqueda de alta dirección.', 'match' ),
-			'toast'   => __( '¿Buscas un perfil ejecutivo?', 'match' ),
 		),
 
 		'outplacement' => array(
@@ -138,7 +137,7 @@ function match_solucion_data( string $slug ): ?array {
 			'years'   => '(2020-26)',
 			'reviews' => array(
 				array(
-					'text'  => __( 'Tengo el mejor de los conceptos del servicio de Match. Es inclusive mucho mejor que otras consultoras trasnacionales, tienen real conocimiento del mercado. Sus candidatos mejoraron mis expectativas referente a su competencia.', 'match' ),
+					'text'  => __( 'Tengo el mejor de los conceptos del servicio de Match. Es inclusive mucho mejor que otras consultoras transnacionales, tienen real conocimiento del mercado. Sus candidatos mejoraron mis expectativas referente a su competencia.', 'match' ),
 					'name'  => 'Christopher Candamo',
 					'role'  => __( 'Global Project Manager · Alfa Laval, Suecia', 'match' ),
 					'photo' => $img( 'executive/cliente-alfa-laval.png' ),
@@ -147,7 +146,7 @@ function match_solucion_data( string $slug ): ?array {
 				),
 				array(
 					'text'  => __( 'Match funciona bien en momentos muy críticos. Fue de gran soporte con posiciones estratégicas del área técnica comercial. Su trabajo fue vital para que el negocio funcione. Lo hicieron súper rápido y bastante acertado.', 'match' ),
-					'name'  => 'Jose Chavez',
+					'name'  => 'José Chávez',
 					'role'  => __( 'Director de Operaciones · Uvirtual, México', 'match' ),
 					'photo' => $img( 'executive/cliente-uvirtual.png' ),
 					'bg'    => '#e0e0e0',
@@ -156,7 +155,6 @@ function match_solucion_data( string $slug ): ?array {
 			),
 			'reviews_photo' => $img( 'executive/testimonios-dark.webp' ),
 			'contact_lead'  => __( 'Cuéntanos tu caso — hablemos del programa que mejor se ajusta a tu situación.', 'match' ),
-			'toast'   => __( '¿Estás reestructurando tu equipo?', 'match' ),
 		),
 	);
 
@@ -172,13 +170,15 @@ function match_solucion_data( string $slug ): ?array {
 function match_solucion( int $post_id ): array {
 	$slug     = (string) get_post_field( 'post_name', $post_id );
 	$fallback = match_solucion_data( $slug ) ?? match_solucion_data( 'executive' );
+	$toast    = match_solucion_toast_defaults( $slug );
 
 	if ( ! function_exists( 'get_field' ) || ! get_field( 'kicker', $post_id ) ) {
-		return $fallback;
+		return array_merge( $fallback, $toast );
 	}
 
 	$f     = static fn( string $name, $default = '' ) => get_field( $name, $post_id ) ?: $default;
 	$pairs = static fn( array $rows, string $a, string $b ): array => array_map( static fn( $row ) => array( $row[ $a ] ?? '', $row[ $b ] ?? '' ), $rows );
+	$rows  = static fn( $value ): array => is_array( $value ) ? array_values( array_filter( $value, 'is_array' ) ) : array();
 	$theme = $f( 'theme', 'executive' );
 
 	// El lockup SVG se inserta inline: primero el adjunto del campo, luego el
@@ -196,24 +196,55 @@ function match_solucion( int $post_id ): array {
 		'title'          => get_the_title( $post_id ),
 		'theme'          => $theme,
 		'logo'           => $logo ?: $fallback['logo'],
+		'subtitle'       => $f( 'subtitle' ),
 		'kicker'         => $f( 'kicker' ),
 		'lead'           => $f( 'lead' ),
 		'lead_2'         => $f( 'lead_2' ),
 		'trust'          => $f( 'trust', array() ),
 		'metrics'        => $pairs( $f( 'metrics', array() ), 'value', 'label' ),
 		'metrics_photo'  => $f( 'metrics_photo' ),
+		'cases_bg'       => $f( 'cases_bg' ),
 		'cases'          => array_map(
 			static fn( $row ) => array(
-				'stats'   => $pairs( $row['stats'] ?: array(), 'value', 'label' ),
-				'quote'   => $row['quote'] ?? '',
-				'text'    => $row['text'] ?? '',
-				'role'    => $row['role'] ?? '',
-				'company' => $row['company'] ?? '',
-				'logo'    => $row['logo'] ?: '',
+				'stats'     => $pairs( $row['stats'] ?: array(), 'value', 'label' ),
+				'highlight' => array( $row['highlight_value'] ?? '', $row['highlight_sub'] ?? '', $row['highlight_label'] ?? '' ),
+				'quote'     => $row['quote'] ?? '',
+				'text'      => $row['text'] ?? '',
+				'role'      => $row['role'] ?? '',
+				'company'   => $row['company'] ?? '',
+				'logo'      => $row['logo'] ?: '',
 			),
 			$f( 'cases', array() )
 		),
 		'levels'         => $pairs( $f( 'levels', array() ), 'label', 'photo' ),
+		// Tarjetas con detalle de Perfiles (opcional; si hay, reemplazan a levels).
+		'audiences'      => array_map(
+			static fn( $row ) => array(
+				'image'      => (int) ( $row['image'] ?? 0 ),
+				'title'      => $row['title'] ?? '',
+				'subtitle'   => $row['subtitle'] ?? '',
+				'text'       => $row['text'] ?? '',
+				'list_title' => $row['list_title'] ?? '',
+				// Los repeaters vacíos pueden llegar como false/'' y sus filas como no-arreglos:
+				// $rows() se queda solo con filas que son arreglos.
+				'items'      => array_values( array_filter( $rows( $row['items'] ?? null ), static fn( $item ) => ! empty( $item['title'] ) || ! empty( $item['text'] ) ) ),
+				'groups'     => array_values(
+					array_filter(
+						array_map(
+							static fn( $group ) => array(
+								'title' => (string) ( $group['title'] ?? '' ),
+								'items' => array_values( array_filter( array_map( static fn( $item ) => (string) ( $item['text'] ?? '' ), $rows( $group['items'] ?? null ) ) ) ),
+							),
+							$rows( $row['groups'] ?? null )
+						),
+						static fn( $group ) => $group['title'] || $group['items']
+					)
+				),
+				'button'     => is_array( $row['button'] ?? null ) ? $row['button'] : array(),
+			),
+			$rows( $f( 'audiences', array() ) )
+		),
+		'levels_brand'   => $f( 'levels_brand' ),
 		'levels_title'   => $f( 'levels_title' ),
 		'levels_title_2' => $f( 'levels_title_2' ),
 		'levels_icon'    => $f( 'levels_icon' ),
@@ -234,6 +265,124 @@ function match_solucion( int $post_id ): array {
 		),
 		'reviews_photo'  => $f( 'reviews_photo' ),
 		'contact_lead'   => $f( 'contact_lead' ),
-		'toast'          => $f( 'toast', $fallback['toast'] ),
+		'toast'          => $f( 'toast', $toast['toast'] ),
+		'toast_text'     => $f( 'toast_text', $toast['toast_text'] ),
+		'toast_cta'      => $f( 'toast_cta' ),
 	);
 }
+
+/**
+ * Textos del aviso flotante del diseño (Figma: Aviso 6219:1305 / 1328 /
+ * 1351 / 1374), por slug; respaldo cuando los campos toast y toast_text
+ * están vacíos. Una solución sin textos propios usa los de Executive.
+ *
+ * @return array{toast: string, toast_text: string}
+ */
+function match_solucion_toast_defaults( string $slug ): array {
+	$texts = array(
+		'personnel'    => array( __( '¿Necesitas cubrir puestos clave?', 'match' ), __( 'Entregamos la terna en 7 días.', 'match' ) ),
+		'executive'    => array( __( '¿Buscas un perfil ejecutivo?', 'match' ), __( 'Headhunting boutique para alta dirección y C-level.', 'match' ) ),
+		'assessment'   => array( __( '¿Evaluando ascensos o sucesiones?', 'match' ), __( 'O perfiles clave en tu empresa.', 'match' ) ),
+		'outplacement' => array( __( '¿Planificando una transición?', 'match' ), __( 'Corporativa o tu siguiente paso profesional.', 'match' ) ),
+	);
+
+	list( $toast, $text ) = $texts[ $slug ] ?? $texts['executive'];
+
+	return array(
+		'toast'      => $toast,
+		'toast_text' => $text,
+	);
+}
+
+/**
+ * Página de programas de una solución: la hija con la plantilla «Programas»
+ * (hoy /outplacement/programas/). Devuelve su URL anclada a las tarjetas
+ * (#programas) para no caer en el hero, o '' si la solución no tiene.
+ */
+function match_solucion_programas_url( int $post_id ): string {
+	$pages = get_pages(
+		array(
+			'child_of'    => $post_id,
+			'meta_key'    => '_wp_page_template', // phpcs:ignore WordPress.DB.SlowDBQuery
+			'meta_value'  => 'template-programas.php', // phpcs:ignore WordPress.DB.SlowDBQuery
+			'post_status' => 'publish',
+		)
+	);
+
+	return $pages ? get_permalink( $pages[0] ) . '#programas' : '';
+}
+
+/**
+ * Soluciones del mega menú del header: las páginas hijas publicadas de
+ * /soluciones/ (esa página solo agrupa, ver match_redirect_soluciones()).
+ * Los textos salen de la pestaña "Menú de soluciones" del grupo PCF de cada
+ * página; vacíos, se usan los del diseño por slug.
+ *
+ * Cada ítem: name, sub, eyebrow, body, color, url y extra (url + label, o null).
+ */
+function match_nav_solutions(): array {
+	static $items = null;
+	if ( null !== $items ) {
+		return $items;
+	}
+
+	$defaults = array(
+		'executive'    => array( 'Headhunting & Executive Search', 'Encontramos con precisión a los ejecutivos de alta dirección que liderarán el futuro de tu empresa. Identificamos perfiles estratégicos con cero margen de error y alta permanencia.', '#0F0B59' ),
+		'personnel'    => array( 'Reclutamiento y Selección', 'Encontramos perfiles especializados y de middle management que hoy lideran equipos y mañana harán crecer aún más tu empresa en un SLA récord de hasta 5 días hábiles.', '#8C31FF' ),
+		'outplacement' => array( 'Transición de Carrera & Recolocación', 'Programas de recolocación laboral y transición de carrera para ejecutivos, y para empresas que busquen respaldar a sus colaboradores mientras blindan su marca empleadora.', '#0966FF' ),
+		'assessment'   => array( 'Assessment Center & Fit Cultural', 'Medimos competencias técnicas y psicológicas y el potencial de un candidato o de todo tu equipo, para que sepas hoy quién puede liderar mañana.', '#6B6B6B' ),
+	);
+
+	$items  = array();
+	$parent = get_page_by_path( 'soluciones' );
+	if ( ! $parent ) {
+		return $items;
+	}
+
+	$pages = get_pages(
+		array(
+			'parent'      => $parent->ID,
+			'post_status' => 'publish',
+			'sort_column' => 'menu_order,post_title',
+		)
+	);
+
+	// Orden del diseño; las que no estén en la lista van al final.
+	$order = array_flip( array_keys( $defaults ) );
+	usort( $pages, static fn( $a, $b ) => ( $order[ $a->post_name ] ?? 99 ) <=> ( $order[ $b->post_name ] ?? 99 ) );
+
+	$field = static fn( string $name, int $id ) => function_exists( 'get_field' ) ? get_field( $name, $id ) : null;
+
+	foreach ( $pages as $page ) {
+		list( $sub, $body, $color ) = $defaults[ $page->post_name ] ?? array( '', '', '#0F0B59' );
+
+		$sub   = (string) ( $field( 'nav_sub', $page->ID ) ?: $sub );
+		$extra = $field( 'nav_extra', $page->ID );
+
+		$items[] = array(
+			'name'    => get_the_title( $page ),
+			'sub'     => $sub,
+			'eyebrow' => (string) ( $field( 'nav_eyebrow', $page->ID ) ?: $sub ),
+			'body'    => (string) ( $field( 'nav_body', $page->ID ) ?: $body ),
+			'color'   => (string) ( $field( 'nav_color', $page->ID ) ?: $color ),
+			'url'     => (string) get_permalink( $page ),
+			'extra'   => is_array( $extra ) && ! empty( $extra['url'] ) && ! empty( $extra['title'] )
+				? array( 'url' => (string) $extra['url'], 'label' => (string) $extra['title'] )
+				: null,
+		);
+	}
+
+	return $items;
+}
+
+/**
+ * /soluciones/ solo agrupa a las internas (/soluciones/executive/…): no se
+ * muestra, se manda a la sección de soluciones de la portada.
+ */
+function match_redirect_soluciones(): void {
+	if ( is_page( 'soluciones' ) ) {
+		wp_safe_redirect( home_url( '/#soluciones' ), 301 );
+		exit;
+	}
+}
+add_action( 'template_redirect', 'match_redirect_soluciones' );

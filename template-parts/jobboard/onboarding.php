@@ -8,14 +8,22 @@
  */
 defined( 'ABSPATH' ) || exit;
 
+// Con un CV activo el paso 1 ya está cumplido (check) y la acción principal es explorar vacantes (J01).
+$has_cv = function_exists( 'match_user_cv' ) && (bool) match_user_cv();
+
 $steps = array(
-	array( __( 'Tu CV es necesario para postularte', 'match' ), __( 'Sin CV activo no puedes postularte.', 'match' ) ),
+	$has_cv
+		? array( __( 'Tu CV está activo', 'match' ), __( 'Ya puedes postularte a las vacantes.', 'match' ) )
+		: array( __( 'Tu CV es necesario para postularte', 'match' ), __( 'Sin CV activo no puedes postularte.', 'match' ) ),
 	array( __( 'Postúlate en segundos', 'match' ), __( 'Con CV listo, postularte es un clic.', 'match' ) ),
 	array( __( 'Mantén tu CV actualizado', 'match' ), __( 'Reemplázalo cuando quieras desde tu perfil.', 'match' ) ),
 );
 ?>
 <dialog class="match-jb-onboarding" aria-labelledby="match-jb-onboarding-title" data-onboarding data-onboarding-url="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>" data-onboarding-nonce="<?php echo esc_attr( wp_create_nonce( 'match_onboarding' ) ); ?>" data-lenis-prevent>
 	<div class="match-jb-onboarding__card" tabindex="-1" autofocus>
+		<button class="match-jb-onboarding__close" type="button" aria-label="<?php esc_attr_e( 'Cerrar', 'match' ); ?>" data-onboarding-close>
+			<?php echo match_icon( 'close' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+		</button>
 		<div class="match-jb-onboarding__head">
 			<span class="match-jb-onboarding__badge" aria-hidden="true">
 				<span><?php echo match_icon( 'hand-wave' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
@@ -30,7 +38,13 @@ $steps = array(
 			<ol class="match-jb-onboarding__steps">
 				<?php foreach ( $steps as $i => list( $title, $desc ) ) : ?>
 					<li class="match-jb-onboarding__step">
-						<span class="match-jb-onboarding__num" aria-hidden="true"><?php echo (int) $i + 1; ?></span>
+						<span class="match-jb-onboarding__num" aria-hidden="true">
+							<?php if ( 0 === $i && $has_cv ) : ?>
+								<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M3.5 8.5l3 3 6-7"/></svg>
+							<?php else : ?>
+								<?php echo (int) $i + 1; ?>
+							<?php endif; ?>
+						</span>
 						<div>
 							<p class="match-jb-onboarding__step-title"><?php echo esc_html( $title ); ?></p>
 							<p class="match-jb-onboarding__step-desc"><?php echo esc_html( $desc ); ?></p>
@@ -42,8 +56,13 @@ $steps = array(
 			<hr class="match-jb-onboarding__rule">
 
 			<div class="match-jb-onboarding__footer">
-				<a class="match-jb__btn match-jb__btn--light" href="<?php echo esc_url( match_jobs_url() ); ?>" data-onboarding-done><?php esc_html_e( 'Explorar vacantes', 'match' ); ?></a>
-				<a class="match-jb__btn match-jb__btn--dark" href="<?php echo esc_url( match_profile_url() ); ?>" data-onboarding-done><?php esc_html_e( 'Completar perfil', 'match' ); ?></a>
+				<?php if ( $has_cv ) : ?>
+					<a class="match-jb__btn match-jb__btn--light" href="<?php echo esc_url( match_profile_url() ); ?>" data-onboarding-done><?php esc_html_e( 'Ver mi perfil', 'match' ); ?></a>
+					<a class="match-jb__btn match-jb__btn--dark" href="<?php echo esc_url( match_jobs_url() ); ?>" data-onboarding-done><?php esc_html_e( 'Explorar vacantes', 'match' ); ?></a>
+				<?php else : ?>
+					<a class="match-jb__btn match-jb__btn--light" href="<?php echo esc_url( match_jobs_url() ); ?>" data-onboarding-done><?php esc_html_e( 'Explorar vacantes', 'match' ); ?></a>
+					<a class="match-jb__btn match-jb__btn--dark" href="<?php echo esc_url( match_profile_url() ); ?>" data-onboarding-done><?php esc_html_e( 'Completar perfil', 'match' ); ?></a>
+				<?php endif; ?>
 			</div>
 		</div>
 	</div>
