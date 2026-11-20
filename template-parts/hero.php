@@ -20,8 +20,11 @@ $photos    = array_values(array_filter(array($home['hero_photo'], $home['hero_ph
 	</div>
 
 	<div class="match-hero__inner">
-		<h1 class="match-hero__wordmark" data-reveal="hero-logo"><?php echo match_logo(); // phpcs:ignore WordPress.Security.EscapeOutput 
-																	?></h1>
+		<?php // SEO: se ve el logo, pero el H1 lleva la frase clave en texto (Google y lectores de pantalla). ?>
+		<h1 class="match-hero__wordmark" data-reveal="hero-logo">
+			<?php echo match_logo('', true); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+			<span class="screen-reader-text"><?php echo esc_html($home['hero_h1']); ?></span>
+		</h1>
 
 		<p class="match-hero__lead text-sm md:text-base" data-reveal="hero-lead">
 			<?php echo esc_html($home['hero_lead']); ?>
