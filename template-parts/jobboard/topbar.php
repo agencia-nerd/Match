@@ -4,9 +4,8 @@
  * "Volver a Vacantes" en el detalle, node 4059:6063).
  *
  * Con sesión agrega, a la derecha, notificaciones y un menú de cuenta
- * (avatar + nombre) con accesos a Perfil y Cerrar sesión: en móvil la
- * barra lateral pasa a una fila con scroll horizontal y esas dos acciones
- * quedan fuera de vista, así que la topbar es su entrada siempre visible.
+ * (avatar + nombre) con accesos a Perfil y Cerrar sesión. En móvil la
+ * barra lateral pasa a un menú hamburguesa que también incluye ambos.
  *
  * @var array $args { back?: array{label:string,url:string} }
  */
@@ -26,8 +25,13 @@ $user   = $logged ? wp_get_current_user() : null;
 		<?php elseif ( $logged ) : ?>
 			<p class="match-jb__welcome">
 				<?php
-				/* translators: %s: nombre */
-				printf( esc_html__( 'Bienvenido, %s', 'match' ), esc_html( match_user_first_name( $user ) ) );
+				$match_first = match_user_first_name( $user );
+				if ( $match_first ) {
+					/* translators: %s: nombre */
+					printf( esc_html__( 'Bienvenido, %s', 'match' ), esc_html( $match_first ) );
+				} else {
+					esc_html_e( 'Bienvenido', 'match' );
+				}
 				?>
 				<?php echo match_icon( 'hand-wave' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 			</p>
@@ -38,11 +42,13 @@ $user   = $logged ? wp_get_current_user() : null;
 
 	<?php if ( $logged ) : ?>
 		<div class="match-jb__topbar-actions">
-			<button class="match-jb__notif" type="button" aria-disabled="true" title="<?php esc_attr_e( 'Disponible próximamente', 'match' ); ?>">
-				<?php echo match_icon( 'bell' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-				<span class="match-jb__notif-label"><?php esc_html_e( 'Notificaciones', 'match' ); ?></span>
-			</button>
+			<?php get_template_part( 'template-parts/jobboard/notifications' ); ?>
 
+			<?php
+			/* Respaldo: el menú de cuenta no está en el Figma de la topbar
+			 * (4365:4286). Se deja comentado, con su separador, por si hay que
+			 * volver a mostrarlo; el CSS (.match-jb-account) y el JS siguen en pie.
+			 *
 			<span class="match-jb__topbar-sep" aria-hidden="true"></span>
 
 			<details class="match-jb-account">
@@ -66,6 +72,8 @@ $user   = $logged ? wp_get_current_user() : null;
 					</a>
 				</div>
 			</details>
+			*/
+			?>
 		</div>
 	<?php endif; ?>
 </header>

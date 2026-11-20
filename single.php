@@ -56,7 +56,6 @@ while ( have_posts() ) :
 	<?php if ( $related ) : ?>
 		<section class="match-post-related">
 			<header class="match-post-related__head" data-aos="fade-up">
-				<p class="match-post-related__brand"><?php esc_html_e( 'blog®', 'match' ); ?></p>
 				<h2 class="match-post-related__title"><?php esc_html_e( 'Podría interesarte', 'match' ); ?></h2>
 			</header>
 			<div class="match-post-related__grid">

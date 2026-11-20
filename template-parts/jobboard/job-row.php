@@ -23,6 +23,7 @@ if ( ! $job ) {
 				<?php endif; ?>
 			</div>
 			<div class="match-jb-app__names">
+				<?php get_template_part( 'template-parts/job-submarcas', null, array( 'submarcas' => $job['submarcas'] ?? array() ) ); ?>
 				<p class="match-jb-app__company"><?php echo esc_html( $job['company'] ); ?></p>
 				<h2 class="match-jb-app__role"><a href="<?php echo esc_url( $job['url'] ); ?>"><?php echo esc_html( $job['title'] ); ?></a></h2>
 			</div>
@@ -32,27 +33,30 @@ if ( ! $job ) {
 			<div class="match-jb-row__right">
 				<button class="match-jb-card__fav<?php echo ! empty( $job['saved'] ) ? ' is-saved' : ''; ?>" type="button" aria-pressed="<?php echo ! empty( $job['saved'] ) ? 'true' : 'false'; ?>" data-job="<?php echo esc_attr( $job['id'] ); ?>">
 					<span class="screen-reader-text"><?php esc_html_e( 'Guardar vacante', 'match' ); ?></span>
-					<?php echo match_icon( 'bookmark' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+					<?php echo match_icon( 'bookmark-simple-line', 'match-jb-card__fav-off' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+					<?php echo match_icon( 'bookmark-simple', 'match-jb-card__fav-on' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 				</button>
 				<p class="match-jb-row__salary"><?php echo esc_html( $job['salary'] ?: __( 'Salario confidencial', 'match' ) ); ?></p>
 			</div>
 			<ul class="match-jb-app__features">
 				<?php if ( ! empty( $job['type'] ) ) : ?>
-					<li><?php echo match_icon( 'meta-location' ); // phpcs:ignore WordPress.Security.EscapeOutput ?><?php echo esc_html( $job['type'] ); ?></li>
+					<li><?php echo match_icon( 'meta-clock' ); // phpcs:ignore WordPress.Security.EscapeOutput ?><?php echo esc_html( $job['type'] ); ?></li>
 				<?php endif; ?>
 				<?php if ( ! empty( $job['place'] ) ) : ?>
-					<li><?php echo match_icon( 'meta-clock' ); // phpcs:ignore WordPress.Security.EscapeOutput ?><?php echo esc_html( $job['place'] ); ?></li>
+					<li><?php echo match_icon( 'meta-location' ); // phpcs:ignore WordPress.Security.EscapeOutput ?><?php echo esc_html( $job['place'] ); ?></li>
 				<?php endif; ?>
 			</ul>
 		</div>
 	</div>
 
 	<div class="match-jb-row__bottom">
-		<ul class="match-jb-tags match-jb-tags--white">
-			<?php foreach ( array_slice( (array) ( $job['skills'] ?? array() ), 0, 4 ) as $skill ) : ?>
-				<li class="match-jb-tag"><?php echo esc_html( $skill ); ?></li>
-			<?php endforeach; ?>
-		</ul>
+		<?php if ( ! empty( $job['skills'] ) ) : ?>
+			<ul class="match-jb-tags match-jb-tags--white">
+				<?php foreach ( array_slice( (array) $job['skills'], 0, 4 ) as $skill ) : ?>
+					<li class="match-jb-tag"><?php echo esc_html( $skill ); ?></li>
+				<?php endforeach; ?>
+			</ul>
+		<?php endif; ?>
 		<div class="match-jb-row__actions">
 			<?php if ( ! empty( $job['date'] ) ) : ?>
 				<time class="match-jb-card__date" datetime="<?php echo esc_attr( $job['datetime'] ); ?>">

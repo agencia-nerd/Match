@@ -24,6 +24,7 @@ if ( ! $job ) {
 				<?php endif; ?>
 			</div>
 			<div class="match-jb-card__names">
+				<?php get_template_part( 'template-parts/job-submarcas', null, array( 'submarcas' => $job['submarcas'] ?? array() ) ); ?>
 				<p class="match-jb-card__company"><?php echo esc_html( $job['company'] ); ?></p>
 				<h3 class="match-jb-card__role"><a href="<?php echo esc_url( $job['url'] ); ?>"><?php echo esc_html( $job['title'] ); ?></a></h3>
 			</div>
@@ -34,7 +35,8 @@ if ( ! $job ) {
 		<?php endif; ?>
 		<button class="match-jb-card__fav<?php echo $job['saved'] ? ' is-saved' : ''; ?>" type="button" aria-pressed="<?php echo $job['saved'] ? 'true' : 'false'; ?>" data-job="<?php echo esc_attr( $job['id'] ); ?>">
 			<span class="screen-reader-text"><?php esc_html_e( 'Guardar vacante', 'match' ); ?></span>
-			<?php echo match_icon( 'bookmark' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+			<?php echo match_icon( 'bookmark-simple-line', 'match-jb-card__fav-off' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+			<?php echo match_icon( 'bookmark-simple', 'match-jb-card__fav-on' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 		</button>
 		</div>
 	</div>

@@ -71,12 +71,12 @@ get_header( 'jobboard' );
 			</div>
 
 			<div class="match-jb-empty match-jb-empty--page" data-saved-empty<?php echo $jobs ? ' hidden' : ''; ?>>
-				<span class="match-jb-empty__icon" aria-hidden="true"><?php echo match_icon( 'bookmark' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
+				<span class="match-jb-empty__icon" aria-hidden="true"><?php echo match_icon( 'bookmark-simple-line' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
 				<p class="match-jb-empty__title">
 					<?php echo 'todas' === $estado ? esc_html__( 'Aún no tienes vacantes guardadas', 'match' ) : esc_html__( 'No hay vacantes en este filtro', 'match' ); ?>
 				</p>
 				<p class="match-jb-empty__text"><?php esc_html_e( 'Guarda las que te interesen con el marcador de cada tarjeta para volver a ellas más tarde.', 'match' ); ?></p>
-				<a class="match-jb__btn match-jb__btn--dark" href="<?php echo esc_url( match_jobs_url() ); ?>"><?php esc_html_e( 'Ver vacantes', 'match' ); ?></a>
+				<a class="match-jb__btn match-jb__btn--dark" href="<?php echo esc_url( match_jobs_url() ); ?>"><?php esc_html_e( 'Explorar vacantes', 'match' ); ?></a>
 			</div>
 		</div>
 	</main>

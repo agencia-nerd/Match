@@ -1,0 +1,525 @@
+/*
+ * Programas (template-programas.php).
+ * Figma: Hero — Programas, node 5467:4752.
+ */
+
+.match-prog-hero {
+	/* Colores del diseño que aún no están en tokens.css */
+	--prog-accent: #003fe6;  /* Figma celeste/600: titular */
+	--prog-current: #0966ff; /* miga de la página actual */
+	--prog-text: #535353;    /* Figma neutral/400 */
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 36px;
+	padding: calc( 200px - var(--match-navbar-h) ) var(--match-space-160) var(--match-space-80);
+	background: var(--match-azul-50);
+	text-align: center;
+}
+
+/* --- Migas --- */
+.match-prog-hero__crumbs ol { display: flex; flex-wrap: wrap; justify-content: center; margin: 0; padding: 0; list-style: none; }
+.match-prog-hero__crumbs li { font-size: var(--match-fs-body); font-weight: 600; line-height: var(--match-lh-nav); color: var(--prog-text); }
+.match-prog-hero__crumbs li + li::before { content: "/"; margin-inline: 8px; color: var(--prog-text); }
+.match-prog-hero__crumbs a { color: inherit; text-decoration: none; }
+.match-prog-hero__crumbs a:hover { color: var(--prog-current); }
+.match-prog-hero__crumbs [aria-current] { color: var(--prog-current); }
+
+/* --- Título, descripción y enlaces --- */
+.match-prog-hero__body { display: flex; flex-direction: column; align-items: center; gap: var(--match-space-40); }
+.match-prog-hero__text { display: flex; flex-direction: column; align-items: center; gap: var(--match-space-24); }
+
+.match-prog-hero__title {
+	margin: 0;
+	font-family: var(--match-font-display);
+	font-size: var(--match-fs-h2-xl);
+	font-weight: 700;
+	line-height: 1.2;
+	color: var(--prog-accent);
+}
+
+.match-prog-hero__lead {
+	width: min( 760px, 100% );
+	margin: 0;
+	font-size: var(--match-fs-body-lg);
+	font-weight: 500;
+	line-height: var(--match-lh-body);
+	color: var(--prog-text);
+}
+
+.match-prog-hero__pills { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: var(--match-space-12); margin: 0; padding: 0; list-style: none; }
+.match-prog-hero__pills li { display: flex; align-items: center; gap: var(--match-space-12); }
+/* Línea entre pastillas (Figma: 48 × 1 px) */
+.match-prog-hero__pills li + li::before { content: ""; width: 48px; height: 1px; background: var(--match-azul-200); }
+
+.match-prog-hero__pill {
+	display: inline-flex;
+	padding: var(--match-space-12) var(--match-space-24);
+	border-radius: var(--match-radius-full);
+	background: var(--match-blanco);
+	font-size: var(--match-fs-body);
+	font-weight: 600;
+	line-height: var(--match-lh-nav);
+	color: var(--match-negro);
+	text-decoration: none;
+	white-space: nowrap;
+	transition: background-color 0.2s ease, color 0.2s ease;
+}
+.match-prog-hero__pill:hover,
+.match-prog-hero__pill:focus-visible { background: var(--prog-accent); color: var(--match-blanco); }
+
+/*
+ * --- Imagen ---
+ * La caja manda: proporción fija del diseño (1600 × 700) y la foto se
+ * recorta al centro con object-fit, sea cual sea su tamaño original.
+ */
+.match-prog-hero__media {
+	width: 100%;
+	aspect-ratio: 16 / 7;
+	margin: 0;
+	overflow: hidden;
+	border-radius: var(--match-radius-24);
+	background: var(--match-azul-100);
+}
+.match-prog-hero__media img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+
+/* --- Responsive (no hay versión mobile en Figma) --- */
+@media ( max-width: 1440px ) {
+	.match-prog-hero { padding-inline: var(--match-gutter); }
+}
+
+@media ( max-width: 1024px ) {
+	.match-prog-hero { gap: var(--match-space-32); padding-block: var(--match-space-56); }
+	.match-prog-hero__body { gap: var(--match-space-32); }
+	.match-prog-hero__lead { font-size: var(--match-fs-body); }
+	.match-prog-hero__media { aspect-ratio: 16 / 9; border-radius: var(--match-radius-16); }
+}
+
+@media ( max-width: 600px ) {
+	.match-prog-hero { gap: var(--match-space-24); padding-block: var(--match-space-40); }
+	.match-prog-hero__pills { gap: var(--match-space-8); }
+	.match-prog-hero__pills li + li::before { display: none; }
+	.match-prog-hero__pill { padding: var(--match-space-8) var(--match-space-16); font-size: var(--match-fs-tag); }
+	.match-prog-hero__media { aspect-ratio: 4 / 3; }
+}
+
+/*
+ * ============ Tarjetas de programas ============
+ * Figma: Section — Programas, node 5476:4791.
+ */
+.match-prog-cards {
+	--prog-accent-2: #0966ff; /* Figma celeste/500: subtítulos, viñetas y 2.ª línea del titular */
+	--prog-text: #535353;
+
+	padding: var(--match-space-80) var(--match-space-160) var(--match-space-120);
+	background: var(--match-azul-50);
+}
+
+/* Encabezado compartido por las secciones de Programas (eyebrow + titular en dos tonos). */
+:is( .match-prog-cards, .match-prog-stats ) .match-section__head { gap: 170px; margin-block-end: var(--match-space-120); }
+:is( .match-prog-cards, .match-prog-stats ) .match-eyebrow__mark { width: 24px; height: 24px; }
+:is( .match-prog-cards, .match-prog-stats ) .match-h2 { line-height: 1.2; }
+:is( .match-prog-cards, .match-prog-stats ) .match-h2 .is-secondary { color: var(--prog-accent-2); }
+
+/*
+ * Cada tarjeta ocupa 6 filas de la grilla (imagen, título, descripción,
+ * datos, destacados, botón) y las comparte por subgrid con sus vecinas:
+ * la fila más alta de una tarjeta estira esa misma fila en todas, así que
+ * crecen juntas y cada bloque queda a la misma altura en las tres.
+ */
+.match-prog-cards__grid {
+	display: grid;
+	grid-template-columns: repeat( auto-fit, minmax( min( 400px, 100% ), 1fr ) );
+	gap: var(--match-space-24);
+}
+
+.match-prog-card {
+	display: grid;
+	grid-row: span 6;
+	grid-template-rows: subgrid;
+	row-gap: 0;
+	border-radius: var(--match-radius-16);
+	/* Al llegar por ancla (#regular…), deja aire bajo el navbar sticky. */
+	scroll-margin-top: calc( var(--match-navbar-h) + var(--match-space-24) );
+}
+
+/*
+ * Tarjeta elegida desde los botones del hero (assets/js/programas.js):
+ * un aro celeste se cierra sobre ella, se sostiene y se apaga.
+ */
+.match-prog-card.is-highlighted { animation: match-prog-card-focus 2.4s cubic-bezier( 0.22, 1, 0.36, 1 ); }
+
+@keyframes match-prog-card-focus {
+	0%   { outline: 2px solid transparent; outline-offset: 20px; box-shadow: 0 0 0 0 rgba( 9, 102, 255, 0 ); translate: 0 0; }
+	18%  { outline: 2px solid var(--prog-accent-2); outline-offset: 8px; box-shadow: 0 24px 48px -20px rgba( 9, 102, 255, 0.45 ); translate: 0 -8px; }
+	70%  { outline: 2px solid var(--prog-accent-2); outline-offset: 8px; box-shadow: 0 24px 48px -20px rgba( 9, 102, 255, 0.45 ); translate: 0 -8px; }
+	100% { outline: 2px solid transparent; outline-offset: 8px; box-shadow: 0 0 0 0 rgba( 9, 102, 255, 0 ); translate: 0 0; }
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	/* Sin movimiento: el aro aparece y desaparece de golpe, sin subir la tarjeta. */
+	.match-prog-card.is-highlighted { animation-timing-function: steps( 1, end ); translate: none !important; }
+}
+
+.match-prog-card__media {
+	height: 300px;
+	overflow: hidden;
+	border-radius: var(--match-radius-16);
+	background: var(--match-azul-100);
+}
+/* La caja manda: la foto se recorta al centro, sea cual sea su tamaño. */
+.match-prog-card__media img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+
+.match-prog-card__body {
+	display: grid;
+	grid-row: 2 / span 5;
+	grid-template-rows: subgrid;
+	row-gap: var(--match-space-24);
+	padding: 36px;
+	border-radius: var(--match-radius-16);
+	background: var(--match-blanco);
+}
+
+.match-prog-card__head { display: flex; flex-direction: column; gap: var(--match-space-4); }
+.match-prog-card__title { margin: 0; font-size: var(--match-fs-h4); font-weight: 600; line-height: var(--match-lh-h4); color: var(--match-negro); }
+.match-prog-card__subtitle { margin: 0; font-size: var(--match-fs-body-lg); font-weight: 500; line-height: var(--match-lh-body); color: var(--prog-accent-2); }
+
+/* Descripción: máximo 2 líneas */
+.match-prog-card__text {
+	display: -webkit-box;
+	margin: 0;
+	overflow: hidden;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	font-size: var(--match-fs-body);
+	line-height: var(--match-lh-body);
+	color: var(--prog-text);
+}
+
+.match-prog-card__data {
+	display: grid;
+	grid-template-columns: repeat( 3, 1fr );
+	gap: var(--match-space-8);
+	align-self: start;
+	margin: 0;
+	padding-block: var(--match-space-16);
+	border-block: 1px solid var(--match-azul-200);
+}
+.match-prog-card__data div { display: flex; flex-direction: column-reverse; justify-content: flex-end; }
+.match-prog-card__data dt { font-size: var(--match-fs-body-sm); line-height: normal; color: var(--prog-text); }
+.match-prog-card__data dd { margin: 0; font-size: var(--match-fs-body-lg); font-weight: 600; line-height: var(--match-lh-body); color: var(--match-negro); }
+
+.match-prog-card__items { display: flex; flex-direction: column; gap: var(--match-space-12); margin: 0; padding: 0; list-style: none; }
+.match-prog-card__items li { display: flex; gap: var(--match-space-12); font-size: var(--match-fs-body); line-height: var(--match-lh-body); color: var(--prog-text); }
+.match-prog-card__items li::before { content: ""; flex: 0 0 8px; height: 17px; background: url( "../img/icons/bullet.svg" ) center / contain no-repeat; }
+
+/* El botón queda siempre abajo; 32 px sobre él en el diseño (24 de gap + 8). */
+.match-prog-card__cta { align-self: end; margin-block-start: var(--match-space-8); }
+.match-prog-card__cta .match-btn__icon { width: 21px; height: 21px; }
+
+@media ( max-width: 1440px ) {
+	.match-prog-cards { padding-inline: var(--match-gutter); }
+}
+
+@media ( max-width: 1024px ) {
+	.match-prog-cards { padding-block: var(--match-space-56) var(--match-space-80); }
+	:is( .match-prog-cards, .match-prog-stats ) .match-section__head { gap: var(--match-space-24); margin-block-end: var(--match-space-48); }
+}
+
+@media ( max-width: 600px ) {
+	.match-prog-card__media { height: auto; aspect-ratio: 16 / 10; }
+	.match-prog-card__body { padding: var(--match-space-24); }
+}
+
+/*
+ * ============ Por qué Match ============
+ * Figma: Section — Por qué Match, node 5485:4925.
+ * Bento de 4 columnas: la tarjeta azul ocupa 2 × 2 y las cuatro cifras
+ * llenan el resto. Las filas miden 282 px como mínimo y crecen juntas si
+ * una tarjeta trae más texto.
+ */
+.match-prog-stats {
+	--prog-accent: #003fe6;   /* Figma celeste/600: tarjeta azul y subtítulos */
+	--prog-accent-2: #0966ff; /* Figma celeste/500: anillo y 2.ª línea del titular */
+	--prog-deep: #00237f;     /* Figma celeste/800: cifras */
+
+	padding: var(--match-space-80) var(--match-space-160) var(--match-space-120);
+	background: var(--match-neutral-100);
+}
+
+.match-prog-stats__grid {
+	display: grid;
+	grid-template-columns: repeat( 4, 1fr );
+	grid-auto-rows: minmax( 282px, auto );
+	gap: var(--match-space-8);
+}
+
+.match-prog-stat {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	gap: var(--match-space-24);
+	min-width: 0;
+	padding: 28px;
+	border-radius: var(--match-radius-16);
+	background: var(--match-blanco);
+}
+
+.match-prog-stat__value { margin: 0 0 var(--match-space-4); font-size: 48px; font-weight: 600; line-height: 1.2; color: var(--prog-deep); }
+.match-prog-stat__label { margin: 0; font-size: var(--match-fs-body-lg); font-weight: 600; line-height: var(--match-lh-body); color: var(--prog-accent); }
+.match-prog-stat__text { margin: 0; font-size: var(--match-fs-body); line-height: var(--match-lh-body); color: var(--match-azul-400); }
+
+/* En esta sección el ícono del eyebrow va en celeste (Figma: #0966ff). */
+.match-prog-stats .match-eyebrow__mark rect { fill: var(--prog-accent-2); }
+
+/* Las cifras cambian de ancho al contar: tabular-nums evita que tiemblen. */
+[data-count] { font-variant-numeric: tabular-nums; }
+
+/* --- Tarjeta azul destacada --- */
+.match-prog-stat--hero {
+	position: relative;
+	isolation: isolate;
+	grid-column: span 2;
+	grid-row: span 2;
+	padding: var(--match-space-32);
+	background: var(--prog-accent);
+	color: var(--match-blanco);
+}
+
+/*
+ * Brillos difusos del diseño (Ellipse 1 y 2). Van en su propia capa recortada
+ * para que la tarjeta no necesite overflow: hidden y la foto pueda asomar
+ * por encima del borde, igual que en las métricas del inicio.
+ */
+.match-prog-stat__bg {
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	overflow: hidden;
+	border-radius: inherit;
+	pointer-events: none;
+}
+.match-prog-stat__bg::before,
+.match-prog-stat__bg::after {
+	position: absolute;
+	border-radius: 50%;
+	filter: blur( 80px );
+	content: "";
+}
+.match-prog-stat__bg::before { inset-inline-start: 268px; inset-block-start: 90px; width: 726px; height: 726px; background: var(--prog-accent-2); opacity: 0.56; }
+.match-prog-stat__bg::after  { inset-inline-start: -103px; inset-block-start: -104px; width: 285px; height: 285px; background: #6ba3ff; opacity: 0.4; }
+
+/* Foto recortada: pegada abajo a la derecha y asomando 36 px por arriba. */
+.match-prog-stat__figure {
+	position: absolute;
+	inset-block: auto 0;
+	inset-inline: auto 24px;
+	z-index: 0;
+	height: calc( 100% + 36px );
+	max-width: 60%;
+	aspect-ratio: 456 / 682;
+	margin: 0;
+	pointer-events: none;
+}
+.match-prog-stat__figure img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	object-position: 50% 100%;
+}
+.match-prog-stat--hero > .match-prog-stat__eyebrow,
+.match-prog-stat--hero > .match-prog-stat__bottom { position: relative; z-index: 1; }
+.match-prog-stat--hero.has-photo .match-prog-stat__bottom { max-width: min( 424px, 52% ); }
+
+.match-prog-stat__eyebrow { margin: 0; font-size: var(--match-fs-body-lg); font-weight: 600; line-height: var(--match-lh-body); }
+.match-prog-stat__bottom { display: flex; flex-direction: column; gap: var(--match-space-16); max-width: 424px; }
+.match-prog-stat__hero-value { display: flex; align-items: baseline; gap: 0.25em; margin: 0; font-size: 96px; font-weight: 600; line-height: 1.1; }
+.match-prog-stat__unit { font-size: 0.5em; text-transform: uppercase; }
+.match-prog-stat__hero-text { margin: 0; font-size: var(--match-fs-body-lg); font-weight: 500; line-height: var(--match-lh-body); color: var(--match-azul-200); }
+
+/* --- Tarjeta del anillo de porcentaje --- */
+.match-prog-stat--gauge { align-items: center; justify-content: center; gap: var(--match-space-16); padding: var(--match-space-24) 28px; text-align: center; }
+.match-prog-stat--gauge .match-prog-stat__label + .match-prog-stat__text { margin-block-start: calc( var(--match-space-16) * -1 ); }
+
+.match-prog-gauge { position: relative; flex: 0 0 auto; width: 120px; height: 120px; }
+.match-prog-gauge svg { display: block; width: 100%; height: 100%; rotate: -90deg; }
+.match-prog-gauge circle { fill: none; stroke: var(--prog-accent-2); stroke-width: 8; }
+.match-prog-gauge__track { opacity: 0.15; }
+/*
+ * El arco pinta --gauge % (0–100) del anillo completo. --ring es la
+ * circunferencia del círculo (2π × r 56 = 351.86): el trazo mide eso y el
+ * desfase esconde el resto. Va en px a propósito: un calc() sin unidad no
+ * es válido en stroke-dashoffset y el navegador pintaría el anillo entero.
+ */
+.match-prog-gauge__fill {
+	--ring: 351.86px;
+	stroke-dasharray: var(--ring);
+	stroke-dashoffset: calc( var(--ring) * ( 100 - var(--gauge, 0) ) / 100 );
+	transition: stroke-dashoffset 1.8s cubic-bezier( 0.16, 1, 0.3, 1 );
+}
+.match-prog-gauge__value {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	margin: 0;
+	font-size: var(--match-fs-h4);
+	font-weight: 500;
+	color: var(--prog-deep);
+}
+
+/* Antes de entrar en pantalla el anillo arranca vacío (lo quita programas.js). */
+.match-prog-stats.is-pending .match-prog-gauge__fill { stroke-dashoffset: var(--ring); transition: none; }
+
+/* --- Responsive --- */
+@media ( max-width: 1440px ) {
+	.match-prog-stats { padding-inline: var(--match-gutter); }
+	.match-prog-stat__hero-value { font-size: 80px; }
+}
+
+@media ( max-width: 1280px ) {
+	/* La tarjeta azul pasa arriba a todo el ancho y las cifras quedan en 2 × 2. */
+	.match-prog-stats__grid { grid-template-columns: repeat( 2, 1fr ); grid-auto-rows: minmax( 240px, auto ); }
+	.match-prog-stat--hero { grid-row: span 1; min-height: 360px; }
+}
+
+@media ( max-width: 1024px ) {
+	.match-prog-stats { padding-block: var(--match-space-56) var(--match-space-80); }
+}
+
+@media ( max-width: 600px ) {
+	.match-prog-stats__grid { grid-template-columns: 1fr; grid-auto-rows: auto; gap: var(--match-space-12); }
+	.match-prog-stat--hero { grid-column: auto; min-height: 380px; padding: var(--match-space-24); }
+	.match-prog-stat__bg::before { inset-inline-start: 30%; inset-block-start: 40%; width: 420px; height: 420px; }
+	/* Como en el inicio: en móvil la foto taparía el texto, se oculta. */
+	.match-prog-stat__figure { display: none; }
+	.match-prog-stat--hero.has-photo .match-prog-stat__bottom { max-width: none; }
+	.match-prog-stat { padding: var(--match-space-24); }
+	.match-prog-stat__hero-value { font-size: 64px; }
+	.match-prog-stat__value { font-size: 40px; }
+}
+
+/*
+ * ============ Preguntas frecuentes ============
+ * Figma: Section — Preguntas frecuentes, node 5485:5017.
+ * Dos columnas: títulos a la izquierda (440 px, la descripción baja al pie)
+ * y el acordeón a la derecha.
+ */
+.match-prog-faq {
+	--prog-text: #535353;
+	--prog-faq-title: #002fac; /* Figma celeste/700 */
+	--prog-accent-2: #0966ff;
+
+	padding: var(--match-space-80) var(--match-space-160) var(--match-space-120);
+	background: var(--match-azul-50);
+}
+
+.match-prog-faq__inner { display: flex; align-items: stretch; gap: var(--match-space-120); }
+
+.match-prog-faq__head { display: flex; flex-direction: column; justify-content: space-between; gap: var(--match-space-40); flex: 0 0 440px; }
+.match-prog-faq__titles { display: flex; flex-direction: column; gap: var(--match-space-16); }
+.match-prog-faq__eyebrow { margin: 0; font-size: var(--match-fs-body); font-weight: 600; line-height: var(--match-lh-nav); color: var(--prog-text); }
+.match-prog-faq__title {
+	margin: 0;
+	font-family: var(--match-font-display);
+	font-size: var(--match-fs-h2);
+	font-weight: 700;
+	line-height: 1.2;
+	color: var(--prog-faq-title);
+}
+.match-prog-faq__title .is-secondary { display: block; color: var(--prog-accent-2); }
+.match-prog-faq__text { margin: 0; font-size: var(--match-fs-body); line-height: var(--match-lh-body); color: var(--prog-text); }
+
+/* --- Acordeón --- */
+.match-prog-faq__list { display: flex; flex-direction: column; gap: var(--match-space-12); flex: 1 1 0; min-width: 0; }
+
+.match-prog-faq__item {
+	/* Permite animar la altura hasta "auto" donde el navegador lo soporta. */
+	interpolate-size: allow-keywords;
+	padding: var(--match-space-24) 28px;
+	border-radius: var(--match-radius-16);
+	background: var(--match-blanco);
+}
+
+.match-prog-faq__question {
+	display: flex;
+	align-items: center;
+	gap: var(--match-space-16);
+	font-size: var(--match-fs-body);
+	font-weight: 600;
+	line-height: var(--match-lh-nav);
+	color: var(--match-negro);
+	list-style: none;
+	cursor: pointer;
+}
+.match-prog-faq__question::-webkit-details-marker { display: none; }
+.match-prog-faq__question > span:first-child { flex: 1 1 auto; min-width: 0; }
+.match-prog-faq__question:hover { color: var(--prog-faq-title); }
+.match-prog-faq__question:focus-visible { outline: 2px solid var(--prog-accent-2); outline-offset: 6px; border-radius: var(--match-radius-4); }
+
+.match-prog-faq__icon { display: grid; flex: 0 0 24px; width: 24px; height: 24px; color: var(--match-negro); }
+.match-prog-faq__icon svg { grid-area: 1 / 1; width: 100%; height: 100%; transition: opacity 0.25s ease, rotate 0.25s ease; }
+.match-prog-faq__minus { opacity: 0; rotate: -90deg; }
+.match-prog-faq__item[open] .match-prog-faq__plus { opacity: 0; rotate: 90deg; }
+.match-prog-faq__item[open] .match-prog-faq__minus { opacity: 1; rotate: 0deg; }
+
+/* Respuesta: viene del editor visual (párrafos, listas, enlaces). */
+.match-prog-faq__answer { padding-block-start: var(--match-space-12); font-size: var(--match-fs-body); line-height: var(--match-lh-body); color: var(--prog-text); }
+.match-prog-faq__answer > :first-child { margin-block-start: 0; }
+.match-prog-faq__answer > :last-child { margin-block-end: 0; }
+.match-prog-faq__answer :is( p, ul, ol ) { margin-block: 0 var(--match-space-12); }
+.match-prog-faq__answer :is( ul, ol ) { padding-inline-start: 1.25em; }
+.match-prog-faq__answer a { color: var(--prog-accent-2); }
+.match-prog-faq__answer strong { font-weight: 600; color: var(--match-negro); }
+
+/* Apertura y cierre suaves (Chrome/Edge 131+; el resto abre al instante). */
+.match-prog-faq__item::details-content {
+	block-size: 0;
+	overflow: hidden;
+	transition: block-size 0.35s cubic-bezier( 0.22, 1, 0.36, 1 ), content-visibility 0.35s allow-discrete;
+}
+.match-prog-faq__item[open]::details-content { block-size: auto; }
+
+@media ( prefers-reduced-motion: reduce ) {
+	.match-prog-faq__item::details-content,
+	.match-prog-faq__icon svg { transition: none; }
+}
+
+/* --- Responsive --- */
+@media ( max-width: 1440px ) {
+	.match-prog-faq { padding-inline: var(--match-gutter); }
+	.match-prog-faq__inner { gap: var(--match-space-80); }
+	.match-prog-faq__head { flex-basis: 380px; }
+}
+
+@media ( max-width: 1024px ) {
+	/* Una columna: títulos, descripción y luego el acordeón. */
+	.match-prog-faq { padding-block: var(--match-space-56) var(--match-space-80); }
+	.match-prog-faq__inner { flex-direction: column; gap: var(--match-space-40); }
+	.match-prog-faq__head { flex-basis: auto; justify-content: flex-start; gap: var(--match-space-16); max-width: 640px; }
+}
+
+@media ( max-width: 600px ) {
+	.match-prog-faq__item { padding: var(--match-space-16) 20px; }
+	.match-prog-faq__question { align-items: flex-start; }
+}
+
+/*
+ * ============ Contacto ============
+ * La sección es la compartida (template-parts/section-contacto.php, estilos
+ * en home.css). Aquí solo el destello del selector cuando un botón
+ * «Solicitar información» deja elegido su programa (programas.js).
+ */
+.match-field__input.is-picked { animation: match-prog-picked 1.6s ease; }
+
+@keyframes match-prog-picked {
+	0%, 60% { border-color: var(--match-blanco); box-shadow: 0 0 0 4px rgba( 255, 255, 255, 0.25 ); }
+	100%    { border-color: rgba( 255, 255, 255, 0.24 ); box-shadow: 0 0 0 0 rgba( 255, 255, 255, 0 ); }
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	.match-field__input.is-picked { animation-timing-function: steps( 1, end ); }
+}

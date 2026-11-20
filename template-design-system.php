@@ -23,7 +23,7 @@ $type = array(
 	array( 'Body / xxl', 'Poppins 500 · 20 / 1.5', 'match-xxl', 'Conoce nuestras soluciones' ),
 	array( 'Body / Largo', 'Poppins 500 · 18 / 1.6', 'match-body-lg', 'Sé parte de la base de datos ejecutiva más importante de la región.' ),
 	array( 'Body / Regular', 'Poppins 400 · 16 / 1.6', 'match-body', 'Las empresas líderes nos confían sus búsquedas.' ),
-	array( 'Nav / Regular', 'Poppins 500 · 15 / 1.7', 'match-nav-text', 'Posiciones disponibles' ),
+	array( 'Nav / Regular', 'Poppins 500 · 15 / 1.7', 'match-nav-text', 'Vacantes disponibles' ),
 	array( 'Body / small', 'Poppins 400 · 13 / 1', 'match-body-sm', 'Publicado hace 3 días' ),
 	array( 'Otros / Eyebrow', 'Poppins 500 · 16 / 1.5', 'match-eyebrow', 'Bienvenido a Match' ),
 );

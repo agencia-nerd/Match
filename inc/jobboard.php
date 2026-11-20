@@ -72,12 +72,21 @@ function match_filter_login_url( string $login_url, string $redirect ): string {
 add_filter( 'login_url', 'match_filter_login_url', 10, 2 );
 
 /**
+ * Login interino: el modal de sesión caducada del admin (wp-auth-check) carga
+ * wp-login.php?interim-login=1 en un iframe y solo se cierra si el flujo
+ * nativo termina en su pantalla de éxito. Ahí no se redirige al tema.
+ */
+function match_is_interim_login(): bool {
+	return ! empty( $_REQUEST['interim-login'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+}
+
+/**
  * wp-login.php sin acción (GET) → página de login del tema. Las acciones
  * (lostpassword, register, logout, postpass…) siguen en wp-login.php.
  */
 function match_redirect_wp_login(): void {
 	$page = match_login_page_url();
-	if ( ! $page || 'GET' !== ( $_SERVER['REQUEST_METHOD'] ?? '' ) ) {
+	if ( ! $page || 'GET' !== ( $_SERVER['REQUEST_METHOD'] ?? '' ) || match_is_interim_login() ) {
 		return;
 	}
 	$action = isset( $_GET['action'] ) ? sanitize_key( $_GET['action'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -100,7 +109,7 @@ add_action( 'login_init', 'match_redirect_wp_login' );
  */
 function match_login_failed(): void {
 	$page = match_login_page_url();
-	if ( ! $page ) {
+	if ( ! $page || match_is_interim_login() ) {
 		return;
 	}
 	$redirect = isset( $_POST['redirect_to'] ) ? sanitize_text_field( wp_unslash( $_POST['redirect_to'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
@@ -128,7 +137,8 @@ function match_login_page_guard(): void {
 	if ( ! is_page_template( 'template-login.php' ) ) {
 		return;
 	}
-	if ( is_user_logged_in() ) {
+	// Quien ya tiene sesión también puede abrir el enlace de cambio de contraseña.
+	if ( is_user_logged_in() && 'login' === match_login_view() ) {
 		wp_safe_redirect( match_jobboard_url() );
 		exit;
 	}
@@ -144,7 +154,8 @@ function match_login_page_guard(): void {
 add_action( 'template_redirect', 'match_login_page_guard' );
 
 /**
- * Aviso del login según la URL (?login=failed, ?loggedout=true, ?registered=1).
+ * Aviso del login según la URL (?login=failed, ?loggedout=true, ?cuenta=eliminada,
+ * ?registered=1).
  *
  * @return array{type:string,text:string}|null
  */
@@ -153,8 +164,14 @@ function match_login_notice(): ?array {
 	if ( isset( $_GET['login'] ) && 'failed' === $_GET['login'] ) {
 		return array( 'type' => 'error', 'text' => __( 'Correo o contraseña incorrectos. Inténtalo de nuevo.', 'match' ) );
 	}
+	if ( isset( $_GET['login'] ) && 'google_failed' === $_GET['login'] ) {
+		return array( 'type' => 'error', 'text' => __( 'No pudimos iniciar sesión con Google. Inténtalo de nuevo.', 'match' ) );
+	}
 	if ( ! empty( $_GET['loggedout'] ) ) {
 		return array( 'type' => 'ok', 'text' => __( 'Cerraste sesión correctamente.', 'match' ) );
+	}
+	if ( isset( $_GET['cuenta'] ) && 'eliminada' === $_GET['cuenta'] ) {
+		return array( 'type' => 'ok', 'text' => __( 'Tu cuenta fue eliminada.', 'match' ) );
 	}
 	if ( ! empty( $_GET['registered'] ) ) {
 		return array( 'type' => 'ok', 'text' => __( 'Cuenta creada. Ya puedes iniciar sesión.', 'match' ) );
@@ -194,30 +211,15 @@ function match_registro_cv_notice(): ?array {
 }
 
 /**
- * Paso 1: crea la cuenta solo con el correo (sin pedir contraseña, como en
- * Figma) y loguea automáticamente para que el paso 2 (subir CV) no pida
- * iniciar sesión de nuevo. La contraseña es aleatoria y nunca se expone: el
- * correo nativo de WordPress (wp_new_user_notification) manda el enlace
- * para fijarla, igual que "Enviar link de reseteo" en Perfil.
+ * Crea un candidato (rol subscriber) con usuario derivado del correo. Lo usan
+ * el registro por correo (con la contraseña que elige el candidato) y
+ * "Continuar con Google" (inc/google-auth.php), que no pasa contraseña: se
+ * genera una aleatoria que nunca se expone.
+ *
+ * @param array $extra Campos extra para wp_insert_user() (first_name, last_name, user_pass…).
+ * @return int|WP_Error
  */
-function match_handle_register(): void {
-	$back = match_registro_page_url() ?: home_url( '/' );
-
-	if ( ! isset( $_POST['_match_nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['_match_nonce'] ), 'match_register' ) || ! empty( $_POST['match_web'] ) ) {
-		wp_safe_redirect( add_query_arg( 'registro', 'error', $back ) );
-		exit;
-	}
-
-	$email = sanitize_email( wp_unslash( $_POST['email'] ?? '' ) );
-	if ( ! is_email( $email ) ) {
-		wp_safe_redirect( add_query_arg( array( 'registro' => 'error', 'msg' => rawurlencode( __( 'Escribe un correo válido.', 'match' ) ) ), $back ) );
-		exit;
-	}
-	if ( email_exists( $email ) ) {
-		wp_safe_redirect( add_query_arg( array( 'registro' => 'error', 'msg' => rawurlencode( __( 'Ese correo ya tiene una cuenta. Inicia sesión.', 'match' ) ) ), $back ) );
-		exit;
-	}
-
+function match_insert_candidate( string $email, array $extra = array() ) {
 	$username = sanitize_user( current( explode( '@', $email ) ), true ) ?: 'usuario';
 	$base     = $username;
 	$i        = 1;
@@ -225,21 +227,111 @@ function match_handle_register(): void {
 		$username = $base . ( ++$i );
 	}
 
+	$full = trim( ( $extra['first_name'] ?? '' ) . ' ' . ( $extra['last_name'] ?? '' ) );
+
 	$user_id = wp_insert_user(
+		array_merge(
+			array(
+				'user_pass'    => wp_generate_password( 24, true, true ),
+				'display_name' => $full,
+			),
+			array_filter( $extra, 'strlen' ),
+			array(
+				'user_login' => $username,
+				'user_email' => $email,
+				'role'       => 'subscriber',
+			)
+		)
+	);
+
+	// Prueba de usabilidad: tras el registro no hay pantalla de bienvenida; se
+	// pasa directo a «Sube tu CV». Se marca como vista para que el modal de
+	// onboarding del panel no aparezca después (?onboarding=1 lo sigue forzando).
+	if ( ! is_wp_error( $user_id ) ) {
+		update_user_meta( $user_id, 'match_onboarding_done', current_time( 'mysql' ) );
+	}
+
+	return $user_id;
+}
+
+/**
+ * Vuelve al paso 1 con el error y lo ya escrito (nunca la contraseña), para
+ * que template-registro.php vuelva a llenar los campos.
+ *
+ * @param array{first?:string,last?:string,email?:string} $fields
+ */
+function match_registro_back( string $message = '', array $fields = array() ): void {
+	$args = array( 'registro' => 'error', 'msg' => $message ? rawurlencode( $message ) : '' );
+	foreach ( $fields as $key => $value ) {
+		$args[ 'r_' . $key ] = rawurlencode( $value );
+	}
+	wp_safe_redirect( add_query_arg( array_filter( $args ), match_registro_page_url() ?: home_url( '/' ) ) );
+	exit;
+}
+
+/**
+ * Lo escrito en el paso 1 antes de un error (?r_first=&r_last=&r_email=).
+ *
+ * @return array{first:string,last:string,email:string}
+ */
+function match_registro_old(): array {
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended
+	return array(
+		'first' => isset( $_GET['r_first'] ) ? sanitize_text_field( wp_unslash( $_GET['r_first'] ) ) : '',
+		'last'  => isset( $_GET['r_last'] ) ? sanitize_text_field( wp_unslash( $_GET['r_last'] ) ) : '',
+		'email' => isset( $_GET['r_email'] ) ? sanitize_email( wp_unslash( $_GET['r_email'] ) ) : '',
+	);
+	// phpcs:enable
+}
+
+/**
+ * Paso 1: crea la cuenta con nombre, apellido, correo y la contraseña que
+ * elige el candidato (el CRM exige applicant.full_name al postular, así que
+ * el nombre es obligatorio). Manda el correo de bienvenida y loguea
+ * automáticamente para que el paso 2 (subir CV) no pida iniciar sesión.
+ */
+function match_handle_register(): void {
+	if ( ! isset( $_POST['_match_nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['_match_nonce'] ), 'match_register' ) || ! empty( $_POST['match_web'] ) ) {
+		match_registro_back();
+	}
+
+	$first = match_clean_person_name( $_POST['first_name'] ?? '' );
+	$last  = match_clean_person_name( $_POST['last_name'] ?? '' );
+	$email = sanitize_email( wp_unslash( $_POST['email'] ?? '' ) );
+	$pass  = isset( $_POST['pass'] ) ? (string) wp_unslash( $_POST['pass'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- contraseña: no se altera.
+	$old   = array( 'first' => $first, 'last' => $last, 'email' => $email );
+
+	if ( '' === $first ) {
+		match_registro_back( __( 'Escribe tu nombre.', 'match' ), $old );
+	}
+	if ( ! match_valid_person_name( $first ) || ! match_valid_person_name( $last ) ) {
+		match_registro_back( match_person_name_error(), $old );
+	}
+	if ( ! is_email( $email ) ) {
+		match_registro_back( __( 'Escribe un correo válido.', 'match' ), $old );
+	}
+	if ( email_exists( $email ) ) {
+		match_registro_back( __( 'Ese correo ya tiene una cuenta. Inicia sesión.', 'match' ), $old );
+	}
+	// Mismo mínimo que la pantalla de nueva contraseña (match_handle_resetpassword()).
+	if ( strlen( $pass ) < 8 ) {
+		match_registro_back( __( 'La contraseña debe tener al menos 8 caracteres.', 'match' ), $old );
+	}
+
+	$user_id = match_insert_candidate(
+		$email,
 		array(
-			'user_login' => $username,
-			'user_email' => $email,
-			'user_pass'  => wp_generate_password( 24, true, true ),
-			'role'       => 'subscriber',
+			'first_name' => $first,
+			'last_name'  => $last,
+			'user_pass'  => $pass,
 		)
 	);
 
 	if ( is_wp_error( $user_id ) ) {
-		wp_safe_redirect( add_query_arg( array( 'registro' => 'error', 'msg' => rawurlencode( $user_id->get_error_message() ) ), $back ) );
-		exit;
+		match_registro_back( $user_id->get_error_message(), $old );
 	}
 
-	wp_new_user_notification( $user_id, null, 'user' );
+	match_send_welcome_email( $user_id, 'email' );
 
 	wp_set_current_user( $user_id );
 	wp_set_auth_cookie( $user_id, true );
@@ -287,6 +379,14 @@ function match_handle_register_cv(): void {
 	update_user_meta( $user->ID, 'mjb_cv_name', sanitize_file_name( wp_unslash( $_FILES['cv']['name'] ) ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
 	update_user_meta( $user->ID, 'mjb_cv_date', current_time( 'mysql' ) );
 
+	// Si el registro empezó desde «Postular ahora» (J12), se vuelve a esa vacante con el modal abierto.
+	$return = isset( $_COOKIE['match_apply_return'] ) ? wp_validate_redirect( esc_url_raw( rawurldecode( wp_unslash( $_COOKIE['match_apply_return'] ) ) ), '' ) : '';
+	if ( $return ) {
+		setcookie( 'match_apply_return', '', time() - HOUR_IN_SECONDS, COOKIEPATH ?: '/', COOKIE_DOMAIN );
+		wp_safe_redirect( $return );
+		exit;
+	}
+
 	wp_safe_redirect( match_jobboard_url() );
 	exit;
 }
@@ -301,10 +401,16 @@ function match_google_login_url(): string {
 }
 
 /**
- * Vacantes destacadas del panel: las últimas.
+ * Vacantes destacadas del panel: las que el CRM marca como destacadas y, si
+ * no alcanzan, las más recientes (MJB_Query::featured_ids). En modo demo,
+ * las primeras de ejemplo.
  */
 function match_jobboard_featured( int $count = 3 ): array {
-	return match_jobs_list( array(), $count )['jobs'];
+	if ( ! match_job_board_active() || match_jobs_demo_mode() ) {
+		return match_jobs_list( array(), $count )['jobs'];
+	}
+
+	return array_map( 'match_job_data', MJB_Query::featured_ids( $count ) );
 }
 
 /**
@@ -420,12 +526,96 @@ function match_profile_guard(): void {
 add_action( 'template_redirect', 'match_profile_guard' );
 
 /**
- * Nombre corto para el saludo.
+ * Nombre corto para el saludo. Vacío si el candidato aún no tiene nombre: el
+ * registro por correo solo pide el correo, y WordPress rellena display_name
+ * con user_login (la parte del correo antes de la @), que no es un nombre.
  */
 function match_user_first_name( ?WP_User $user = null ): string {
 	$user = $user ?: wp_get_current_user();
-	return $user->first_name ?: ( explode( ' ', trim( $user->display_name ) )[0] ?: $user->user_login );
+	if ( $user->first_name ) {
+		return $user->first_name;
+	}
+	$display = trim( $user->display_name );
+	if ( '' === $display || $display === $user->user_login || is_email( $display ) ) {
+		return '';
+	}
+	return explode( ' ', $display )[0];
 }
+
+/**
+ * Postulación: nombre, apellidos y correo salen del perfil, no del formulario.
+ *
+ * El modal (match-job-board/apply-form.php) solo pide teléfono, CV y carta.
+ * Antes de que el plugin procese el envío (prioridad 10), se rellenan esos
+ * campos desde la cuenta; se sobrescribe lo que venga en el POST para que el
+ * perfil sea la única fuente. El teléfono se guarda para precargarlo la
+ * próxima vez.
+ */
+function match_apply_fill_from_profile(): void {
+	if ( ! is_user_logged_in() ) {
+		return;
+	}
+
+	$user    = wp_get_current_user();
+	$job_url = get_permalink( absint( $_POST['job_id'] ?? 0 ) ) ?: match_jobboard_url();
+
+	// Cuentas creadas antes de pedir el nombre en el registro: el modal lo
+	// pide (apply-form.php) y aquí se guarda en el perfil. Antes se mandaba
+	// user_login (la parte del correo) y el CRM recibía ese texto como nombre.
+	if ( '' === match_user_first_name( $user ) ) {
+		$first = match_clean_person_name( $_POST['first_name'] ?? '' );
+		$last  = match_clean_person_name( $_POST['last_name'] ?? '' );
+		if ( '' === $first || ! match_valid_person_name( $first ) || ! match_valid_person_name( $last ) ) {
+			wp_safe_redirect( add_query_arg( 'mjb_error', rawurlencode( '' === $first ? __( 'Escribe tu nombre.', 'match' ) : match_person_name_error() ), $job_url ) );
+			exit;
+		}
+		wp_update_user(
+			array(
+				'ID'           => $user->ID,
+				'first_name'   => $first,
+				'last_name'    => $last,
+				'display_name' => trim( $first . ' ' . $last ),
+			)
+		);
+		$user = get_userdata( $user->ID );
+	}
+
+	$_POST['first_name'] = match_user_first_name( $user );
+	$_POST['last_name']  = $user->last_name;
+	$_POST['email']      = $user->user_email;
+
+	$phone = sanitize_text_field( wp_unslash( $_POST['phone'] ?? '' ) );
+	if ( '' !== $phone ) {
+		// Solo números, espacios y «+», de 9 a 15 dígitos (J07). El navegador ya lo avisa; esto cubre el envío sin JavaScript.
+		$digits = preg_match_all( '/\d/', $phone );
+		if ( ! preg_match( '/^[\d\s+]+$/', $phone ) || $digits < 9 || $digits > 15 ) {
+			wp_safe_redirect( add_query_arg( 'mjb_error', rawurlencode( __( 'El teléfono no es válido: usa solo números, espacios y +, de 9 a 15 dígitos.', 'match' ) ), $job_url ) );
+			exit;
+		}
+		update_user_meta( $user->ID, 'mjb_phone', $phone );
+	}
+
+	// Carta (tope de 2000 en el API): el maxlength del navegador cuenta cada
+	// salto de línea como 1, pero lo envía como \r\n. Sin normalizar, una carta
+	// que llega justo a 2000 en pantalla supera los 2000 aquí y el plugin la
+	// recorta en silencio (mb_substr), así que se pierde el final.
+	if ( isset( $_POST['cover_letter'] ) ) {
+		$_POST['cover_letter'] = str_replace( array( "\r\n", "\r" ), "\n", (string) $_POST['cover_letter'] );
+	}
+}
+add_action( 'admin_post_mjb_apply', 'match_apply_fill_from_profile', 5 );
+
+/**
+ * La spec 1.1.195 del webhook marca `applicant.full_name` como obligatorio
+ * (sin él responde 400); el plugin solo manda first_name y last_name.
+ */
+function match_apply_payload_full_name( array $payload ): array {
+	if ( empty( $payload['applicant']['full_name'] ) ) {
+		$payload['applicant']['full_name'] = trim( ( $payload['applicant']['first_name'] ?? '' ) . ' ' . ( $payload['applicant']['last_name'] ?? '' ) );
+	}
+	return $payload;
+}
+add_filter( 'mjb/application_payload', 'match_apply_payload_full_name' );
 
 /**
  * CV guardado en el perfil (lo almacena el plugin en su carpeta protegida).
@@ -439,14 +629,25 @@ function match_user_cv( int $user_id = 0 ): ?array {
 		return null;
 	}
 
-	$file = (string) get_user_meta( $user_id, 'mjb_cv_file', true );
+	return match_cv_info(
+		(string) get_user_meta( $user_id, 'mjb_cv_file', true ),
+		(string) get_user_meta( $user_id, 'mjb_cv_name', true ),
+		(string) get_user_meta( $user_id, 'mjb_cv_date', true )
+	);
+}
 
-	if ( '' === $file || ! MJB_CV::exists( $file ) ) {
+/**
+ * Datos de un CV de la carpeta protegida del plugin para cv-row.php: el del
+ * perfil (match_user_cv) o el que viajó con una postulación.
+ *
+ * @return array{file:string,name:string,ext:string,date:string,size:string,url:string}|null
+ */
+function match_cv_info( string $file, string $name = '', string $date = '' ): ?array {
+	if ( '' === $file || ! match_job_board_active() || ! MJB_CV::exists( $file ) ) {
 		return null;
 	}
 
-	$name = (string) get_user_meta( $user_id, 'mjb_cv_name', true ) ?: $file;
-	$date = (string) get_user_meta( $user_id, 'mjb_cv_date', true );
+	$name = $name ?: $file;
 
 	return array(
 		'file' => $file,
@@ -505,13 +706,39 @@ function match_profile_check( string $action ): WP_User {
 }
 
 /**
+ * Nombre o apellido tal como llega del formulario: sin espacios de más.
+ *
+ * @param mixed $raw Valor sin tratar de $_POST.
+ */
+function match_clean_person_name( $raw ): string {
+	return (string) preg_replace( '/\s+/u', ' ', trim( sanitize_text_field( wp_unslash( (string) $raw ) ) ) );
+}
+
+/**
+ * Solo letras; espacios, apóstrofo y guion únicamente entre letras; máx. 50.
+ * Vacío cuenta como válido: cada formulario decide si el campo es obligatorio.
+ * Misma regla que el `pattern` de los inputs con data-name-input.
+ */
+function match_valid_person_name( string $name ): bool {
+	return '' === $name || ( mb_strlen( $name ) <= 50 && (bool) preg_match( "/^\p{L}+(?:[ '\-]\p{L}+)*$/u", $name ) );
+}
+
+function match_person_name_error(): string {
+	return __( 'El nombre y el apellido solo pueden tener letras, espacios, apóstrofo o guion.', 'match' );
+}
+
+/**
  * Información de cuenta: correo, nombre y apellido.
  */
 function match_profile_save(): void {
 	$user  = match_profile_check( 'match_profile_save' );
 	$email = sanitize_email( wp_unslash( $_POST['email'] ?? '' ) );
-	$first = sanitize_text_field( wp_unslash( $_POST['first_name'] ?? '' ) );
-	$last  = sanitize_text_field( wp_unslash( $_POST['last_name'] ?? '' ) );
+	$first = match_clean_person_name( $_POST['first_name'] ?? '' );
+	$last  = match_clean_person_name( $_POST['last_name'] ?? '' );
+
+	if ( ! match_valid_person_name( $first ) || ! match_valid_person_name( $last ) ) {
+		match_profile_redirect( 'error', match_person_name_error() );
+	}
 
 	if ( ! is_email( $email ) ) {
 		match_profile_redirect( 'error', __( 'Escribe un correo válido.', 'match' ) );
@@ -577,6 +804,51 @@ function match_profile_reset(): void {
 	match_profile_redirect( is_wp_error( $result ) ? 'error' : 'reset', is_wp_error( $result ) ? __( 'No pudimos enviar el correo. Inténtalo más tarde.', 'match' ) : '' );
 }
 add_action( 'admin_post_match_profile_reset', 'match_profile_reset' );
+
+/**
+ * Solo los candidatos pueden eliminar su cuenta desde el perfil: el registro
+ * del tema (match_insert_candidate) los crea como subscriber. Cualquier otro
+ * rol, o un subscriber con un rol adicional, queda fuera.
+ */
+function match_user_can_self_delete( ?WP_User $user = null ): bool {
+	$user = $user ?: wp_get_current_user();
+	return $user->exists() && array( 'subscriber' ) === array_values( $user->roles ) && ! is_super_admin( $user->ID );
+}
+
+/**
+ * Eliminar la cuenta: borra el CV de la carpeta protegida y el usuario con
+ * todos sus metas. Las postulaciones se conservan como historial: pasan al
+ * primer administrador. Lo ya enviado al CRM no se toca.
+ */
+function match_profile_delete(): void {
+	$user = match_profile_check( 'match_profile_delete' );
+
+	if ( ! match_user_can_self_delete( $user ) ) {
+		match_profile_redirect( 'error', __( 'Esta cuenta no se puede eliminar desde aquí.', 'match' ) );
+	}
+	if ( 'ELIMINAR' !== trim( sanitize_text_field( wp_unslash( $_POST['confirm'] ?? '' ) ) ) ) {
+		match_profile_redirect( 'error', __( 'Escribe ELIMINAR para confirmar.', 'match' ) );
+	}
+
+	$admins = get_users( array( 'role' => 'administrator', 'number' => 1, 'fields' => 'ID', 'orderby' => 'ID' ) );
+	if ( ! $admins ) {
+		match_profile_redirect( 'error', __( 'No pudimos eliminar tu cuenta. Inténtalo más tarde.', 'match' ) );
+	}
+
+	$cv = (string) get_user_meta( $user->ID, 'mjb_cv_file', true );
+	if ( $cv && match_job_board_active() ) {
+		MJB_CV::delete( $cv );
+	}
+
+	require_once ABSPATH . 'wp-admin/includes/user.php';
+	wp_logout();
+	wp_delete_user( $user->ID, (int) $admins[0] );
+
+	$login = match_login_page_url();
+	wp_safe_redirect( $login ? add_query_arg( 'cuenta', 'eliminada', $login ) : home_url( '/' ) );
+	exit;
+}
+add_action( 'admin_post_match_profile_delete', 'match_profile_delete' );
 
 /**
  * Meta de usuario como arreglo. get_user_meta devuelve '' cuando no existe
@@ -660,6 +932,37 @@ function match_toggle_saved( string $id, int $user_id = 0 ): bool {
 }
 
 /**
+ * Aviso «Inicia sesión para guardar vacantes» (J20) para quien no tiene sesión, en las vistas con marcador de
+ * guardar: portada y Job Board.
+ */
+function match_save_modal(): void {
+	if ( is_user_logged_in() || ! ( is_front_page() || ( function_exists( 'match_is_jobboard_view' ) && match_is_jobboard_view() ) ) ) {
+		return;
+	}
+	get_template_part( 'template-parts/jobboard/save-modal' );
+}
+add_action( 'wp_footer', 'match_save_modal' );
+
+/**
+ * Tras iniciar sesión (o registrarse) desde el aviso de guardar, la página vuelve con ?match_save=ID: se guarda
+ * esa vacante (sin alternar: si ya estaba guardada se deja así) y se limpia la URL, conservando lo demás.
+ */
+function match_save_after_login(): void {
+	if ( ! isset( $_GET['match_save'] ) || ! is_user_logged_in() ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return;
+	}
+
+	$id = sanitize_key( wp_unslash( $_GET['match_save'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	if ( '' !== $id && ! isset( match_saved_map()[ $id ] ) ) {
+		match_toggle_saved( $id );
+	}
+
+	wp_safe_redirect( remove_query_arg( 'match_save' ) );
+	exit;
+}
+add_action( 'template_redirect', 'match_save_after_login', 5 );
+
+/**
  * POST /wp-json/match/v1/saved/{id} alterna el guardado (sesión + nonce REST).
  */
 function match_saved_rest_routes(): void {
@@ -705,7 +1008,7 @@ function match_jobboard_saved_jobs( int $limit = 0 ): array {
 			continue;
 		}
 		$job['saved']    = true;
-		$job['saved_at'] = $ts ? date_i18n( 'j M, Y', $ts ) : '';
+		$job['saved_at'] = $ts ? wp_date( 'j M, Y', $ts ) : '';
 		$jobs[]          = $job;
 		if ( $limit && count( $jobs ) >= $limit ) {
 			break;
@@ -744,18 +1047,27 @@ function match_jobboard_applied_keys(): array {
 /**
  * Etapas de una postulación: meta `stage` del plugin → etiqueta, variante
  * visual de la pastilla y el texto de "Próximo paso" (columna de estado en
- * el detalle de vacante, Figma 4158:4284). El plugin hoy solo escribe
- * "sent"; las demás llegarán cuando el CRM exponga el avance (ver
- * CONTEXTO-proyecto-match.md).
+ * el detalle de vacante, Figma 4158:4284 / 5548:5587). `step` es el nombre
+ * en la línea de etapas del panel, cuando difiere de la pastilla.
  *
- * @return array<string, array{label:string,variant:string,hint:string}>
+ * El avance llega por los avisos de estado del CRM (MJB_Status en el plugin):
+ * cada aviso trae el estado público (`status`: recibida, en_revision,
+ * en_entrevista…) y el plugin lo traduce a una de estas etapas en el meta
+ * `stage`, con su fecha en `status_history`. "closed" agrupa los tres
+ * finales (seleccionada, no_seleccionada, proceso_cerrado); su "Próximo
+ * paso" depende del resultado (ver match_application_final_hint).
+ *
+ * Respaldo sin aviso: si la VACANTE figura cerrada en GET /public/jobs
+ * (`closed` o desaparecida del CRM), la postulación pasa a "closed" igual.
+ *
+ * @return array<string, array{label:string,variant:string,hint:string,step?:string}>
  */
 function match_application_stages(): array {
 	return array(
 		'sent'      => array(
 			'label' => __( 'Enviado', 'match' ),
 			'variant' => 'sent',
-			'hint' => __( 'Tu postulación fue enviada. El equipo de Match la está revisando.', 'match' ),
+			'hint' => __( 'Recibimos tu CV. Lo revisamos y lo enviamos al cliente pronto.', 'match' ),
 		),
 		'review'    => array(
 			'label' => __( 'En revisión', 'match' ),
@@ -764,6 +1076,7 @@ function match_application_stages(): array {
 		),
 		'interview' => array(
 			'label' => __( 'Entrevista agendada', 'match' ),
+			'step' => __( 'Entrevista', 'match' ),
 			'variant' => 'ok',
 			'hint' => __( 'Match coordinará la entrevista contigo. Revisa tu correo.', 'match' ),
 		),
@@ -775,19 +1088,74 @@ function match_application_stages(): array {
 		'closed'    => array(
 			'label' => __( 'Finalizado', 'match' ),
 			'variant' => 'muted',
-			'hint' => __( 'Este proceso ha finalizado.', 'match' ),
+			'hint' => __( 'Match cerró este proceso. Si avanzaste, te contactarán por correo.', 'match' ),
 		),
 	);
 }
 
 /**
- * Postulación del usuario actual a una vacante puntual (real o "demo-N"), o
- * null si no ha postulado: { stage, applied (fecha legible), applied_ts }.
- * Reutiliza match_user_applications() para no duplicar la lógica real/demo;
- * en modo demo esas cinco filas son fijas, así que sirven para revisar las
- * cinco etapas sin CRM.
+ * Recorrido del panel "Etapas del proceso" (Figma 5548:5587), en orden.
+ * "closed" no es un paso: es el cierre del proceso, que corta el recorrido.
  *
- * @return array{stage:string,applied:string,applied_ts:int}|null
+ * @return string[]
+ */
+function match_application_steps(): array {
+	return array( 'sent', 'review', 'interview', 'final' );
+}
+
+/**
+ * "Próximo paso" de una fila de match_user_applications(). En "closed" el
+ * texto depende de cómo terminó: seleccionado, descartado o proceso cerrado
+ * (por aviso del CRM o porque la vacante figura cerrada).
+ */
+function match_application_hint( array $row ): string {
+	$stage = $row['stage'] ?? 'sent';
+
+	if ( 'closed' !== $stage ) {
+		return match_application_stages()[ $stage ]['hint'] ?? '';
+	}
+
+	switch ( $row['status'] ?? '' ) {
+		case 'seleccionada':
+			return __( '¡Felicitaciones! Fuiste seleccionado/a. Match se pondrá en contacto contigo para los siguientes pasos.', 'match' );
+		case 'no_seleccionada':
+			return __( 'Gracias por tu interés. En esta ocasión no continúas en el proceso; te tendremos en cuenta para futuras vacantes.', 'match' );
+	}
+
+	if ( ! empty( $row['closed_at'] ) ) {
+		/* translators: %s: fecha de cierre del proceso. */
+		return sprintf( __( 'Match cerró este proceso el %s. Si avanzaste, te contactarán por correo.', 'match' ), $row['closed_at'] );
+	}
+
+	return match_application_stages()['closed']['hint'];
+}
+
+/**
+ * Historial de avisos de estado de una postulación (meta del plugin), en
+ * orden: [{ event_id, status, stage, at, ts }]. Las entradas sin etapa
+ * conocida se descartan.
+ */
+function match_application_history( int $application_id ): array {
+	$history = array();
+
+	foreach ( (array) MJB_Helpers::get_meta( $application_id, 'status_history', array() ) as $entry ) {
+		$ts = strtotime( (string) ( $entry['at'] ?? '' ) );
+		if ( $ts && ! empty( $entry['stage'] ) && isset( match_application_stages()[ $entry['stage'] ] ) ) {
+			$history[] = array_merge( $entry, array( 'ts' => $ts ) );
+		}
+	}
+
+	return $history;
+}
+
+/**
+ * Postulación del usuario actual a una vacante puntual (real o "demo-N"), o
+ * null si no ha postulado: la misma fila de match_user_applications().
+ * Reutiliza esa función para no duplicar la lógica real/demo; en modo demo
+ * esas cinco filas son fijas, así que sirven para revisar las cinco etapas
+ * sin CRM.
+ *
+ * @return array{job:array,stage:string,status:string,applied:string,applied_ts:int,closed_at:string,dates:array,history:array,cv:?array}|null
  */
 function match_job_application_data( string $job_key ): ?array {
 	if ( ! is_user_logged_in() ) {
@@ -796,11 +1164,7 @@ function match_job_application_data( string $job_key ): ?array {
 
 	foreach ( match_user_applications() as $row ) {
 		if ( (string) $row['job']['id'] === $job_key ) {
-			return array(
-				'stage'      => $row['stage'],
-				'applied'    => $row['applied'],
-				'applied_ts' => $row['applied_ts'],
-			);
+			return $row;
 		}
 	}
 
@@ -809,7 +1173,9 @@ function match_job_application_data( string $job_key ): ?array {
 
 /**
  * Postulaciones del usuario listas para la fila: job (ver match_job_data),
- * stage, applied (fecha legible) y applied_ts para ordenar.
+ * stage, status (estado público del CRM), applied (fecha legible),
+ * applied_ts para ordenar, dates (etapa → fecha en que se alcanzó) y
+ * history (avisos del CRM, ver match_application_history).
  *
  * En modo demo (sin vacantes sincronizadas) devuelve cinco filas de ejemplo
  * con todas las etapas, salvo que se pida ?demo=0.
@@ -828,24 +1194,67 @@ function match_user_applications( string $order = 'reciente' ): array {
 				'url'     => '',
 				'type'    => '',
 				'place'   => '',
+				'submarcas' => $job_id ? match_job_submarcas( $job_id ) : array(),
 			);
-			$stage  = (string) MJB_Helpers::get_meta( $application->ID, 'stage', 'sent' );
-			$when   = strtotime( (string) MJB_Helpers::get_meta( $application->ID, 'applied_at' ) ) ?: (int) get_post_time( 'U', true, $application );
+			$stage   = (string) MJB_Helpers::get_meta( $application->ID, 'stage', 'sent' );
+			$stage   = isset( match_application_stages()[ $stage ] ) ? $stage : 'sent';
+			$when    = strtotime( (string) MJB_Helpers::get_meta( $application->ID, 'applied_at' ) ) ?: (int) get_post_time( 'U', true, $application );
+			$history = match_application_history( $application->ID );
+
+			// Fecha en que se llegó por primera vez a cada etapa.
+			$dates = array( 'sent' => wp_date( 'j M, Y', $when ) );
+			foreach ( $history as $entry ) {
+				$dates[ $entry['stage'] ] = $dates[ $entry['stage'] ] ?? wp_date( 'j M, Y', $entry['ts'] );
+			}
+
+			// Respaldo sin aviso del CRM: la vacante figura cerrada o desapareció
+			// del CRM sin pasar por `closed` (el sync la marca missing_in_crm).
+			if ( 'closed' !== $stage && $job_id && in_array( MJB_Helpers::get_meta( $job_id, 'status' ), array( 'closed', 'missing_in_crm' ), true ) ) {
+				$stage     = 'closed';
+				$closed_ts = strtotime( (string) MJB_Helpers::get_meta( $job_id, 'closed_at' ) );
+				if ( $closed_ts ) {
+					$dates['closed'] = wp_date( 'j M, Y', $closed_ts );
+				}
+			}
+
+			// El CV que viajó con esta postulación, no el que hoy tiene el perfil.
+			$cv_file = (string) MJB_Helpers::get_meta( $application->ID, 'cv_file' );
+			$cv_name = $cv_file === (string) get_user_meta( get_current_user_id(), 'mjb_cv_file', true ) ? (string) get_user_meta( get_current_user_id(), 'mjb_cv_name', true ) : '';
+
 			$rows[] = array(
 				'job'        => $job,
-				'stage'      => isset( match_application_stages()[ $stage ] ) ? $stage : 'sent',
-				'applied'    => date_i18n( 'j M, Y', $when ),
+				'stage'      => $stage,
+				'status'     => (string) MJB_Helpers::get_meta( $application->ID, 'status' ),
+				'applied'    => wp_date( 'j M, Y', $when ),
 				'applied_ts' => $when,
+				'closed_at'  => $dates['closed'] ?? '',
+				'dates'      => $dates,
+				'history'    => $history,
+				'cv'         => match_cv_info( $cv_file, $cv_name, wp_date( 'Y-m-d H:i:s', $when ) ),
 			);
 		}
 	} elseif ( match_jobs_demo_mode() && '0' !== ( $_GET['demo'] ?? '' ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$stages = array( 'review', 'interview', 'closed', 'sent', 'final' );
+		$cv     = match_user_cv();
 		foreach ( array_slice( match_demo_jobs(), 0, 5 ) as $i => $job ) {
+			$applied = strtotime( '2026-04-08' ) - $i * DAY_IN_SECONDS;
+			$dates   = array( 'sent' => date_i18n( 'j M, Y', $applied ) );
+			foreach ( array_slice( match_application_steps(), 1, max( 0, (int) array_search( $stages[ $i ], match_application_steps(), true ) ) ) as $n => $step ) {
+				$dates[ $step ] = date_i18n( 'j M, Y', $applied + ( $n + 1 ) * 3 * DAY_IN_SECONDS );
+			}
+			if ( 'closed' === $stages[ $i ] ) {
+				$dates['closed'] = date_i18n( 'j M, Y', strtotime( '2026-05-02' ) );
+			}
 			$rows[] = array(
 				'job'        => $job,
 				'stage'      => $stages[ $i ],
-				'applied'    => date_i18n( 'j M, Y', strtotime( '2026-04-08' ) - $i * DAY_IN_SECONDS ),
-				'applied_ts' => strtotime( '2026-04-08' ) - $i * DAY_IN_SECONDS,
+				'status'     => '',
+				'applied'    => $dates['sent'],
+				'applied_ts' => $applied,
+				'closed_at'  => $dates['closed'] ?? '',
+				'dates'      => $dates,
+				'history'    => array(),
+				'cv'         => $cv,
 			);
 		}
 	}
@@ -957,7 +1366,7 @@ function match_job_detail_data( string $id ): ?array {
 	$job['requirements']     = array(); // El CRM lo incluye dentro de la descripción.
 	$job['summary']          = array_filter(
 		array(
-			__( 'Nivel', 'match' )         => (string) MJB_Helpers::get_meta( $post_id, 'seniority' ),
+			__( 'Nivel', 'match' )         => MJB_Helpers::seniority_label( (string) MJB_Helpers::get_meta( $post_id, 'seniority' ) ),
 			__( 'Modalidad', 'match' )     => MJB_Helpers::work_mode_label( (string) MJB_Helpers::get_meta( $post_id, 'work_mode' ) ),
 			__( 'Jornada', 'match' )       => MJB_Helpers::employment_type_label( (string) MJB_Helpers::get_meta( $post_id, 'employment_type' ) ),
 			__( 'Ubicación', 'match' )     => trim( implode( ', ', array_filter( array( $city, $country ) ) ), ', ' ),
@@ -978,6 +1387,67 @@ function match_job_detail_data( string $id ): ?array {
  * Listado de vacantes (Figma: Job-Board/Entrance, 4009:3081)
  * ====================================================================== */
 
+/** Vacantes por página del listado. */
+const MATCH_JOBS_PER_PAGE = 10;
+
+/**
+ * El plugin pone su propio tamaño de página (12) en la consulta principal del archivo; se iguala al del listado
+ * para que WordPress cuente las mismas páginas que la paginación.
+ */
+add_filter( 'mjb/jobs_per_page', fn(): int => MATCH_JOBS_PER_PAGE );
+
+/**
+ * El listado no sale de la consulta principal (búsqueda por empresa/submarca y modo demo van aparte), así que
+ * /vacantes/page/N/ no debe dar 404 aunque la consulta principal tenga menos páginas: la plantilla ya pinta el
+ * estado vacío si la página no existe.
+ */
+function match_jobs_archive_no_404( $preempt, WP_Query $query ) {
+	if ( class_exists( 'MJB_Helpers' ) && $query->is_main_query() && $query->is_post_type_archive( MJB_Helpers::job_post_type() ) ) {
+		return true;
+	}
+	return $preempt;
+}
+add_filter( 'pre_handle_404', 'match_jobs_archive_no_404', 10, 2 );
+
+/**
+ * Ids de vacantes que coinciden con la búsqueda por empresa (taxonomía
+ * mjb_company, por trozo del nombre) o por submarca. $ids_args es la consulta
+ * de ids sin texto, con los filtros activos.
+ */
+function match_jobs_search_extra_ids( string $q, array $ids_args ): array {
+	$ids = array();
+
+	$companies = get_terms(
+		array(
+			'taxonomy'   => 'mjb_company',
+			'name__like' => $q,
+			'fields'     => 'ids',
+			'hide_empty' => false,
+		)
+	);
+	if ( $companies && ! is_wp_error( $companies ) ) {
+		$tax_query             = $ids_args['tax_query'] ?? array();
+		$tax_query[]           = array(
+			'taxonomy' => 'mjb_company',
+			'field'    => 'term_id',
+			'terms'    => $companies,
+		);
+		$tax_query['relation'] = 'AND';
+		$ids                   = ( new WP_Query( array_merge( $ids_args, array( 'tax_query' => $tax_query ) ) ) )->posts; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+	}
+
+	$slugs = match_submarcas_search( $q );
+	if ( $slugs ) {
+		foreach ( ( new WP_Query( $ids_args ) )->posts as $id ) {
+			if ( array_intersect( $slugs, array_column( match_job_submarcas( $id ), 'slug' ) ) ) {
+				$ids[] = $id;
+			}
+		}
+	}
+
+	return array_values( array_unique( array_map( 'intval', $ids ) ) );
+}
+
 /**
  * Consulta del listado: filtros por taxonomía, búsqueda libre, orden y
  * paginación. En modo demo trabaja en memoria sobre las filas de ejemplo.
@@ -991,7 +1461,7 @@ function match_jobs_archive_query( array $filters, string $q = '', string $order
 		$jobs = match_jobs_demo_filtered( $filters );
 		if ( '' !== $q ) {
 			$needle = mb_strtolower( $q );
-			$jobs   = array_values( array_filter( $jobs, fn( array $job ): bool => false !== mb_strpos( mb_strtolower( $job['title'] . ' ' . $job['company'] . ' ' . implode( ' ', $job['skills'] ) ), $needle ) ) );
+			$jobs   = array_values( array_filter( $jobs, fn( array $job ): bool => false !== mb_strpos( mb_strtolower( $job['title'] . ' ' . $job['company'] . ' ' . implode( ' ', $job['skills'] ) . ' ' . implode( ' ', array_column( $job['submarcas'], 'label' ) ) ), $needle ) ) );
 		}
 		if ( 'antiguo' === $order ) {
 			$jobs = array_reverse( $jobs );
@@ -1006,17 +1476,27 @@ function match_jobs_archive_query( array $filters, string $q = '', string $order
 		);
 	}
 
-	$query = new WP_Query(
-		array(
-			'post_type'      => MJB_Helpers::job_post_type(),
-			'posts_per_page' => $per_page,
-			'paged'          => $page,
-			's'              => $q,
-			'orderby'        => 'date',
-			'order'          => 'antiguo' === $order ? 'ASC' : 'DESC',
-			'tax_query'      => match_jobs_tax_query( $filters ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
-		)
-	);
+	$args = array(
+		'post_type'      => MJB_Helpers::job_post_type(),
+		'posts_per_page' => $per_page,
+		'paged'          => $page,
+		's'              => $q,
+		'orderby'        => 'date',
+		'order'          => 'antiguo' === $order ? 'ASC' : 'DESC',
+	) + match_jobs_query_args( $filters );
+
+	// La búsqueda de WordPress solo mira título y contenido: se suman las
+	// vacantes cuya empresa o submarca coincide con el texto.
+	if ( '' !== $q ) {
+		$ids_args = array_merge( $args, array( 'fields' => 'ids', 'posts_per_page' => -1, 'paged' => 1, 'no_found_rows' => true ) );
+		$extra    = match_jobs_search_extra_ids( $q, array_merge( $ids_args, array( 's' => '' ) ) );
+		if ( $extra ) {
+			$ids  = array_unique( array_merge( ( new WP_Query( $ids_args ) )->posts, $extra ) );
+			$args = array_merge( $args, array( 's' => '', 'post__in' => $ids ) );
+		}
+	}
+
+	$query = new WP_Query( $args );
 
 	return array(
 		'jobs'  => array_map( fn( WP_Post $post ): array => match_job_data( $post->ID ), $query->posts ),
@@ -1026,3 +1506,41 @@ function match_jobs_archive_query( array $filters, string $q = '', string $order
 		'demo'  => false,
 	);
 }
+
+/**
+ * Los candidatos (usuarios sin permiso de edición) no entran al escritorio de WordPress: /wp-admin/ y
+ * /wp-admin/profile.php los devuelven a su panel. Quedan fuera admin-ajax.php y admin-post.php, que usa el sitio
+ * (login con Google, newsletter, onboarding, etc.). Administradores y editores no se ven afectados.
+ */
+function match_block_admin_for_candidates(): void {
+	if ( wp_doing_ajax() || wp_doing_cron() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
+		return;
+	}
+	if ( 'admin-post.php' === basename( wp_parse_url( $_SERVER['SCRIPT_NAME'] ?? '', PHP_URL_PATH ) ?: '' ) ) {
+		return;
+	}
+	if ( is_user_logged_in() && ! current_user_can( 'edit_posts' ) ) {
+		wp_safe_redirect( match_jobboard_url() );
+		exit;
+	}
+}
+add_action( 'admin_init', 'match_block_admin_for_candidates' );
+
+/**
+ * Animación de entrada del listado del Job Board: solo en la primera carga
+ * limpia de la sesión. Si la URL trae filtros, búsqueda, orden o paginación
+ * (?q, ?nivel[], ?orden, /page/2/) o ya se animó antes (sessionStorage
+ * jbAnimated), se marca <html> con .jb-no-anim y el CSS la desactiva. Va en el
+ * <head> para decidirlo antes del primer pintado y evitar parpadeos.
+ */
+function match_jb_animation_gate(): void {
+	?>
+<script>
+(function(){try{var d=document.documentElement,s=window.sessionStorage;
+if(s.getItem('jbAnimated')||window.location.search||/\/page\/\d+/.test(window.location.pathname)){d.classList.add('jb-no-anim');return;}
+window.addEventListener('load',function(){setTimeout(function(){try{s.setItem('jbAnimated','1');}catch(e){}},1200);});
+}catch(e){}})();
+</script>
+	<?php
+}
+add_action( 'wp_head', 'match_jb_animation_gate', 1 );

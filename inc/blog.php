@@ -1,6 +1,6 @@
 <?php
 /**
- * Blog (Figma: Prensa & News 3455:142, Blog — Entrada 3933:77).
+ * Blog (Figma: Blog 3455:142, Blog — Entrada 3933:77).
  *
  * El listado vive en la página con la plantilla "Blog" (template-blog.php).
  * Filtra por ?categoria= y ?buscar= y pagina con ?pagina=, así que los
@@ -133,6 +133,82 @@ function match_related_posts( int $post_id, int $count = 3 ): array {
 }
 
 /**
+ * Las entradas cuelgan de la página del blog: /blog/{slug}/ en lugar de
+ * /{slug}/. Se hace en el tema (no en Ajustes → Enlaces permanentes) para
+ * que valga igual en todos los entornos y no mueva otros archivos bajo /blog/.
+ *
+ * Base = slug de la página con la plantilla Blog; vacío si no existe o si
+ * el sitio no usa enlaces permanentes (entonces todo queda como antes).
+ */
+function match_blog_base(): string {
+	$id = match_blog_page_id();
+	return $id && get_option( 'permalink_structure' ) ? (string) get_post_field( 'post_name', $id ) : '';
+}
+
+/**
+ * URL de cada entrada: /blog/{slug}/. Los borradores sin publicar conservan
+ * su enlace de vista previa (?p=); $leavename deja %postname% para que el
+ * editor permita cambiar el slug.
+ */
+function match_blog_post_link( string $url, WP_Post $post, bool $leavename ): string {
+	$base = match_blog_base();
+	if ( ! $base || false !== strpos( $url, '?' ) ) {
+		return $url;
+	}
+
+	$slug = $leavename ? '%postname%' : $post->post_name;
+	return home_url( user_trailingslashit( $base . '/' . $slug, 'single' ) );
+}
+add_filter( 'post_link', 'match_blog_post_link', 10, 3 );
+
+/**
+ * Regla para /blog/{slug}/ (y su paginación interna /blog/{slug}/2/). Las
+ * reglas se regeneran solas una vez cuando cambia la base (p. ej. si se
+ * renombra la página del blog).
+ */
+function match_blog_rewrite(): void {
+	$base = match_blog_base();
+	if ( ! $base ) {
+		return;
+	}
+
+	$quoted = preg_quote( $base, '#' );
+	add_rewrite_rule( '^' . $quoted . '/([^/]+)(?:/([0-9]+))?/?$', 'index.php?name=$matches[1]&page=$matches[2]', 'top' );
+
+	if ( get_option( 'match_blog_rewrite_base' ) !== $base ) {
+		update_option( 'match_blog_rewrite_base', $base );
+		flush_rewrite_rules( false );
+	}
+}
+add_action( 'init', 'match_blog_rewrite', 20 );
+
+/**
+ * Las URLs antiguas de entradas (/{slug}/) redirigen con 301 a /blog/{slug}/,
+ * conservando la query, para no perder enlaces compartidos ni posicionamiento.
+ */
+function match_blog_redirect_old_posts(): void {
+	$base = match_blog_base();
+	if ( ! $base || ! is_singular( 'post' ) || is_preview() ) {
+		return;
+	}
+
+	$uri  = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+	$path = trim( (string) wp_parse_url( $uri, PHP_URL_PATH ), '/' );
+	$home = trim( (string) wp_parse_url( home_url( '/' ), PHP_URL_PATH ), '/' );
+	$path = trim( preg_replace( '#^' . preg_quote( $home, '#' ) . '#', '', $path ), '/' );
+
+	if ( 0 === strpos( $path . '/', $base . '/' ) ) {
+		return;
+	}
+
+	$target = get_permalink();
+	$query  = isset( $_SERVER['QUERY_STRING'] ) ? sanitize_text_field( wp_unslash( $_SERVER['QUERY_STRING'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+	wp_safe_redirect( $query ? $target . ( false === strpos( $target, '?' ) ? '?' : '&' ) . $query : $target, 301 );
+	exit;
+}
+add_action( 'template_redirect', 'match_blog_redirect_old_posts', 1 );
+
+/**
  * Los archivos de categoría usan el listado del blog con su filtro.
  */
 function match_blog_redirect_categories(): void {
@@ -142,6 +218,32 @@ function match_blog_redirect_categories(): void {
 	}
 }
 add_action( 'template_redirect', 'match_blog_redirect_categories' );
+
+/**
+ * La URL antigua /prensa/ (y lo que cuelgue de ella) pasa a /blog/ con 301,
+ * conservando la query (?categoria=, ?buscar=, ?pagina=). No redirige si la
+ * página aún tiene el slug «prensa», para no entrar en bucle.
+ */
+function match_blog_redirect_prensa(): void {
+	$uri  = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+	$path = trim( (string) wp_parse_url( $uri, PHP_URL_PATH ), '/' );
+	$home = trim( (string) wp_parse_url( home_url( '/' ), PHP_URL_PATH ), '/' );
+	$path = trim( preg_replace( '#^' . preg_quote( $home, '#' ) . '#', '', $path ), '/' );
+
+	if ( 'prensa' !== $path && 0 !== strpos( $path, 'prensa/' ) ) {
+		return;
+	}
+
+	$target = match_blog_url();
+	if ( 'prensa' === trim( (string) wp_parse_url( $target, PHP_URL_PATH ), '/' ) ) {
+		return;
+	}
+
+	$query = isset( $_SERVER['QUERY_STRING'] ) ? sanitize_text_field( wp_unslash( $_SERVER['QUERY_STRING'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+	wp_safe_redirect( $query ? $target . ( false === strpos( $target, '?' ) ? '?' : '&' ) . $query : $target, 301 );
+	exit;
+}
+add_action( 'template_redirect', 'match_blog_redirect_prensa', 1 );
 
 /**
  * Newsletter: valida y avisa por correo al equipo, luego vuelve al listado

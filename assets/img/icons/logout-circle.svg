@@ -1,0 +1,10 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<mask id="match-logout-circle-mask">
+<rect width="24" height="24" fill="#fff"/>
+<path d="M13.5 7.25H15.75C16.3023 7.25 16.75 7.69772 16.75 8.25V15.75C16.75 16.3023 16.3023 16.75 15.75 16.75H13.5" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M14.25 12H7.25M10 9.25L7.25 12L10 14.75" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+</mask>
+</defs>
+<circle cx="12" cy="12" r="12" fill="currentColor" mask="url(#match-logout-circle-mask)"/>
+</svg>

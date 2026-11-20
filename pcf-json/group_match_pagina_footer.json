@@ -1,0 +1,42 @@
+{
+    "key": "group_match_pagina_footer",
+    "title": "Página — Pie de página",
+    "fields": [
+        {
+            "default_value": "",
+            "enable_opacity": 0,
+            "return_format": "string",
+            "key": "field_page_footer_logo_color",
+            "label": "Color del isotipo del pie de esta página",
+            "name": "footer_iso_color",
+            "type": "color_picker",
+            "instructions": "Opcional. Color del ícono (isotipo) del logo grande al final de esta página; solo cambia esta página y las letras «match» no cambian. Si queda vacío: en las páginas de solución se usa el color de su paleta (pestaña General → Paleta); en el resto, el degradado azul por defecto (o el color de Apariencia → Personalizar → Match — Contacto, si ahí se eligió uno).",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "page"
+            }
+        ]
+    ],
+    "menu_order": 99,
+    "position": "side",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "field",
+    "hide_on_screen": [],
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "modified": 1791912037
+}

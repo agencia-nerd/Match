@@ -9,8 +9,8 @@ defined( 'ABSPATH' ) || exit;
 
 $phone = get_theme_mod( 'match_phone', '(+51) 908825057' );
 $email = get_theme_mod( 'match_email', 'conversemos@match.win' );
-$ruc   = get_theme_mod( 'match_ruc', '20508540788' );
-$razon = get_theme_mod( 'match_razon_social', 'MATCH CONSULTORES SAC' );
+$ruc   = get_theme_mod( 'match_ruc', '20613126725' );
+$razon = get_theme_mod( 'match_razon_social', 'MATCH GROUP S.A.C.' );
 
 $columns = array(
 	'footer_jobs'   => __( 'Job Board', 'match' ),
@@ -49,7 +49,28 @@ $columns = array(
 			</nav>
 		</div>
 
-		<p class="match-footer__wordmark">
+		<?php $iso_color = match_footer_iso_color(); ?>
+		<?php if ( ! $iso_color ) : ?>
+			<?php
+			/*
+			 * Degradado por defecto del isotipo del pie: linear-gradient(60deg,
+			 * #0086F1 2.55%, #0081F0 21.84%, #0075EE 41.97%, #0060EB 62.94%,
+			 * #0043E6 83.07%, #003FE6 86.43%). Los extremos de la línea salen de
+			 * la caja del isotipo en el SVG (x 0–216, y 22–151) a 60°.
+			 */
+			?>
+			<svg class="match-footer__defs" width="0" height="0" aria-hidden="true" focusable="false">
+				<linearGradient id="match-footer-iso-gradient" x1="-0.9" y1="149.4" x2="216.9" y2="23.6" gradientUnits="userSpaceOnUse">
+					<stop offset="0.0255" stop-color="#0086F1" />
+					<stop offset="0.2184" stop-color="#0081F0" />
+					<stop offset="0.4197" stop-color="#0075EE" />
+					<stop offset="0.6294" stop-color="#0060EB" />
+					<stop offset="0.8307" stop-color="#0043E6" />
+					<stop offset="0.8643" stop-color="#003FE6" />
+				</linearGradient>
+			</svg>
+		<?php endif; ?>
+		<p class="match-footer__wordmark<?php echo $iso_color ? ' has-iso-color' : ''; ?>"<?php echo $iso_color ? ' style="--footer-iso: ' . esc_attr( $iso_color ) . '"' : ''; ?>>
 			<?php echo match_logo(); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 		</p>
 	</div>

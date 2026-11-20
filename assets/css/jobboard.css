@@ -162,6 +162,80 @@
 	gap: var(--match-space-8);
 }
 
+/* Registro: nombre y apellido en una fila (una columna en móvil). */
+.match-login-card__row {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--match-space-16);
+}
+
+@media (max-width: 480px) {
+	.match-login-card__row {
+		grid-template-columns: 1fr;
+		gap: var(--match-space-24);
+	}
+}
+
+/* Contraseña con botón para mostrarla ([data-password-toggle], app.js). */
+.match-field__secret {
+	position: relative;
+	display: block;
+}
+
+.match-field__secret .match-field__input {
+	padding-right: 52px;
+}
+
+.match-field__toggle {
+	position: absolute;
+	top: 50%;
+	right: 6px;
+	display: grid;
+	place-items: center;
+	width: 40px;
+	height: 40px;
+	padding: 0;
+	border: 0;
+	border-radius: var(--match-radius-12);
+	background: transparent;
+	color: var(--match-neutral-200);
+	cursor: pointer;
+	transform: translateY(-50%);
+}
+
+.match-field__toggle[hidden] {
+	display: none;
+}
+
+.match-field__toggle:hover {
+	color: var(--match-blanco);
+}
+
+.match-field__toggle:focus-visible {
+	outline: 2px solid var(--match-blanco);
+	outline-offset: 0;
+}
+
+.match-field__toggle svg {
+	width: 20px;
+	height: 20px;
+}
+
+.match-field__toggle .match-field__toggle-hide,
+.match-field__toggle[aria-pressed="true"] .match-field__toggle-show {
+	display: none;
+}
+
+.match-field__toggle[aria-pressed="true"] .match-field__toggle-hide {
+	display: block;
+}
+
+.match-field__hint {
+	margin: 0;
+	font-size: var(--match-fs-body-sm);
+	color: var(--match-neutral-200);
+}
+
 .match-login-card__forgot {
 	align-self: flex-end;
 	font-size: var(--match-fs-body-sm);
@@ -329,6 +403,90 @@
 	color: var(--match-error);
 }
 
+.match-register-drop[hidden] {
+	display: none;
+}
+
+/* Archivo elegido (Figma: Confirmación CV, node 6136:5500): franja blanca con
+ * check verde, nombre del archivo y «Cambiar», en vez del verde sobre vidrio
+ * de bajo contraste. */
+.match-register-file {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	padding: var(--match-space-16) 20px;
+	border: 1px solid rgba(255, 255, 255, 0.6);
+	border-radius: 14px;
+	background: var(--match-blanco);
+	-webkit-backdrop-filter: blur(8px);
+	backdrop-filter: blur(8px);
+	text-align: start;
+}
+
+.match-register-file[hidden] {
+	display: none;
+}
+
+.match-register-file__check {
+	display: grid;
+	flex: none;
+	place-items: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	background: #17995e;
+	color: var(--match-blanco);
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 1;
+}
+
+.match-register-file__text {
+	display: flex;
+	flex: 1 1 auto;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.match-register-file__name {
+	overflow: hidden;
+	font-size: var(--match-fs-body);
+	font-weight: 500;
+	color: #060527; /* Figma primario/900 */
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.match-register-file__state {
+	font-size: 13px;
+	color: #127a4a;
+}
+
+.match-register-file__change {
+	flex: none;
+	padding: var(--match-space-4);
+	border: 0;
+	background: none;
+	font: inherit;
+	font-size: 13px;
+	font-weight: 500;
+	color: var(--match-azul-500);
+	text-decoration: underline;
+	text-underline-offset: 2px;
+	cursor: pointer;
+}
+
+.match-register-file__change:hover {
+	color: var(--match-azul-600);
+}
+
+.match-register-file__change:focus-visible {
+	outline: 2px solid var(--match-primario-500);
+	outline-offset: 2px;
+	border-radius: 4px;
+}
+
 .match-register-drop__note {
 	margin: 0;
 	font-size: var(--match-fs-body-sm);
@@ -345,6 +503,15 @@
 	color: var(--match-neutral-500);
 }
 
+/* Carga de la página (sidebar.php): sin transiciones ni animaciones, para que
+ * recargar (filtros, orden, paginación) no repita el cambio de ancho ni la
+ * entrada del isotipo. Se quita tras el primer pintado. */
+.match-jb__sidebar.is-booting,
+.match-jb__sidebar.is-booting * {
+	transition: none !important;
+	animation: none !important;
+}
+
 .match-jb__sidebar {
 	position: sticky;
 	inset-block-start: 0;
@@ -355,7 +522,9 @@
 	height: 100vh;
 	height: 100svh;
 	padding: var(--match-space-32) var(--match-space-24);
-	border-inline-end: 12px solid var(--match-neutral-100);
+	/* Línea de 1 px (#E6E6E6, el gris del borde inferior de la cabecera) en lugar de la franja de 12 px (J09) */
+	border-inline-end: 1px solid var(--match-neutral-200);
+	transition: border-color 0.2s ease;
 }
 
 .match-jb__logo {
@@ -367,6 +536,246 @@
 .match-jb__logo svg {
 	width: 100%;
 	height: auto;
+}
+
+/* El SVG trae fill="white"; en el sidebar el texto va en --match-negro */
+.match-jb__logo svg [fill="white"] {
+	fill: currentColor;
+}
+
+/* Hamburguesa: en desktop contrae la barra a solo iconos; en mobile abre
+ * el menú desplegable (ver @media max-width 1024px). */
+.match-jb__bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--match-space-16);
+}
+
+.match-jb__toggle {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 auto;
+	width: 40px;
+	height: 40px;
+	padding: 0;
+	border: 0;
+	border-radius: var(--match-radius-12);
+	background: none;
+	color: var(--match-neutral-350);
+	cursor: pointer;
+	transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.match-jb__toggle:hover {
+	background: var(--match-neutral-100);
+	color: var(--match-neutral-500);
+}
+
+.match-jb__toggle svg {
+	width: 20px;
+	height: auto;
+}
+
+.match-jb__toggle .match-jb__close,
+.match-jb__toggle .match-jb__chevron,
+.match-jb__btn-rail,
+.match-jb__logo-mark {
+	display: none;
+}
+
+.match-jb__navlabel {
+	white-space: nowrap;
+}
+
+/* ============ Panel: barra contraída (solo desktop) ============
+ * Rail de iconos al estilo Linear/Notion: el ancho se anima, los textos se
+ * desvanecen, el logo se recorta al isotipo y cada icono muestra su nombre
+ * en un tooltip. El estado lo guarda app.js en localStorage. */
+@media (min-width: 1025px) {
+	.match-jb__sidebar {
+		z-index: 30;
+		transition: flex-basis 0.35s cubic-bezier(0.22, 1, 0.36, 1), padding 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s ease;
+	}
+
+	.match-jb__logo {
+		flex: 0 0 auto;
+	}
+
+	/* Botón de 24 px centrado sobre la línea vertical de la barra (mitad del círculo a cada lado) y a media
+	 * altura de la pantalla (la barra es sticky). Fondo blanco, borde 1 px #E6E6E6, sin sombra (J09). */
+	.match-jb__toggle {
+		position: absolute;
+		inset-block-start: 50%;
+		inset-inline-end: calc(-12px - 0.5px);
+		z-index: 2;
+		width: 24px;
+		height: 24px;
+		border: 1px solid var(--match-neutral-200);
+		border-radius: 50%;
+		background: var(--match-blanco);
+		box-shadow: none;
+		color: var(--match-neutral-350);
+		translate: 0 -50%;
+		transition: border-color 0.2s ease, color 0.2s ease;
+	}
+
+	/* Hover: borde y flecha en #2C2C2C, y la línea vertical se oscurece un poco (indica que el panel se colapsa) */
+	.match-jb__toggle:hover {
+		border-color: var(--match-neutral-500);
+		background: var(--match-blanco);
+		color: var(--match-neutral-500);
+	}
+
+	.match-jb__sidebar:has(.match-jb__toggle:hover) {
+		border-inline-end-color: #c4c4c4;
+	}
+
+	.match-jb__toggle .match-jb__burger {
+		display: none;
+	}
+
+	.match-jb__toggle .match-jb__chevron {
+		display: block;
+		width: 12px;
+		height: 12px;
+		transition: rotate 0.2s ease; /* la flecha gira 180° en 200 ms al cerrar */
+	}
+
+	/* Contraída: la flecha apunta hacia afuera (expandir) */
+	.match-jb__sidebar.is-collapsed .match-jb__chevron {
+		rotate: 180deg;
+	}
+
+	.match-jb .match-jb__toggle:focus-visible {
+		border-radius: 50%;
+	}
+
+	.match-jb__navlabel {
+		overflow: hidden;
+		max-width: 220px;
+		transition: max-width 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease 0.1s;
+	}
+
+	.match-jb__sidebar.is-collapsed {
+		flex-basis: 88px;
+		padding-inline: 20px;
+	}
+
+	.match-jb__sidebar.is-collapsed .match-jb__bar {
+		flex-direction: column;
+		gap: var(--match-space-24);
+	}
+
+	/* Wordmark → isotipo (assets/img/icons/logo-sidebar.svg) */
+	.match-jb__sidebar.is-collapsed .match-jb__logo {
+		width: 44px;
+	}
+
+	.match-jb__sidebar.is-collapsed .match-jb__logo-full {
+		display: none;
+	}
+
+	.match-jb__sidebar.is-collapsed .match-jb__logo-mark {
+		display: block;
+		animation: match-jb-logo-in 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	@keyframes match-jb-logo-in {
+		from {
+			opacity: 0;
+			scale: 0.8;
+		}
+	}
+
+	.match-jb__sidebar.is-collapsed .match-jb__navlabel {
+		max-width: 0;
+		opacity: 0;
+		transition: max-width 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.1s ease;
+	}
+
+	.match-jb__sidebar.is-collapsed .match-jb__navitem,
+	.match-jb__sidebar.is-collapsed .match-jb__navitem.is-active,
+	.match-jb__sidebar.is-collapsed .match-jb__logout {
+		position: relative;
+		gap: 0;
+		padding: 12px;
+	}
+
+	/* Sin desplazamiento al hover: en el rail los iconos quedan alineados */
+	.match-jb__sidebar.is-collapsed .match-jb__navitem:hover,
+	.match-jb__sidebar.is-collapsed .match-jb__navitem:hover svg,
+	.match-jb__sidebar.is-collapsed .match-jb__logout:hover,
+	.match-jb__sidebar.is-collapsed .match-jb__logout:hover svg {
+		translate: 0 0;
+	}
+
+	/* Conteo → punto sobre la esquina del icono */
+	.match-jb__sidebar.is-collapsed .match-jb__navbadge {
+		position: absolute;
+		inset-block-start: 8px;
+		inset-inline-end: 8px;
+		min-width: 0;
+		width: 8px;
+		height: 8px;
+		padding: 0;
+		background: var(--match-celeste-500);
+		box-shadow: 0 0 0 2px var(--match-blanco);
+		font-size: 0;
+	}
+
+	.match-jb__sidebar.is-collapsed .match-jb__navitem.is-active .match-jb__navbadge {
+		background: var(--match-blanco);
+		box-shadow: 0 0 0 2px var(--match-azul-800);
+	}
+
+	.match-jb__sidebar.is-collapsed .match-jb__btn {
+		position: relative;
+		gap: 0;
+		padding: 13px;
+	}
+
+	.match-jb__sidebar.is-collapsed .match-jb__btn-rail {
+		display: block;
+	}
+
+	/* Tooltip con el nombre, a la derecha del icono */
+	.match-jb__sidebar.is-collapsed [data-tooltip]::after {
+		content: attr(data-tooltip);
+		position: absolute;
+		inset-block-start: 50%;
+		inset-inline-start: calc(100% + 14px);
+		z-index: 1;
+		padding: 6px 10px;
+		border-radius: var(--match-radius-8);
+		background: var(--match-neutral-500);
+		box-shadow: 0 8px 20px -10px rgba(23, 23, 31, 0.45);
+		color: var(--match-blanco);
+		font-size: 13px;
+		font-weight: 500;
+		line-height: 1.2;
+		white-space: nowrap;
+		pointer-events: none;
+		opacity: 0;
+		translate: -4px -50%;
+		transition: opacity 0.15s ease, translate 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	.match-jb__sidebar.is-collapsed [data-tooltip]:is(:hover, :focus-visible)::after {
+		opacity: 1;
+		translate: 0 -50%;
+		transition-delay: 0.08s;
+	}
+}
+
+/* Navegación + sesión: en desktop es el resto de la barra lateral */
+.match-jb__menu {
+	display: flex;
+	flex-direction: column;
+	gap: var(--match-space-40);
+	flex: 1;
+	min-height: 0;
 }
 
 .match-jb__nav {
@@ -519,7 +928,7 @@
 .match-jb__title {
 	margin: 0;
 	font-family: var(--match-font-display);
-	font-size: 32px;
+	font-size: var(--match-jb-fs-title, 32px);
 	font-weight: 700;
 	line-height: 1.19;
 	color: var(--match-neutral-500);
@@ -618,7 +1027,7 @@
 .match-jb-drop__hint {
 	margin: 0;
 	font-size: var(--match-fs-body-sm);
-	color: var(--match-azul-200);
+	color: #6b6b7b; /* más contraste (J13); antes azul-200 */
 }
 
 .match-jb-drop.is-ready .match-jb-drop__hint {
@@ -659,8 +1068,26 @@
 	text-decoration: none;
 }
 
+.match-jb__section-head a {
+	white-space: nowrap; /* el enlace no se parte en dos líneas (J19) */
+}
+
 .match-jb__section-head a:hover {
 	color: var(--match-negro);
+}
+
+/* Mobile (J19): el enlace de la derecha («Ver todas las vacantes», «Ver guardados») pasa debajo del título, en
+   una sola línea, en vez de pelear con él por la fila y partir los dos. */
+@media (max-width: 600px) {
+	.match-jb__section-head {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: var(--match-space-4);
+	}
+
+	.match-jb__section-head a {
+		padding-inline-start: 0;
+	}
 }
 
 .match-jb__grid {
@@ -774,8 +1201,14 @@
 	height: 24px;
 }
 
-.match-jb-card__fav.is-saved svg path {
-	fill: currentColor;
+/* Contorno = sin guardar; relleno = guardada (mismo patrón que .match-job__fav) */
+.match-jb-card__fav-on,
+.match-jb-card__fav.is-saved .match-jb-card__fav-off {
+	display: none;
+}
+
+.match-jb-card__fav.is-saved .match-jb-card__fav-on {
+	display: block;
 }
 
 .match-jb-card__meta {
@@ -846,12 +1279,49 @@
 }
 
 .match-jb-onboarding__card {
+	position: relative;
 	outline: none;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	gap: var(--match-space-48);
 	padding: var(--match-space-40);
+}
+
+/* Botón X (J01): 40 × 40 px, ícono de 20 px, gris de los íconos del panel, fondo gris claro al pasar el cursor.
+   Hace lo mismo que Escape y que el clic fuera del modal. */
+.match-jb-onboarding__close {
+	position: absolute;
+	inset-block-start: var(--match-space-16);
+	inset-inline-end: var(--match-space-16);
+	display: grid;
+	place-items: center;
+	width: 40px;
+	height: 40px;
+	padding: 0;
+	border: 0;
+	border-radius: var(--match-radius-full);
+	background: transparent;
+	color: var(--match-neutral-300);
+	cursor: pointer;
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.match-jb-onboarding__close:hover,
+.match-jb-onboarding__close:focus-visible {
+	background: var(--match-neutral-100);
+	color: var(--match-negro);
+}
+
+.match-jb-onboarding__close svg {
+	width: 20px;
+	height: 20px;
+}
+
+/* Paso completado (J01): con CV activo el paso 1 lleva un check en lugar del número. */
+.match-jb-onboarding__num svg {
+	width: 18px;
+	height: 18px;
 }
 
 .match-jb-onboarding__head {
@@ -1087,30 +1557,136 @@
 		flex-direction: column;
 	}
 
+	/* Barra lateral → barra superior con menú hamburguesa */
 	.match-jb__sidebar {
-		position: static;
+		z-index: 40;
 		flex: 0 0 auto;
 		height: auto;
-		flex-direction: row;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: var(--match-space-16);
-		padding: var(--match-space-16) var(--match-space-24);
+		gap: 0;
+		padding: var(--match-space-12) var(--match-space-24);
+		background: var(--match-blanco);
 		border-inline-end: 0;
 		border-block-end: 8px solid var(--match-neutral-100);
+	}
+
+	.match-jb__bar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--match-space-16);
 	}
 
 	.match-jb__logo {
 		width: 120px;
 	}
 
-	.match-jb__nav {
-		flex-direction: row;
+	.match-jb__toggle {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 44px;
+		height: 44px;
+		margin-inline-end: calc(-1 * var(--match-space-8));
+		padding: 0;
+		border: 0;
+		border-radius: var(--match-radius-12);
+		background: var(--match-neutral-100); /* mismo fondo gris en todas las páginas (J08) */
+		color: var(--match-neutral-500);
+		cursor: pointer;
 	}
 
+	.match-jb__toggle svg {
+		width: 24px;
+		height: auto;
+	}
+
+	.match-jb__toggle .match-jb__close,
+	.match-jb__toggle[aria-expanded="true"] .match-jb__burger {
+		display: none;
+	}
+
+	.match-jb__toggle[aria-expanded="true"] .match-jb__close {
+		display: block;
+	}
+
+	/* Panel desplegable bajo la barra, con la misma estructura que en desktop */
+	.match-jb__menu {
+		position: absolute;
+		inset-inline: 0;
+		inset-block-start: 100%;
+		gap: var(--match-space-24);
+		/* Panel a alto completo (J10): la navegación arriba y «Volver» / «Cerrar sesión» al final */
+		height: calc(100vh - 76px);
+		height: calc(100dvh - 76px);
+		max-height: calc(100vh - 76px);
+		max-height: calc(100dvh - 76px);
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		padding: var(--match-space-24);
+		border-block-end: 8px solid var(--match-neutral-100);
+		background: var(--match-blanco);
+		box-shadow: 0 16px 32px -20px rgba(23, 23, 31, 0.35);
+		visibility: hidden;
+		opacity: 0;
+		translate: 0 -8px;
+		pointer-events: none;
+		transition: opacity 0.2s ease, translate 0.2s ease, visibility 0s linear 0.2s;
+	}
+
+	.match-jb__sidebar.is-open .match-jb__menu {
+		visibility: visible;
+		opacity: 1;
+		translate: 0 0;
+		pointer-events: auto;
+		transition: opacity 0.2s ease, translate 0.2s ease, visibility 0s;
+	}
+
+	/* «Volver» y «Cerrar sesión» al fondo del panel (margin-top: auto, como en escritorio). Si el panel no da
+	   para separarlos, una línea de 1 px #E6E6E6 con 24 px de aire arriba y abajo los aparta de la navegación. */
 	.match-jb__auth {
-		flex-direction: row;
-		margin-inline-start: auto;
+		margin-block-start: auto;
+		padding-block-start: var(--match-space-24);
+		border-block-start: 1px solid var(--match-neutral-200);
+	}
+
+	/* Grupo secundario con menos peso visual: «Volver» en gris y 14 px; «Cerrar sesión» sigue en rojo */
+	.match-jb__auth .match-jb__home {
+		font-size: var(--match-fs-tag);
+		color: var(--match-neutral-300);
+	}
+
+	/* Área táctil mínima de 44 px en cada ítem */
+	.match-jb__navitem,
+	.match-jb__logout,
+	.match-jb__auth .match-jb__btn {
+		min-height: 44px;
+	}
+
+	/* clip (no hidden): hidden convierte <body> en contenedor de scroll y la
+	 * barra sticky deja de seguir al viewport (el panel se abre arriba, fuera de vista). */
+	body.has-open-jbmenu {
+		overflow: clip;
+	}
+
+	/* Al bloquear el scroll se conserva el hueco de la barra: el contenido ya no cambia de ancho (J08). */
+	html:has(body.has-open-jbmenu) {
+		scrollbar-gutter: stable;
+	}
+
+	/* Fondo oscuro detrás del menú (negro al 40 %); tocarlo cierra el menú (app.js cierra con clic fuera del sidebar). */
+	body.has-open-jbmenu::before {
+		position: fixed;
+		inset: 0;
+		z-index: 39; /* justo bajo la barra lateral (z-index 40) */
+		content: "";
+		background: rgba(0, 0, 0, 0.4);
+		animation: match-jbmenu-scrim 0.2s ease both;
+	}
+
+	@keyframes match-jbmenu-scrim {
+		from {
+			opacity: 0;
+		}
 	}
 
 	.match-jb__topbar {
@@ -1130,15 +1706,6 @@
 @media (max-width: 600px) {
 	.match-login-card {
 		padding: var(--match-space-32) var(--match-space-24);
-	}
-
-	.match-jb__auth {
-		width: 100%;
-		margin: 0;
-	}
-
-	.match-jb__auth .match-jb__btn {
-		flex: 1;
 	}
 
 	.match-jb-onboarding__card {
@@ -1222,27 +1789,23 @@
 	color: var(--match-azul-300);
 }
 
+/* Mismas medidas que .match-jb__navitem ("Volver"), en rojo y sin fondo */
 .match-jb__logout {
 	display: flex;
 	align-items: center;
-	gap: var(--match-space-24);
-	padding: 15px var(--match-space-16);
+	gap: var(--match-space-16);
+	padding: var(--match-space-8) var(--match-space-16);
 	border-radius: var(--match-radius-12);
-	background: #e43131;
-	color: var(--match-blanco);
+	background: var(--match-blanco);
+	color: #e43131;
 	line-height: var(--match-lh-body);
 	text-decoration: none;
-	transition: background-color 0.2s ease;
-}
-
-.match-jb__logout:hover {
-	background: #c92a2a;
 }
 
 .match-jb__logout svg {
 	width: 24px;
 	height: 24px;
-	scale: -1 1;
+	flex: 0 0 auto;
 }
 
 /* ============ Con sesión: tarjetas del hero ============ */
@@ -1554,6 +2117,57 @@ a.match-jb-cv:hover .match-jb-cv__name {
 	width: 100%;
 }
 
+/* Eliminar cuenta (template-profile.php). */
+.match-jb__btn--danger {
+	background: var(--match-blanco);
+	border-color: var(--match-error);
+	color: var(--match-error);
+}
+
+.match-jb__btn--danger:hover {
+	background: var(--match-error);
+	color: var(--match-blanco);
+}
+
+.match-jb-result-modal .match-jb__btn--danger {
+	background: var(--match-error);
+	color: var(--match-blanco);
+}
+
+.match-jb-result-modal .match-jb__btn--danger:hover {
+	background: #b91c1c;
+	border-color: #b91c1c;
+}
+
+.match-jb__btn--danger[hidden] {
+	display: none;
+}
+
+.match-jb__btn--danger:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
+.match-jb-delete__field {
+	display: flex;
+	flex-direction: column;
+	gap: var(--match-space-8);
+	width: 100%;
+	max-width: 440px;
+	text-align: left;
+}
+
+.match-jb-delete__label {
+	font-size: var(--match-fs-body-sm);
+	color: var(--match-neutral-300);
+}
+
+.match-jb-delete__label strong {
+	color: var(--match-negro);
+	font-weight: 600;
+}
+
 label.match-jb__btn:focus-within {
 	outline: 2px solid var(--match-azul-400);
 	outline-offset: 2px;
@@ -1580,11 +2194,6 @@ label.match-jb__btn:focus-within {
 }
 
 @media (max-width: 1024px) {
-	.match-jb__auth .match-jb__logout {
-		flex: 1;
-		justify-content: center;
-	}
-
 	.match-jb__body--center {
 		padding-inline: var(--match-space-24);
 	}
@@ -1745,6 +2354,43 @@ label.match-jb__btn:focus-within {
 	color: var(--match-neutral-500);
 }
 
+/* Mis procesos: la tarjeta entera abre su panel de estado. El <button> va en
+ * el título y su ::after cubre la tarjeta (un solo control accesible). */
+.match-jb-app--open {
+	position: relative;
+	cursor: pointer;
+}
+
+.match-jb-app__open {
+	padding: 0;
+	border: 0;
+	background: none;
+	font: inherit;
+	color: inherit;
+	text-align: start;
+	cursor: pointer;
+}
+
+.match-jb-app__open::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: var(--match-radius-16);
+}
+
+.match-jb-app__open:focus-visible {
+	outline: none;
+}
+
+.match-jb-app__open:focus-visible::after {
+	outline: 2px solid var(--match-primario-500);
+	outline-offset: 2px;
+}
+
+.match-jb-app--open:hover .match-jb-app__open {
+	color: var(--match-neutral-500);
+}
+
 .match-jb-app__aside {
 	display: flex;
 	flex-direction: column;
@@ -1845,6 +2491,7 @@ label.match-jb__btn:focus-within {
 
 .match-jb-empty--page .match-jb-empty__text {
 	max-width: 320px;
+	text-wrap: balance; /* sin una palabra suelta en la última línea (J15) */
 }
 
 .match-jb-empty--page .match-jb__btn {
@@ -1997,6 +2644,125 @@ label.match-jb__btn:focus-within {
 
 .match-jb-detail__apply {
 	min-width: 200px;
+}
+
+/* Barra fija «Postular ahora» (Figma: Barra fija — Postular, node 6153:1886).
+ * Solo escritorio: va del borde de la barra lateral (320 px) al borde derecho y
+ * entra desde abajo cuando app.js le pone .is-visible. */
+.match-jb-sticky-apply {
+	display: none;
+}
+
+@media (min-width: 1025px) {
+	.match-jb-sticky-apply {
+		position: fixed;
+		inset-inline: 320px 0;
+		inset-block-end: 0;
+		z-index: 30;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--match-space-24);
+		padding: var(--match-space-16) var(--match-space-48);
+		border-block-start: 2px solid var(--match-azul-100);
+		background: var(--match-blanco);
+		box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
+		translate: 0 110%;
+		visibility: hidden;
+		transition: translate 0.35s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s 0.35s;
+	}
+
+	.match-jb-sticky-apply.is-visible {
+		translate: 0 0;
+		visibility: visible;
+		transition: translate 0.35s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s;
+	}
+
+	/* Barra lateral contraída (88 px): la barra fija la sigue */
+	.match-jb:has(.match-jb__sidebar.is-collapsed) .match-jb-sticky-apply {
+		inset-inline-start: 88px;
+	}
+
+	/* Con la barra a la vista, el final del detalle no queda tapado */
+	.match-jb-detail:has(~ .match-jb-sticky-apply) {
+		padding-block-end: 96px;
+	}
+}
+
+.match-jb-sticky-apply__job {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.match-jb-sticky-apply__title,
+.match-jb-sticky-apply__meta {
+	margin: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.match-jb-sticky-apply__title {
+	font-size: 18px;
+	font-weight: 500;
+	color: #060527; /* Figma primario/900 */
+}
+
+.match-jb-sticky-apply__meta {
+	font-size: 14px;
+	color: var(--match-azul-500);
+}
+
+.match-jb-sticky-apply__btn {
+	flex: none;
+	min-width: 200px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.match-jb-sticky-apply,
+	.match-jb-sticky-apply.is-visible {
+		transition: none;
+	}
+}
+
+/* Sin sesión: «Postular ahora» con el aviso de cuenta debajo (Figma 6153:1455).
+ * La fila se alinea arriba para que el marcador quede a la altura del botón. */
+.match-jb-detail__actions:has(.match-jb-detail__apply-wrap) {
+	align-items: flex-start;
+}
+
+.match-jb-detail__apply-wrap {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: var(--match-space-8);
+}
+
+.match-jb-detail__account-note {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	margin: 0;
+	font-size: var(--match-fs-nav);
+	line-height: normal;
+	color: var(--match-azul-400);
+	white-space: nowrap;
+}
+
+.match-jb-detail__account-icon {
+	display: grid;
+	flex: none;
+	place-items: center;
+	width: 16px;
+	height: 16px;
+	border: 1.4px solid currentColor;
+	border-radius: 50%;
+	font-size: 10px;
+	font-weight: 600;
+	line-height: 1;
 }
 
 .match-jb-iconbtn {
@@ -2266,6 +3032,18 @@ label.match-jb__btn:focus-within {
 	padding: var(--match-space-48) var(--match-space-40);
 }
 
+.match-jb-status-drawer__top {
+	display: flex;
+	flex-direction: column;
+	gap: var(--match-space-24);
+}
+
+.match-jb-status-drawer__head {
+	display: flex;
+	flex-direction: column;
+	gap: var(--match-space-16);
+}
+
 .match-jb-status-drawer__eyebrow {
 	margin: 0;
 	font-size: var(--match-fs-tag);
@@ -2361,10 +3139,11 @@ label.match-jb__btn:focus-within {
 	}
 }
 
-/* Etapas ya alcanzadas del proceso: punto relleno + línea, todo en el mismo
- * azul marino (Figma no distingue color por tipo de etapa acá, a diferencia
- * de la pastilla de arriba); la etapa actual es un anillo hueco más grande y
- * sin línea hacia abajo, porque es la última que se muestra. */
+/* Etapas del proceso (Figma 5548:5587): el recorrido completo siempre a la
+ * vista. Alcanzada = punto relleno azul marino; actual = anillo hueco; las
+ * que faltan, punto y texto gris con "Pendiente". El tramo de línea bajo
+ * cada punto va en azul solo si la etapa siguiente también se alcanzó
+ * (.is-reached), si no, en gris. */
 .match-jb-status__steps {
 	display: flex;
 	flex-direction: column;
@@ -2379,7 +3158,7 @@ label.match-jb__btn:focus-within {
 	min-height: 80px;
 }
 
-.match-jb-status__step.is-current {
+.match-jb-status__step:last-child {
 	min-height: 64px;
 }
 
@@ -2393,6 +3172,7 @@ label.match-jb__btn:focus-within {
 }
 
 .match-jb-status__dot {
+	box-sizing: border-box;
 	width: 20px;
 	height: 20px;
 	flex: 0 0 auto;
@@ -2401,15 +3181,22 @@ label.match-jb__btn:focus-within {
 }
 
 .match-jb-status__step.is-current .match-jb-status__dot {
-	box-sizing: border-box;
-	border: 3px solid var(--match-primario-500);
+	border: 6px solid var(--match-primario-500);
 	background: var(--match-blanco);
+}
+
+.match-jb-status__step.is-pending .match-jb-status__dot {
+	background: #d3d2da;
 }
 
 .match-jb-status__line {
 	width: 2px;
 	flex: 1 0 0;
 	min-height: 24px;
+	background: #d9d9d9;
+}
+
+.match-jb-status__line.is-reached {
 	background: var(--match-primario-500);
 }
 
@@ -2417,20 +3204,18 @@ label.match-jb__btn:focus-within {
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
-	padding-block-start: 1px;
 	font-size: var(--match-fs-body);
 	line-height: 1.6;
 	color: var(--match-primario-500);
 }
 
-.match-jb-status__step.is-current .match-jb-status__label {
-	font-weight: 500;
+.match-jb-status__date {
+	color: var(--match-neutral-300);
 }
 
-.match-jb-status__date {
-	font-size: var(--match-fs-body-sm);
-	font-weight: 400;
-	color: var(--match-azul-400);
+.match-jb-status__step.is-pending .match-jb-status__label,
+.match-jb-status__step.is-pending .match-jb-status__date {
+	color: #d1d1d9;
 }
 
 /* ============ Modales de resultado (éxito / error) ============
@@ -2463,6 +3248,7 @@ label.match-jb__btn:focus-within {
 }
 
 .match-jb-result-modal__panel {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
@@ -2470,6 +3256,37 @@ label.match-jb__btn:focus-within {
 	max-height: inherit;
 	overflow-y: auto;
 	padding: var(--match-space-40);
+}
+
+/* Misma X que el onboarding y el modal de postular (J01/J07). Escape lo
+ * cierra solo: es un <dialog> abierto con showModal(). */
+.match-jb-result-modal__close {
+	position: absolute;
+	inset-block-start: var(--match-space-16);
+	inset-inline-end: var(--match-space-16);
+	z-index: 1;
+	display: grid;
+	place-items: center;
+	width: 40px;
+	height: 40px;
+	padding: 0;
+	border: 0;
+	border-radius: var(--match-radius-full);
+	background: transparent;
+	color: var(--match-neutral-300);
+	cursor: pointer;
+	transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.match-jb-result-modal__close svg {
+	width: 20px;
+	height: 20px;
+}
+
+.match-jb-result-modal__close:hover,
+.match-jb-result-modal__close:focus-visible {
+	background: var(--match-neutral-100);
+	color: var(--match-negro);
 }
 
 .match-jb-result-modal__body {
@@ -2499,12 +3316,39 @@ label.match-jb__btn:focus-within {
 	height: 80px;
 }
 
+/* El check de éxito "se dibuja" de izquierda a derecha (400 ms) después de
+ * que el modal termina de entrar. El ícono es un relleno, no un trazo, así
+ * que se revela con clip-path en lugar de stroke-dashoffset. */
+@media (prefers-reduced-motion: no-preference) {
+	.match-jb-result-modal[open] .match-jb-result-modal__icon--ok svg path {
+		animation: match-result-check-draw 0.4s cubic-bezier(0.65, 0, 0.35, 1) 0.2s both;
+	}
+}
+
+@keyframes match-result-check-draw {
+	from {
+		clip-path: inset(0 100% 0 0);
+	}
+	to {
+		clip-path: inset(0 0 0 0);
+	}
+}
+
 .match-jb-result-modal__title {
 	margin: 0;
 	font-size: 24px;
 	font-weight: 500;
 	line-height: 1.5;
 	color: var(--match-negro);
+}
+
+/* Empresa + puesto forman un solo grupo (4 px), separado 24 px del título
+ * y de la fecha por el gap de __body. */
+.match-jb-result-modal__job {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 4px;
 }
 
 .match-jb-result-modal__who {
@@ -2517,6 +3361,7 @@ label.match-jb__btn:focus-within {
 .match-jb-result-modal__role {
 	margin: 0;
 	font-size: var(--match-fs-body-sm);
+	font-weight: 400;
 	color: var(--match-neutral-300);
 }
 
@@ -2577,16 +3422,16 @@ label.match-jb__btn:focus-within {
  * tarjeta suelta que trae por defecto en el pie de página.
  */
 .match-jb-apply-modal {
-	width: min(560px, calc(100% - 2 * var(--match-space-24)));
+	width: min(520px, calc(100% - 2 * var(--match-space-24)));
 	max-height: calc(100vh - 2 * var(--match-space-24));
 	max-height: calc(100dvh - 2 * var(--match-space-24));
 	margin: auto;
 	padding: 0;
 	border: 0;
-	border-radius: var(--match-radius-24);
+	border-radius: var(--match-radius-16);
 	background: var(--match-blanco);
 	color: var(--match-negro);
-	box-shadow: 0 24px 32px rgba(0, 0, 0, 0.16);
+	box-shadow: 0 16px 24px rgba(0, 0, 0, 0.14);
 }
 
 .match-jb-apply-modal::backdrop {
@@ -2607,9 +3452,25 @@ label.match-jb__btn:focus-within {
 	}
 }
 
+/* El dialog no hace scroll: lo hace solo __body, y la página queda bloqueada */
+.match-jb-apply-modal[open] {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+html:has(.match-jb-apply-modal[open]) {
+	overflow: hidden;
+	/* Al quitar el scroll de la página, se conserva el hueco de la barra: el fondo ya no se corre a la derecha (J07). */
+	scrollbar-gutter: stable;
+}
+
 .match-jb-apply-modal__panel {
 	position: relative;
-	max-height: inherit;
+	display: flex;
+	flex-direction: column;
+	flex: 1 1 auto;
+	min-height: 0;
 }
 
 .match-jb-apply-modal__close {
@@ -2619,112 +3480,308 @@ label.match-jb__btn:focus-within {
 	z-index: 1;
 	display: grid;
 	place-items: center;
-	width: 36px;
-	height: 36px;
+	width: 40px;
+	height: 40px;
 	padding: 0;
 	border: 0;
-	border-radius: var(--match-radius-12);
-	background: var(--match-neutral-100);
-	color: var(--match-neutral-400);
+	border-radius: var(--match-radius-full);
+	background: transparent;
+	color: var(--match-neutral-300);
 	cursor: pointer;
 	transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .match-jb-apply-modal__close svg {
-	width: 18px;
-	height: 18px;
+	width: 20px;
+	height: 20px;
 }
 
-.match-jb-apply-modal__close:hover {
-	background: var(--match-neutral-200);
+.match-jb-apply-modal__close:hover,
+.match-jb-apply-modal__close:focus-visible {
+	background: var(--match-neutral-100);
 	color: var(--match-negro);
 }
 
 .match-jb-apply-modal__body {
-	max-height: inherit;
+	flex: 1 1 auto;
+	min-height: 0;
 	overflow-y: auto;
-	padding: var(--match-space-40) var(--match-space-32) var(--match-space-32);
+	overscroll-behavior: contain;
+	padding: var(--match-space-40);
 }
 
-/* El formulario del plugin (mjb-*), llevado al lenguaje del Job Board */
+/* La X se ve también con el formulario (J07, misma que el onboarding); el título deja sitio a la derecha. */
+.match-jb-apply-modal__panel:has(.mjb-apply) .mjb-apply__head {
+	padding-inline-end: var(--match-space-40);
+}
+
+/* Teléfono con error (J07): borde y mensaje en rojo, bajo el campo */
+.match-jb-detail__apply-block .mjb-field input.is-invalid {
+	border-color: #dc2626;
+}
+
+/* El formulario de postulación (Figma: Modal — Postular, node 5545:5555).
+ * La plantilla es el override match-job-board/apply-form.php; se escopa a
+ * #postular (.match-jb-detail__apply-block) para pisar mjb-front.css tanto
+ * dentro del modal como en la página sin JavaScript. */
 .match-jb-apply-modal__body .match-jb-detail__apply-block {
 	padding: 0;
 }
 
-.match-jb-apply-modal__body .mjb-apply {
+.match-jb-detail__apply-block .mjb-apply {
 	max-width: none;
+	gap: var(--match-space-40);
 }
 
-.match-jb-apply-modal__body .mjb-apply__title {
-	padding-inline-end: var(--match-space-40);
-	/* deja sitio al botón de cerrar */
+.match-jb-detail__apply-block .mjb-apply__head {
+	display: flex;
+	flex-direction: column;
+	gap: var(--match-space-4);
+}
+
+.match-jb-detail__apply-block .mjb-apply__title {
+	margin: 0;
 	font-size: var(--match-fs-xxl);
 	font-weight: 500;
-	line-height: 1.4;
+	line-height: 1.5;
 	color: var(--match-negro);
 }
 
-.match-jb-apply-modal__body .mjb-apply__sub {
+.match-jb-detail__apply-block .mjb-apply__sub {
+	margin: 0;
+	font-size: var(--match-fs-body);
+	line-height: var(--match-lh-body);
 	color: var(--match-neutral-350);
 }
 
-.match-jb-apply-modal__body .mjb-field label {
-	font-size: var(--match-fs-body-sm);
+.match-jb-detail__apply-block .mjb-apply__fields {
+	display: flex;
+	flex-direction: column;
+	gap: var(--match-space-32);
+}
+
+.match-jb-detail__apply-block .mjb-field label {
+	font-size: var(--match-fs-tag);
 	font-weight: 500;
-	color: var(--match-neutral-350);
+	line-height: normal;
+	color: var(--match-neutral-400);
 }
 
-.match-jb-apply-modal__body .mjb-field input[type="text"],
-.match-jb-apply-modal__body .mjb-field input[type="email"],
-.match-jb-apply-modal__body .mjb-field input[type="tel"],
-.match-jb-apply-modal__body .mjb-field input[type="file"],
-.match-jb-apply-modal__body .mjb-field select,
-.match-jb-apply-modal__body .mjb-field textarea {
-	border-color: rgba(217, 217, 217, 0.64);
+.match-jb-detail__apply-block .mjb-field {
+	gap: var(--match-space-16);
+}
+
+.match-jb-detail__apply-block .mjb-optional {
+	color: inherit;
+	font-weight: inherit;
+}
+
+.match-jb-detail__apply-block .mjb-field input[type="tel"],
+.match-jb-detail__apply-block .mjb-field input[type="text"],
+.match-jb-detail__apply-block .mjb-field textarea {
+	padding: var(--match-space-8) var(--match-space-16);
+	border: 1px solid transparent;
 	border-radius: var(--match-radius-16);
-	background: var(--match-azul-50);
+	background: var(--match-neutral-100);
+	font-size: var(--match-fs-body);
+	line-height: var(--match-lh-body);
+	color: var(--match-negro);
 }
 
-.match-jb-apply-modal__body .mjb-field input:focus-visible,
-.match-jb-apply-modal__body .mjb-field select:focus-visible,
-.match-jb-apply-modal__body .mjb-field textarea:focus-visible {
-	outline-color: var(--match-azul-400);
+.match-jb-detail__apply-block .mjb-field input[type="tel"],
+.match-jb-detail__apply-block .mjb-field input[type="text"] {
+	padding-block: 12px;
+}
+
+.match-jb-detail__apply-block .mjb-field textarea {
+	min-height: 90px;
+	resize: vertical;
+}
+
+.match-jb-detail__apply-block .mjb-field input::placeholder,
+.match-jb-detail__apply-block .mjb-field textarea::placeholder {
+	color: #8a899f;
+}
+
+.match-jb-detail__apply-block .mjb-field input:focus-visible,
+.match-jb-detail__apply-block .mjb-field textarea:focus-visible {
+	outline: 2px solid var(--match-azul-400);
+	outline-offset: 1px;
 	background: var(--match-blanco);
+	border-color: rgba(217, 217, 217, 0.64);
 }
 
-.match-jb-apply-modal__body .mjb-field__hint,
-.match-jb-apply-modal__body .mjb-cv-current {
+/* Contador de la carta: el API del CRM topa cover_letter en 2000 caracteres */
+.match-jb-detail__apply-block .mjb-field__count {
+	margin: calc(-1 * var(--match-space-8)) 0 0;
+	font-size: var(--match-fs-body-sm);
 	color: var(--match-neutral-350);
+	text-align: end;
+	font-variant-numeric: tabular-nums;
 }
 
-.match-jb-apply-modal__body .mjb-btn--primary {
-	width: 100%;
-	padding: 12px var(--match-space-24);
-	border-radius: var(--match-radius-12);
-	background: var(--match-neutral-500);
-	border-color: var(--match-neutral-500);
+.match-jb-detail__apply-block .mjb-field__count.is-limit {
+	color: #b42318;
+}
+
+/* CV a usar: el título y "Cambiar CV" (el <label> del input de archivo) */
+.match-jb-detail__apply-block .mjb-field--cv {
+	position: relative; /* ancla del input oculto */
+	gap: var(--match-space-8);
+}
+
+.match-jb-detail__apply-block .mjb-cv-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--match-space-16);
+}
+
+.match-jb-detail__apply-block .mjb-cv-head__label {
+	font-size: var(--match-fs-body);
+	font-weight: 600;
+	line-height: 1.7;
+	color: var(--match-neutral-500);
+}
+
+.match-jb-detail__apply-block .mjb-field .mjb-cv-head__btn {
+	padding: var(--match-space-4) var(--match-space-8);
+	border-radius: var(--match-radius-8);
 	font-size: var(--match-fs-nav);
 	font-weight: 500;
 	line-height: var(--match-lh-body);
+	color: var(--match-neutral-350);
+	cursor: pointer;
+	transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.match-jb-apply-modal__body .mjb-btn--primary:hover {
-	background: var(--match-negro);
-	border-color: var(--match-negro);
+.match-jb-detail__apply-block .mjb-field .mjb-cv-head__btn:hover {
+	background: var(--match-neutral-100);
+	color: var(--match-negro);
 }
 
-.match-jb-apply-modal__body .mjb-notice {
+/* El input real está oculto pero sigue enfocable (para teclado y para que el
+   `required` funcione). No usa .screen-reader-text: WordPress la vuelve
+   visible con :focus (patrón "saltar al contenido") y aparecía el
+   "Examinar… No se ha seleccionado ningún archivo" nativo arriba a la izquierda. */
+.match-jb-detail__apply-block .mjb-cv-input,
+.match-jb-detail__apply-block .mjb-cv-input:focus {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	border: 0;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+	opacity: 0;
+}
+
+.match-jb-detail__apply-block .mjb-cv-input:focus-visible ~ .mjb-cv-head .mjb-cv-head__btn {
+	outline: 2px solid var(--match-azul-400);
+	outline-offset: 1px;
+}
+
+/* Nombre y apellido: solo en cuentas sin nombre (apply-form.php). */
+.match-jb-detail__apply-block .mjb-field__hint {
+	margin: 0;
+	font-size: var(--match-fs-body-sm);
+	color: var(--match-neutral-350);
+}
+
+.match-jb-detail__apply-block .mjb-field__hint--error {
+	margin: 0;
+	font-size: var(--match-fs-body-sm);
+	color: #b42318;
+}
+
+/* Cancelar / Confirmar postulación */
+.match-jb-detail__apply-block .mjb-apply__actions {
+	display: flex;
+	flex-wrap: wrap-reverse; /* en angosto, "Confirmar" queda arriba */
+	gap: var(--match-space-8);
+	margin-top: var(--match-space-8); /* 40 + 8 = 48 de Figma entre campos y pie */
+}
+
+.match-jb-detail__apply-block .mjb-apply__actions .match-jb__btn {
+	flex: 1 0 0;
+	padding-inline: var(--match-space-16); /* con 24 "Confirmar postulación" no entra en una línea */
+	border-radius: var(--match-radius-16);
+	white-space: nowrap;
+	box-shadow: 0 4px 12px -6px rgba(0, 0, 0, 0.12);
+}
+
+.match-jb-detail__apply-block .mjb-apply__cancel {
+	min-width: 150px;
+}
+
+.match-jb-detail__apply-block .mjb-apply__submit {
+	min-width: 200px;
+}
+
+.match-jb-detail__apply-block .mjb-apply__submit:disabled {
+	opacity: 0.6;
+	cursor: progress;
+}
+
+/* Sin JavaScript el formulario queda en la página: "Cancelar" no tiene qué cerrar */
+.match-jb-detail__apply-block:not(.match-jb-apply-modal__body > *) .mjb-apply__cancel {
+	display: none;
+}
+
+.match-jb-detail__apply-block .mjb-notice {
+	margin: 0;
 	border: 0;
 	border-radius: var(--match-radius-16);
 	background: var(--match-neutral-100);
 }
 
-.match-jb-apply-modal__body .mjb-notice--ok {
+/* Modal sin sesión (J12): un solo contenedor, sin caja gris interior */
+.mjb-signin {
+	display: flex;
+	flex-direction: column;
+	gap: var(--match-space-16);
+}
+
+.mjb-signin__title {
+	margin: 0;
+	padding-inline-end: var(--match-space-40); /* deja sitio a la X */
+	font-size: var(--match-fs-xxl);
+	font-weight: 600;
+	line-height: var(--match-lh-h4);
+	color: var(--match-negro);
+}
+
+.mjb-signin__text {
+	margin: 0;
+	color: var(--match-neutral-400);
+}
+
+.mjb-signin__btn {
+	width: 100%;
+	margin-block-start: var(--match-space-8);
+}
+
+.mjb-signin__alt {
+	margin: 0;
+	text-align: center;
+	font-size: var(--match-fs-tag);
+	color: var(--match-neutral-400);
+}
+
+.mjb-signin__alt a {
+	font-weight: 600;
+	color: var(--match-negro);
+	text-underline-offset: 3px;
+}
+
+.match-jb-detail__apply-block .mjb-notice--ok {
 	background: #f0fbf0;
 	color: #1a6b1a;
 }
 
-.match-jb-apply-modal__body .mjb-notice--error {
+.match-jb-detail__apply-block .mjb-notice--error {
 	background: rgba(227, 48, 48, 0.1);
 	color: #b42318;
 }
@@ -2745,6 +3802,11 @@ label.match-jb__btn:focus-within {
 	.match-jb-apply-modal__body {
 		padding: var(--match-space-56) var(--match-space-24) var(--match-space-24);
 	}
+
+	/* Sin la X (ver arriba) no hace falta el aire de arriba */
+	.match-jb-apply-modal__panel:has(.mjb-apply) .match-jb-apply-modal__body {
+		padding-top: var(--match-space-24);
+	}
 }
 
 @media (max-width: 1440px) {
@@ -2764,8 +3826,27 @@ label.match-jb__btn:focus-within {
 		padding: var(--match-space-32) var(--match-space-24) var(--match-space-24);
 	}
 
+	/* Mobile (J16): los datos clave (jornada, lugar, salario) van en una fila con salto automático, debajo del
+	   logo y a todo el ancho, no apilados en la columna estrecha junto al logo. `display: contents` hace que el
+	   título y las pastillas sean hijos directos de __who, que ahora puede envolver. */
 	.match-jb-detail__who {
+		flex-wrap: wrap;
 		align-items: flex-start;
+		gap: var(--match-space-16);
+	}
+
+	.match-jb-detail__intro {
+		display: contents;
+	}
+
+	.match-jb-detail__intro > div {
+		flex: 1 1 0;
+		min-width: 0;
+	}
+
+	.match-jb-detail__intro > .match-jb-tags {
+		flex: 1 0 100%;
+		gap: var(--match-space-8);
 	}
 
 	.match-jb-detail__logo {
@@ -2802,8 +3883,10 @@ label.match-jb__btn:focus-within {
 }
 
 .match-jb-filters {
+	position: relative;
+	z-index: 5; /* el desplegable de los filtros va por encima de la lista */
 	display: flex;
-	align-items: center;
+	align-items: start;
 	gap: var(--match-space-32);
 }
 
@@ -2868,9 +3951,7 @@ label.match-jb__btn:focus-within {
 	position: relative;
 	display: inline-flex;
 	align-items: center;
-	gap: var(--match-space-8);
 	min-width: 100px;
-	padding: 10px var(--match-space-16);
 	border: 1px solid #e5e5e5;
 	border-radius: var(--match-radius-12);
 	background: var(--match-blanco);
@@ -2882,6 +3963,13 @@ label.match-jb__btn:focus-within {
 
 .match-jb-filter:hover {
 	border-color: var(--match-azul-300);
+}
+
+/* Cara de la píldora (.match-filter__toggle, home.css): el padding vive en el
+ * botón para que todo el filtro sea clicable. */
+.match-jb-filter .match-filter__toggle {
+	width: 100%;
+	border-radius: inherit;
 }
 
 .match-jb-filter svg {
@@ -2900,6 +3988,11 @@ label.match-jb__btn:focus-within {
 	font-size: 16px;
 }
 
+/* Con JavaScript manda el desplegable de la marca (home.css). */
+.match-jb-filter.is-enhanced select {
+	pointer-events: none;
+}
+
 .match-jb-filter.is-active {
 	border-color: var(--match-celeste-500);
 	background: var(--match-celeste-500);
@@ -2907,6 +4000,11 @@ label.match-jb__btn:focus-within {
 	font-weight: 600;
 	line-height: var(--match-lh-nav);
 }
+
+/* Filtro de submarca activo: el color de la etiqueta de esa submarca
+ * (.match-submarca--{slug} en components.css). */
+.match-jb-filter.match-jb-filter--executive    { border-color: transparent; background: var(--match-submarca-executive); }
+.match-jb-filter.match-jb-filter--personnel    { border-color: var(--match-submarca-personnel); background: var(--match-submarca-personnel); }
 
 .match-jb-filter:focus-within {
 	outline: 2px solid var(--match-azul-300);
@@ -2922,6 +4020,12 @@ label.match-jb__btn:focus-within {
 	color: var(--match-neutral-300);
 	text-decoration: none;
 	white-space: nowrap;
+}
+
+/* Sin filtros activos ocupa su sitio pero no se ve ni se puede tocar (J17) */
+.match-jb-filters__clear.is-idle {
+	visibility: hidden;
+	pointer-events: none;
 }
 
 .match-jb-filters__clear:hover {
@@ -3077,6 +4181,41 @@ label.match-jb__btn:focus-within {
 	}
 }
 
+/* Listado en mobile (J06): buscador y botón «Filtros · n» en una fila; los filtros plegados hasta tocarlo */
+@media (max-width: 767px) {
+	.match-jb-filters {
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--match-space-12);
+	}
+
+	.match-jb-search {
+		flex: 1 1 0;
+		min-width: 0;
+	}
+
+	.match-filters-toggle--light {
+		height: 52px;
+		border-color: #e5e5e5;
+		background: var(--match-blanco);
+		color: var(--match-azul-800);
+	}
+
+	.match-jb-filters__pills {
+		flex: 1 0 100%;
+	}
+
+	.match-jb-filters:not(.is-filters-open) .match-jb-filter {
+		display: none;
+	}
+
+	/* En mobile no hace falta reservar el sitio de «Borrar filtros» */
+	.match-jb-filters__clear.is-idle {
+		display: none;
+	}
+}
+
 @media (max-width: 1024px) {
 	.match-jb__body--archive {
 		gap: var(--match-space-24);
@@ -3112,6 +4251,55 @@ label.match-jb__btn:focus-within {
 
 	.match-jb-row__actions {
 		justify-content: space-between;
+	}
+}
+
+/* Tarjetas de vacante en mobile (J03): «Ver vacante» y la fecha ya no se parten en dos líneas.
+   Vale para el listado (.match-jb-row) y para las tarjetas de Inicio y Guardados (.match-jb-card). */
+.match-jb__btn--sm {
+	flex: 0 0 auto;
+	white-space: nowrap;
+}
+
+@media (max-width: 1024px) {
+	/* El ícono de guardar fijo en la esquina superior derecha de la tarjeta, no flotando junto al salario */
+	.match-jb-row {
+		position: relative;
+	}
+
+	.match-jb-row .match-jb-card__fav {
+		position: absolute;
+		inset-block-start: var(--match-space-16);
+		inset-inline-end: var(--match-space-16);
+	}
+
+	.match-jb-row__top .match-jb-app__who {
+		padding-inline-end: var(--match-space-40);
+	}
+
+	.match-jb-row__actions,
+	.match-jb-card__bottom {
+		gap: var(--match-space-12);
+	}
+
+	.match-jb-row .match-jb-card__date,
+	.match-jb-card__bottom .match-jb-card__date {
+		font-size: 12px;
+		white-space: nowrap;
+	}
+}
+
+/* Pantallas de ~360 px: si fecha y botón no caben juntos, la fecha arriba y el botón a todo el ancho (más fácil de tocar) */
+@media (max-width: 380px) {
+	.match-jb-row__actions,
+	.match-jb-card__bottom {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.match-jb-row__actions .match-jb__btn--sm,
+	.match-jb-card__bottom .match-jb__btn--sm {
+		width: 100%;
 	}
 }
 
@@ -3246,6 +4434,21 @@ label.match-jb__btn:focus-within {
 	text-wrap: pretty;
 }
 
+/* La descripción llega como HTML del CRM y puede traer espacios duros (&nbsp;) o estilos en línea con
+   white-space: nowrap/pre, que impiden partir la línea y la sacan de su tarjeta. Se fuerza el salto de línea
+   normal dentro del texto de la vacante y se deja partir donde haga falta. */
+.match-jb-prose,
+.match-jb-prose * {
+	white-space: normal !important;
+	overflow-wrap: anywhere;
+}
+
+.match-jb-detail__main,
+.match-jb-detail__aside,
+.match-jb-panel {
+	min-width: 0;
+}
+
 .match-jb__title,
 .match-jb-detail__title,
 .match-jb-list__title,
@@ -3377,28 +4580,27 @@ label.match-jb__btn:focus-within {
 	color: var(--match-azul-300);
 }
 
+/* Misma interacción que los ítems del menú; solo cambia el color (rojo). */
 .match-jb__logout {
-	transition: background-color 0.25s ease, translate 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+	transition: background-color 0.3s cubic-bezier(0.22, 1, 0.36, 1), color 0.3s cubic-bezier(0.22, 1, 0.36, 1), translate 0.3s cubic-bezier(0.22, 1, 0.36, 1), padding 0.2s ease;
 }
 
 .match-jb__logout svg {
-	transition: translate 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+	transition: color 0.3s cubic-bezier(0.22, 1, 0.36, 1), translate 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Desplazamiento lateral sutil, distinto del de los ítems de arriba:
- * aquí el icono se adelanta al texto en vez de moverse junto con él. */
 .match-jb__logout:hover {
-	translate: 4px 0;
-	box-shadow: 0 6px 16px -10px rgba(228, 49, 49, 0.55);
-}
-
-.match-jb__logout:hover svg {
+	background: var(--match-neutral-100);
+	color: #c92a2a;
 	translate: 3px 0;
 }
 
-.match-jb__logout:active {
+.match-jb__logout:hover svg {
 	translate: 2px 0;
-	box-shadow: none;
+}
+
+.match-jb__logout:active {
+	translate: 1px 0;
 	transition-duration: 0.1s;
 }
 
@@ -3607,6 +4809,174 @@ label.match-jb__btn:focus-within {
 	background: rgba(228, 49, 49, 0.08);
 }
 
+/* --- Notificaciones: mismo <details> nativo que el menú de cuenta --- */
+.match-jb-notif {
+	position: relative;
+}
+
+.match-jb-notif__trigger {
+	position: relative;
+	list-style: none;
+	transition: background-color 0.2s ease;
+}
+
+.match-jb-notif__trigger::-webkit-details-marker {
+	display: none;
+}
+
+.match-jb-notif__trigger:hover,
+.match-jb-notif[open] .match-jb-notif__trigger {
+	background: var(--match-neutral-200);
+}
+
+/* El bell.svg trae un punto fijo: el de aviso lo pone el span, solo si hay sin leer. */
+.match-jb-notif__trigger svg circle {
+	display: none;
+}
+
+.match-jb-notif__dot {
+	position: absolute;
+	inset-block-start: 7px;
+	inset-inline-start: 25px;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--match-error);
+}
+
+.match-jb-notif__dot[hidden],
+.match-jb-notif__readall[hidden],
+.match-jb-notif__empty[hidden] {
+	display: none;
+}
+
+.match-jb-notif__panel {
+	position: absolute;
+	inset-inline-end: 0;
+	inset-block-start: calc(100% + var(--match-space-8));
+	z-index: 40;
+	width: 380px;
+	max-width: calc(100vw - 32px);
+	padding: var(--match-space-8);
+	border: 1px solid rgba(217, 217, 217, 0.56);
+	border-radius: var(--match-radius-16);
+	background: var(--match-blanco);
+	box-shadow: 0 16px 32px -12px rgba(23, 23, 31, 0.22);
+	animation: match-account-in 0.18s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.match-jb-notif__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--match-space-16);
+	padding: var(--match-space-12) var(--match-space-12) var(--match-space-8);
+}
+
+.match-jb-notif__title {
+	margin: 0;
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 1.3;
+	color: var(--match-negro);
+}
+
+.match-jb-notif__readall {
+	padding: 0;
+	border: 0;
+	background: none;
+	font: inherit;
+	font-size: 14px;
+	color: var(--match-neutral-350);
+	cursor: pointer;
+}
+
+.match-jb-notif__readall:hover {
+	color: var(--match-negro);
+}
+
+.match-jb-notif__list {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	max-height: min(420px, 70vh);
+	margin: 0;
+	padding: 0;
+	overflow-y: auto;
+	list-style: none;
+}
+
+.match-jb-notif__item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--match-space-16);
+	padding: var(--match-space-12);
+	border-radius: var(--match-radius-12);
+	color: inherit;
+	text-decoration: none;
+	transition: background-color 0.15s ease;
+}
+
+.match-jb-notif__item:hover {
+	background: var(--match-neutral-100);
+}
+
+.match-jb-notif__item.is-unread {
+	background: var(--match-celeste-50);
+}
+
+.match-jb-notif__item.is-unread:hover {
+	background: #d9e8ff;
+}
+
+.match-jb-notif__body {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.match-jb-notif__name {
+	font-size: 15px;
+	font-weight: 500;
+	line-height: 1.4;
+	color: var(--match-negro);
+}
+
+.match-jb-notif__sub,
+.match-jb-notif__time {
+	font-size: 14px;
+	line-height: 1.4;
+	color: var(--match-neutral-350);
+}
+
+.match-jb-notif__time {
+	font-size: 13px;
+}
+
+.match-jb-notif__unread {
+	display: none;
+	flex: 0 0 auto;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--match-celeste-500);
+}
+
+.match-jb-notif__item.is-unread .match-jb-notif__unread {
+	display: block;
+}
+
+.match-jb-notif__empty {
+	margin: 0;
+	padding: var(--match-space-24) var(--match-space-16);
+	font-size: 14px;
+	line-height: var(--match-lh-body);
+	text-align: center;
+	color: var(--match-neutral-350);
+}
+
 @media (max-width: 1024px) {
 
 	.match-jb-account__mail {
@@ -3631,7 +5001,8 @@ label.match-jb__btn:focus-within {
 
 @media (prefers-reduced-motion: reduce) {
 
-	.match-jb-account__menu {
+	.match-jb-account__menu,
+	.match-jb-notif__panel {
 		animation: none;
 	}
 
@@ -3713,6 +5084,14 @@ label.match-jb__btn:focus-within {
 	}
 }
 
+/* Solo la primera carga de la sesión anima (ver match_jb_animation_gate() en inc/jobboard.php):
+   con filtros, búsqueda, orden, paginación o tras la primera vez, las tarjetas aparecen directo. */
+.jb-no-anim .match-jb__grid>.match-jb-card,
+.jb-no-anim .match-jb-list>.match-jb-row,
+.jb-no-anim .match-jb-list>.match-jb-app {
+	animation: none;
+}
+
 /* Listado: mientras recarga tras cambiar un filtro */
 .match-jb-list-wrap.is-loading,
 .match-jb-list.is-loading {
@@ -3729,40 +5108,6 @@ label.match-jb__btn:focus-within {
 }
 
 @media (max-width: 1024px) {
-
-	/* Barra lateral compacta: navegación con desplazamiento horizontal y acciones en su fila */
-	.match-jb__sidebar {
-		gap: var(--match-space-12);
-		padding-block: var(--match-space-12) var(--match-space-16);
-	}
-
-	.match-jb__nav {
-		flex: 1 1 100%;
-		order: 2;
-		flex-wrap: nowrap;
-		overflow-x: auto;
-		scrollbar-width: none;
-		-webkit-overflow-scrolling: touch;
-		padding-block: 2px;
-	}
-
-	.match-jb__nav::-webkit-scrollbar {
-		display: none;
-	}
-
-	.match-jb__navitem {
-		flex: 0 0 auto;
-		white-space: nowrap;
-	}
-
-	.match-jb__auth {
-		order: 1;
-		margin: 0;
-	}
-
-	.match-jb__logo {
-		order: 0;
-	}
 
 	/* Detalle: barra de acciones fija abajo para postular sin volver arriba */
 	.match-jb-detail {
@@ -3781,12 +5126,25 @@ label.match-jb__btn:focus-within {
 	}
 
 	.match-jb-detail__actions .match-jb-detail__apply,
-	.match-jb-detail__actions [data-status-trigger] {
+	.match-jb-detail__actions [data-status-trigger],
+	.match-jb-detail__apply-wrap {
 		flex: 1;
+	}
+
+	/* Con el aviso de cuenta la barra crece ~26 px: el contenido deja ese aire. */
+	.match-jb-detail:has(.match-jb-detail__apply-wrap) {
+		padding-block-end: 116px;
+	}
+
+	.match-jb-detail__account-note {
+		font-size: var(--match-fs-body-sm);
 	}
 }
 
 @media (prefers-reduced-motion: reduce) {
+	body.has-open-jbmenu::before {
+		animation: none;
+	}
 
 	.match-jb__grid>.match-jb-card,
 	.match-jb-list>.match-jb-row,
@@ -3801,8 +5159,26 @@ label.match-jb__btn:focus-within {
 	.match-jb__navitem svg,
 	.match-jb__logout,
 	.match-jb__logout svg,
+	.match-jb__menu,
+	.match-jb__sidebar.is-open .match-jb__menu,
+	.match-jb__sidebar,
+	.match-jb__logo,
+	.match-jb__navlabel,
+	.match-jb__sidebar.is-collapsed .match-jb__navlabel,
+	.match-jb__sidebar.is-collapsed [data-tooltip]::after,
+	.match-jb__toggle,
+	.match-jb__chevron,
 	.match-jb-card__fav svg {
 		transition: none;
+	}
+
+	.match-jb__toggle:hover,
+	.match-jb__toggle:active {
+		scale: 1;
+	}
+
+	.match-jb__sidebar.is-collapsed .match-jb__logo-mark {
+		animation: none;
 	}
 
 	.match-jb__navitem:hover,
@@ -3823,5 +5199,62 @@ label.match-jb__btn:focus-within {
 
 	.match-jb__logout:hover svg {
 		translate: 0 0;
+	}
+}
+/* Barra lateral sin sesión: secciones privadas visibles, atenuadas y con candado. */
+.match-jb__navitem.is-locked {
+	color: var(--match-azul-400);
+}
+
+.match-jb__navitem.is-locked svg:not(.match-jb__navlock) {
+	color: var(--match-azul-300);
+}
+
+.match-jb__navlock {
+	flex: none;
+	margin-left: auto;
+	color: var(--match-azul-300);
+}
+
+/* Barra contraída: solo iconos, el candado sobra (queda el tooltip). */
+.match-jb__sidebar.is-collapsed .match-jb__navlock {
+	display: none;
+}
+
+/* Detalle de vacante (J22): el marcador mantiene el círculo de 50px (misma altura que «Postular ahora») pero el
+ * ícono baja a 18px, cerca de un tercio del contenedor, para no competir con la acción principal. Vale también para
+ * la barra fija de mobile, que usa este mismo botón. Hover gris claro; guardado, relleno #2C2C2C. */
+.match-jb-detail__actions .match-jb-iconbtn svg {
+	width: 18px;
+	height: 18px;
+}
+
+.match-jb-detail__actions .match-jb-iconbtn:hover {
+	background: #f5f5f5;
+}
+
+.match-jb-detail__actions .match-jb-iconbtn.is-saved {
+	color: #2c2c2c;
+}
+
+/*
+ * Escala tipográfica propia del Job Board (G01, J01). Reutiliza las mismas
+ * variables --match-fs-* de la web, pero con una escala más contenida porque ya
+ * es una aplicación: el título de página, los subtítulos, el puesto y el body
+ * bajan un poco en laptop. Etiquetas, fechas, salario y filtros usan
+ * --match-fs-body-sm (13 px) y no se tocan. Solo escritorio (>1024 px).
+ *
+ *                 1280   1440   1920
+ *  título página   26     28     32
+ *  subtítulos      17     18     20
+ *  puesto          16     16     16
+ *  body            15     15     16
+ */
+@media (min-width: 1025px) {
+	.match-jb {
+		--match-jb-fs-title: clamp(26px, 2vw, 32px);
+		--match-fs-xxl: clamp(17px, 1.25vw, 20px);
+		--match-fs-body-lg: 16px;
+		--match-fs-body: clamp(15px, 1.05vw, 16px);
 	}
 }

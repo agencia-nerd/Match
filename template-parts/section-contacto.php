@@ -4,25 +4,37 @@
  *
  * El formulario lo procesa match_handle_contact() (admin-post) y envía el
  * mensaje al correo del Personalizador.
+ *
+ * $args opcionales de las internas:
+ * - lead, lead_muted  Texto de apoyo junto al titular.
+ * - programas         Nombres de programas: agrega el selector «Programa de
+ *                     interés» (Programas). Los botones de cada tarjeta lo
+ *                     preseleccionan (assets/js/programas.js).
+ * - placeholder       Texto de ayuda del mensaje.
  */
 defined( 'ABSPATH' ) || exit;
 
-$status  = isset( $_GET['contacto'] ) ? sanitize_key( wp_unslash( $_GET['contacto'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+// Un envío desde el formulario emergente muestra su aviso allí, no aquí.
+$status  = isset( $_GET['contacto'] ) && ! isset( $_GET['origen'] ) ? sanitize_key( wp_unslash( $_GET['contacto'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 $profile = isset( $_GET['perfil'] ) && 'profesional' === $_GET['perfil'] ? 'profesional' : 'empresa'; // phpcs:ignore WordPress.Security.NonceVerification
 
 // Las internas pasan su propio texto de apoyo; la portada usa sus campos PCF.
 $home       = match_home();
 $lead       = $args['lead'] ?? $home['c_lead'];
 $lead_muted = array_key_exists( 'lead_muted', (array) $args ) ? $args['lead_muted'] : $home['c_lead_muted'];
+$programas  = array_values( array_filter( array_map( 'strval', (array) ( $args['programas'] ?? array() ) ) ) );
+$placeholder = $args['placeholder'] ?? __( 'Cuéntanos sobre tu situación o la de tu equipo.', 'match' );
+$programa   = isset( $_GET['programa'] ) ? sanitize_text_field( wp_unslash( $_GET['programa'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 ?>
-<section class="match-contacto" id="contacto" data-aos="fade-up">
+<section class="match-contacto" id="contacto"<?php echo match_aos(); // phpcs:ignore WordPress.Security.EscapeOutput ?>>
 	<div class="match-contacto__inner">
 		<div class="match-contacto__bg" aria-hidden="true">
 			<img src="<?php echo esc_url( get_theme_file_uri( 'assets/img/contacto-bg.webp' ) ); ?>" alt="" loading="lazy" decoding="async">
 		</div>
 
-		<form class="match-glass match-contacto__card" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+		<form class="match-glass match-contacto__card"<?php echo match_reveal( 'left' ); // phpcs:ignore WordPress.Security.EscapeOutput ?> method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 			<input type="hidden" name="action" value="match_contact">
+			<input type="hidden" name="volver" value="<?php echo esc_url( get_permalink( get_queried_object_id() ) ?: home_url( '/' ) ); ?>">
 			<?php wp_nonce_field( 'match_contact', 'match_contact_nonce' ); ?>
 			<input type="text" name="match_web" value="" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
 
@@ -50,9 +62,23 @@ $lead_muted = array_key_exists( 'lead_muted', (array) $args ) ? $args['lead_mute
 					<span class="match-field__label"><?php esc_html_e( 'Correo electrónico', 'match' ); ?></span>
 					<input class="match-field__input" type="email" name="correo" placeholder="tu@empresa.com" required autocomplete="email">
 				</label>
+				<?php if ( $programas ) : ?>
+					<label class="match-field">
+						<span class="match-field__label"><?php esc_html_e( 'Programa de interés', 'match' ); ?></span>
+						<span class="match-field__select">
+							<select class="match-field__input" name="programa" data-contact-programa>
+								<option value=""><?php esc_html_e( 'Aún no lo sé, quiero asesoría', 'match' ); ?></option>
+								<?php foreach ( $programas as $nombre ) : ?>
+									<option value="<?php echo esc_attr( $nombre ); ?>"<?php selected( $programa, $nombre ); ?>><?php echo esc_html( $nombre ); ?></option>
+								<?php endforeach; ?>
+							</select>
+							<?php echo match_icon( 'chevron' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+						</span>
+					</label>
+				<?php endif; ?>
 				<label class="match-field">
 					<span class="match-field__label"><?php esc_html_e( 'Mensaje', 'match' ); ?></span>
-					<textarea class="match-field__input" name="mensaje" placeholder="<?php esc_attr_e( 'Cuéntanos sobre el rol y el perfil que buscas.', 'match' ); ?>" required></textarea>
+					<textarea class="match-field__input" name="mensaje" placeholder="<?php echo esc_attr( $placeholder ); ?>" required></textarea>
 				</label>
 			</div>
 
@@ -62,25 +88,32 @@ $lead_muted = array_key_exists( 'lead_muted', (array) $args ) ? $args['lead_mute
 				<?php elseif ( 'error' === $status ) : ?>
 					<p class="match-contacto__notice match-contacto__notice--error" role="alert"><?php esc_html_e( 'No pudimos enviar tu mensaje. Revisa los datos e inténtalo de nuevo.', 'match' ); ?></p>
 				<?php endif; ?>
-				<button class="match-btn match-btn--primary" type="submit">
-					<span class="match-btn__orbit" aria-hidden="true"></span>
-					<?php esc_html_e( 'Enviar mensaje', 'match' ); ?>
-					<span class="match-btn__icon"><?php echo match_icon( 'arrow' ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
+				<button class="match-btn match-btn--cta" type="submit">
+					<?php echo match_cta_inner( __( 'Enviar mensaje', 'match' ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 				</button>
-				<p class="match-contacto__legal"><?php esc_html_e( 'Al enviar, aceptas nuestros Términos y Política de Privacidad.', 'match' ); ?></p>
+				<p class="match-contacto__legal">
+					<?php
+					printf(
+						/* translators: 1: enlace a Términos, 2: enlace a Política de Privacidad */
+						esc_html__( 'Al enviar, aceptas nuestros %1$s y %2$s.', 'match' ),
+						'<a href="' . esc_url( home_url( '/terminos-de-servicio/' ) ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Términos', 'match' ) . '</a>',
+						'<a href="' . esc_url( home_url( '/politica-de-privacidad/' ) ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Política de Privacidad', 'match' ) . '</a>'
+					); // phpcs:ignore WordPress.Security.EscapeOutput
+					?>
+				</p>
 			</div>
 		</form>
 
 		<div class="match-contacto__text">
-			<h2 class="match-contacto__title"><?php esc_html_e( 'Hablemos.', 'match' ); ?></h2>
-			<p class="match-contacto__lead">
+			<h2 class="match-contacto__title"<?php echo match_reveal( 'title' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>><?php esc_html_e( 'Hablemos.', 'match' ); ?></h2>
+			<p class="match-contacto__lead"<?php echo match_reveal(); // phpcs:ignore WordPress.Security.EscapeOutput ?>>
 				<?php echo esc_html( $lead ); ?>
 				<?php if ( $lead_muted ) : ?>
 					<span class="is-muted"><?php echo esc_html( $lead_muted ); ?></span>
 				<?php endif; ?>
 			</p>
 			<hr class="match-contacto__rule">
-			<div class="match-contacto__bullets">
+			<div class="match-contacto__bullets"<?php echo match_reveal(); // phpcs:ignore WordPress.Security.EscapeOutput ?>>
 				<?php foreach ( $home['c_bullets'] as $bullet ) : ?>
 					<div class="match-bullet">
 						<p class="match-bullet__head"><?php echo match_icon( $bullet['icon'] ); // phpcs:ignore WordPress.Security.EscapeOutput ?><?php echo esc_html( $bullet['head'] ); ?></p>

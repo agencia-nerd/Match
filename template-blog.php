@@ -36,7 +36,7 @@ get_header();
 		</div>
 	</div>
 
-	<div class="match-blog-filters" data-aos="fade-up" data-aos-delay="150">
+	<div class="match-blog-filters" data-aos="fade-up" data-aos-delay="150" data-blog-filters>
 		<form class="match-blog-search" role="search" method="get" action="<?php echo esc_url( match_blog_url() ); ?>">
 			<label class="screen-reader-text" for="match-blog-q"><?php esc_html_e( 'Buscar en el blog', 'match' ); ?></label>
 			<?php echo match_icon( 'search' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
@@ -46,8 +46,26 @@ get_header();
 			<?php endif; ?>
 		</form>
 
-		<nav class="match-blog-pills" aria-label="<?php esc_attr_e( 'Categorías', 'match' ); ?>">
-			<a class="match-blog-pill<?php echo $category ? '' : ' is-active'; ?>" href="<?php echo esc_url( match_blog_url() ); ?>"<?php echo $category ? '' : ' aria-current="page"'; ?>><?php esc_html_e( 'Ver todas las noticias', 'match' ); ?></a>
+		<?php
+		// Mobile (Figma B01): un botón «Filtros» junto al buscador que despliega las categorías; con una activa
+		// muestra «Filtros · Categoría» y aparece «Borrar filtro». En escritorio se ven las píldoras en fila.
+		$active_name = '';
+		foreach ( match_blog_categories() as $term ) {
+			if ( $term->slug === $category ) {
+				$active_name = $term->name;
+			}
+		}
+		?>
+		<button class="match-blog-filter-toggle" type="button" aria-expanded="false" aria-controls="match-blog-cats" data-blog-filter-toggle>
+			<span><?php echo $active_name ? esc_html( sprintf( /* translators: %s: categoría */ __( 'Filtros · %s', 'match' ), $active_name ) ) : esc_html__( 'Filtros', 'match' ); ?></span>
+			<?php echo match_icon( 'chevron' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+		</button>
+		<?php if ( $category ) : ?>
+			<a class="match-blog-filter-clear" href="<?php echo esc_url( match_blog_url() ); ?>"><?php esc_html_e( 'Borrar filtro', 'match' ); ?></a>
+		<?php endif; ?>
+
+		<nav class="match-blog-pills" id="match-blog-cats" aria-label="<?php esc_attr_e( 'Categorías', 'match' ); ?>">
+			<a class="match-blog-pill<?php echo $category ? '' : ' is-active'; ?>" href="<?php echo esc_url( match_blog_url() ); ?>"<?php echo $category ? '' : ' aria-current="page"'; ?>><?php esc_html_e( 'Ver todo', 'match' ); ?></a>
 			<?php foreach ( match_blog_categories() as $term ) : ?>
 				<?php $active = $term->slug === $category; ?>
 				<a class="match-blog-pill<?php echo $active ? ' is-active' : ''; ?>" href="<?php echo esc_url( match_blog_url( $term->slug ) ); ?>"<?php echo $active ? ' aria-current="page"' : ''; ?>><?php echo esc_html( $term->name ); ?></a>
@@ -99,7 +117,7 @@ get_header();
 		<div class="match-blog-empty">
 			<p class="match-blog-empty__title"><?php esc_html_e( 'No encontramos artículos', 'match' ); ?></p>
 			<p><?php esc_html_e( 'Prueba con otros términos o revisa todas las noticias.', 'match' ); ?></p>
-			<a class="match-btn match-btn--secondary" href="<?php echo esc_url( match_blog_url() ); ?>"><?php esc_html_e( 'Ver todas las noticias', 'match' ); ?></a>
+			<a class="match-btn match-btn--secondary" href="<?php echo esc_url( match_blog_url() ); ?>"><?php esc_html_e( 'Ver todo', 'match' ); ?></a>
 		</div>
 	<?php endif; ?>
 </section>

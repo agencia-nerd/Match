@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="es" class="match-preloading">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MATCH</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap">
+  <style>
+/* ==========================================================================
+   MATCH · Preloader
+   Sin dependencias. Escala con --mp-u (1 unidad = 1/140 del ancho del logo).
+   ========================================================================== */
+
+html.match-preloading,
+html.match-preloading body { overflow: hidden; }
+
+.match-preloader {
+  /* Personalizables */
+  --mp-hero-bg: #0A0A0B;          /* debe coincidir con el fondo del Hero */
+  --mp-bg-1: #FFFFFF;
+  --mp-bg-2: #F7F7F8;
+  --mp-bg-3: #EFEFF1;
+  --mp-ink: #1C1C1C;
+  --mp-pct-color: #55555B;
+  --mp-bar-color: #B8B8BD;
+  --mp-u: min(clamp(1.7px, 0.16vw + 1.1px, 3.2px), 0.6vh);
+
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(ellipse 75% 65% at 50% 46%, var(--mp-bg-1) 0%, var(--mp-bg-2) 55%, var(--mp-bg-3) 100%);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.mp-grain {
+  position: absolute;
+  inset: -50%;
+  opacity: 0.1;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  background-size: 160px 160px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.mp-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 85% 75% at 50% 48%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.05) 100%);
+}
+
+.mp-stage { position: relative; opacity: 0; will-change: transform, opacity, filter; }
+
+.mp-lockup {
+  display: flex;
+  align-items: flex-end;
+  gap: calc(var(--mp-u) * 9);
+  transform: translateX(37.142857%);
+}
+
+.mp-iso {
+  position: relative;
+  flex: none;
+  width: calc(var(--mp-u) * 36);
+  height: calc(var(--mp-u) * 22);
+  perspective: calc(var(--mp-u) * 200);
+}
+
+.mp-cube,
+.mp-face {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.mp-face-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  opacity: 0; /* oculto hasta que el JS lo muestre */
+}
+
+.mp-iso-svg {
+  display: block;
+  width: calc(var(--mp-u) * 36);
+  height: calc(var(--mp-u) * 22);
+}
+
+.mp-word {
+  display: block;
+  flex: none;
+  width: calc(var(--mp-u) * 95);
+  height: calc(var(--mp-u) * 25);
+  overflow: hidden;
+  clip-path: inset(0 100% 0 0);
+}
+.mp-word path { fill: var(--mp-ink); }
+
+.mp-progress { position: absolute; inset: 0; pointer-events: none; opacity: 0; }
+
+.mp-pct {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + var(--mp-u) * 34);
+  transform: translateX(-50%);
+  font-family: 'Poppins', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: clamp(11px, 0.2vw + 10px, 13px);
+  letter-spacing: 0.04em;
+  color: var(--mp-pct-color);
+  font-variant-numeric: tabular-nums;
+}
+
+.mp-track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: rgba(28, 28, 28, 0.04);
+}
+
+.mp-bar {
+  height: 100%;
+  background: var(--mp-bar-color);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+}
+
+.mp-hero-wipe {
+  position: absolute;
+  inset: 0;
+  background: var(--mp-hero-bg);
+  clip-path: inset(100% 0 0 0);
+  pointer-events: none;
+}
+
+  </style>
+  <noscript><style>.match-preloader{display:none!important}html.match-preloading,html.match-preloading body{overflow:auto!important}</style></noscript>
+  <style>
+    html, body { margin: 0; background: #0A0A0B; }
+    .hero { min-height: 100vh; min-height: 100svh; background: #0A0A0B; }
+  </style>
+</head>
+<body>
+<!-- MATCH PRELOADER · inicio -->
+<div class="match-preloader" data-match-preloader data-speed="1" data-once="" role="status" aria-live="polite" aria-label="Cargando MATCH">
+  <div class="mp-grain" aria-hidden="true"></div>
+  <div class="mp-vignette" aria-hidden="true"></div>
+  <div class="mp-stage" data-stage>
+    <div class="mp-lockup" data-lockup>
+      <div class="mp-iso">
+        <div class="mp-cube" data-cube>
+          <div class="mp-face" data-face="empty"><div class="mp-face-inner"></div></div>
+          <div class="mp-face" data-face="navy"><div class="mp-face-inner"><svg class="mp-iso-svg" viewBox="0 14 36 22" aria-hidden="true" focusable="false"><defs><linearGradient id="mp-g-navy" x1="6.08" y1="10" x2="29.93" y2="33.38" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#3B33C6"/><stop offset="0.35" stop-color="#2A229F"/><stop offset="0.7" stop-color="#19137A"/><stop offset="1" stop-color="#0F0B59"/></linearGradient></defs><path fill="url(#mp-g-navy)" d="M8.47365 14.7481C7.51446 14.7904 6.69129 15.3822 6.33596 16.2939L0.177333 31.9985C-0.255069 33.0914 0.123936 34.311 1.08933 34.9631C2.05456 35.6153 3.30409 35.4824 4.12121 34.6493L12.7787 25.8098L15.6212 31.6001C16.0299 32.4393 16.859 32.9586 17.7767 32.9586C18.6945 32.9586 19.5236 32.4393 19.9321 31.6001L22.7628 25.8098L31.4321 34.6493C31.9001 35.1263 32.5159 35.3738 33.132 35.3738V35.3676C33.5878 35.3676 34.0554 35.2349 34.4642 34.9571C35.4294 34.305 35.8084 33.0854 35.3763 31.9925L29.2175 16.2939C28.8624 15.3822 28.039 14.7904 27.0798 14.7481C26.1264 14.7182 25.2559 15.2313 24.8236 16.1069L22.1115 21.6495L19.4823 18.9689C18.5703 18.0388 16.9832 18.0388 16.0712 18.9689L13.4479 21.6495L10.7299 16.1069C10.3118 15.2545 9.48411 14.7463 8.56787 14.7465C8.53668 14.7465 8.50516 14.747 8.47365 14.7481ZM26.9672 17.2058L33.1438 32.8982L23.9057 23.4791L26.9672 17.2058ZM8.56248 17.2118L11.6417 23.4912L2.42165 32.9103L8.56248 17.2118ZM14.5849 23.9682V23.9622L17.7708 20.7138L20.9745 23.9802L17.7886 30.495L14.5849 23.9682Z"/></svg></div></div>
+          <div class="mp-face" data-face="purple"><div class="mp-face-inner"><svg class="mp-iso-svg" viewBox="0 14 36 22" aria-hidden="true" focusable="false"><defs><linearGradient id="mp-g-purple" x1="6.08" y1="10" x2="29.93" y2="33.38" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#A866FF"/><stop offset="0.35" stop-color="#9244F2"/><stop offset="0.7" stop-color="#7723D8"/><stop offset="1" stop-color="#6216BE"/></linearGradient></defs><path fill="url(#mp-g-purple)" d="M8.47365 14.7481C7.51446 14.7904 6.69129 15.3822 6.33596 16.2939L0.177333 31.9985C-0.255069 33.0914 0.123936 34.311 1.08933 34.9631C2.05456 35.6153 3.30409 35.4824 4.12121 34.6493L12.7787 25.8098L15.6212 31.6001C16.0299 32.4393 16.859 32.9586 17.7767 32.9586C18.6945 32.9586 19.5236 32.4393 19.9321 31.6001L22.7628 25.8098L31.4321 34.6493C31.9001 35.1263 32.5159 35.3738 33.132 35.3738V35.3676C33.5878 35.3676 34.0554 35.2349 34.4642 34.9571C35.4294 34.305 35.8084 33.0854 35.3763 31.9925L29.2175 16.2939C28.8624 15.3822 28.039 14.7904 27.0798 14.7481C26.1264 14.7182 25.2559 15.2313 24.8236 16.1069L22.1115 21.6495L19.4823 18.9689C18.5703 18.0388 16.9832 18.0388 16.0712 18.9689L13.4479 21.6495L10.7299 16.1069C10.3118 15.2545 9.48411 14.7463 8.56787 14.7465C8.53668 14.7465 8.50516 14.747 8.47365 14.7481ZM26.9672 17.2058L33.1438 32.8982L23.9057 23.4791L26.9672 17.2058ZM8.56248 17.2118L11.6417 23.4912L2.42165 32.9103L8.56248 17.2118ZM14.5849 23.9682V23.9622L17.7708 20.7138L20.9745 23.9802L17.7886 30.495L14.5849 23.9682Z"/></svg></div></div>
+          <div class="mp-face" data-face="gray"><div class="mp-face-inner"><svg class="mp-iso-svg" viewBox="0 14 36 22" aria-hidden="true" focusable="false"><defs><linearGradient id="mp-g-gray" x1="6.08" y1="10" x2="29.93" y2="33.38" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#A3A5AD"/><stop offset="0.45" stop-color="#85878F"/><stop offset="1" stop-color="#5E6068"/></linearGradient></defs><path fill="url(#mp-g-gray)" d="M8.47365 14.7481C7.51446 14.7904 6.69129 15.3822 6.33596 16.2939L0.177333 31.9985C-0.255069 33.0914 0.123936 34.311 1.08933 34.9631C2.05456 35.6153 3.30409 35.4824 4.12121 34.6493L12.7787 25.8098L15.6212 31.6001C16.0299 32.4393 16.859 32.9586 17.7767 32.9586C18.6945 32.9586 19.5236 32.4393 19.9321 31.6001L22.7628 25.8098L31.4321 34.6493C31.9001 35.1263 32.5159 35.3738 33.132 35.3738V35.3676C33.5878 35.3676 34.0554 35.2349 34.4642 34.9571C35.4294 34.305 35.8084 33.0854 35.3763 31.9925L29.2175 16.2939C28.8624 15.3822 28.039 14.7904 27.0798 14.7481C26.1264 14.7182 25.2559 15.2313 24.8236 16.1069L22.1115 21.6495L19.4823 18.9689C18.5703 18.0388 16.9832 18.0388 16.0712 18.9689L13.4479 21.6495L10.7299 16.1069C10.3118 15.2545 9.48411 14.7463 8.56787 14.7465C8.53668 14.7465 8.50516 14.747 8.47365 14.7481ZM26.9672 17.2058L33.1438 32.8982L23.9057 23.4791L26.9672 17.2058ZM8.56248 17.2118L11.6417 23.4912L2.42165 32.9103L8.56248 17.2118ZM14.5849 23.9682V23.9622L17.7708 20.7138L20.9745 23.9802L17.7886 30.495L14.5849 23.9682Z"/></svg></div></div>
+          <div class="mp-face" data-face="celeste"><div class="mp-face-inner"><svg class="mp-iso-svg" viewBox="0 14 36 22" aria-hidden="true" focusable="false"><defs><linearGradient id="mp-g-celeste" x1="6.08" y1="10" x2="29.93" y2="33.38" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0086F1"/><stop offset="0.23" stop-color="#0081F0"/><stop offset="0.47" stop-color="#0075EE"/><stop offset="0.72" stop-color="#0060EB"/><stop offset="0.96" stop-color="#0043E6"/><stop offset="1" stop-color="#003FE6"/></linearGradient></defs><path fill="url(#mp-g-celeste)" d="M8.47365 14.7481C7.51446 14.7904 6.69129 15.3822 6.33596 16.2939L0.177333 31.9985C-0.255069 33.0914 0.123936 34.311 1.08933 34.9631C2.05456 35.6153 3.30409 35.4824 4.12121 34.6493L12.7787 25.8098L15.6212 31.6001C16.0299 32.4393 16.859 32.9586 17.7767 32.9586C18.6945 32.9586 19.5236 32.4393 19.9321 31.6001L22.7628 25.8098L31.4321 34.6493C31.9001 35.1263 32.5159 35.3738 33.132 35.3738V35.3676C33.5878 35.3676 34.0554 35.2349 34.4642 34.9571C35.4294 34.305 35.8084 33.0854 35.3763 31.9925L29.2175 16.2939C28.8624 15.3822 28.039 14.7904 27.0798 14.7481C26.1264 14.7182 25.2559 15.2313 24.8236 16.1069L22.1115 21.6495L19.4823 18.9689C18.5703 18.0388 16.9832 18.0388 16.0712 18.9689L13.4479 21.6495L10.7299 16.1069C10.3118 15.2545 9.48411 14.7463 8.56787 14.7465C8.53668 14.7465 8.50516 14.747 8.47365 14.7481ZM26.9672 17.2058L33.1438 32.8982L23.9057 23.4791L26.9672 17.2058ZM8.56248 17.2118L11.6417 23.4912L2.42165 32.9103L8.56248 17.2118ZM14.5849 23.9682V23.9622L17.7708 20.7138L20.9745 23.9802L17.7886 30.495L14.5849 23.9682Z"/></svg></div></div>
+        </div>
+      </div>
+      <svg class="mp-word" data-word viewBox="45 11 95 25" aria-hidden="true" focusable="false">
+        <path data-letter fill="#1C1C1C" d="M64.0244 20.8464C61.0693 20.8645 59.7487 23.0502 59.7193 26.7031V35.3676H57.0248C57.0248 35.3676 57.007 26.7454 57.0248 26.7031C56.9951 23.0623 55.5978 20.8464 52.69 20.8464H52.6428C49.4096 20.8464 48.6455 24.0646 48.6455 26.8299V35.3736H45.9512V26.8299C45.9512 22.1265 47.9587 18.3045 52.5656 18.3045H52.6131C55.5089 18.3045 57.3741 19.8199 58.3747 22.1143C59.3579 19.8199 61.2232 18.3045 64.1189 18.3045H64.1782C68.7854 18.3045 70.7928 22.1325 70.7928 26.8299V35.3736H68.0806V26.8299C68.0806 23.4246 66.9792 20.8464 64.0244 20.8464Z"/>
+        <path data-letter fill="#1C1C1C" d="M81.3927 20.8827C78.6038 20.8827 76.294 22.7544 76.294 26.8482C76.294 30.9418 78.5621 32.8618 81.3927 32.8618C84.2232 32.8618 86.4794 30.9418 86.4794 26.8482C86.4794 22.7544 84.1642 20.8827 81.3927 20.8827ZM86.9355 32.7351C85.7097 34.2687 83.9804 35.3736 81.3927 35.3736C75.9388 35.3736 73.3984 31.5456 73.3984 26.8482C73.3984 22.1506 75.9388 18.3226 81.3927 18.3226C86.8465 18.3226 89.3753 22.1506 89.3753 26.8482C89.3753 27.0655 89.3575 27.4701 89.3575 27.4881C89.2982 29.0157 89.0791 32.2038 90.6426 33.6891L88.2087 35.3736C87.5632 34.7335 87.1073 33.6709 86.9355 32.7351Z"/>
+        <path data-letter fill="#1C1C1C" d="M95.6515 19.7233C94.4258 20.6109 92.8802 21.1422 91.009 21.1422H90.6416V18.5943H91.009C93.7685 18.5943 96.2496 16.7527 96.3089 12.7677V11.1978H99.0032V12.7737C98.9735 14.9292 98.417 16.7406 97.0373 18.3045H104.581V20.8342H98.3636V26.848C98.3636 29.8006 100.306 32.7169 103.77 32.8315H104.611V35.3736H103.77C99.2816 35.2952 95.6515 31.5153 95.6515 26.848V19.7293V19.7233Z"/>
+        <path data-letter fill="#1C1C1C" d="M121.424 31.98C120.151 34.0389 117.948 35.3673 114.744 35.3673C109.29 35.3673 106.75 31.5393 106.75 26.8418C106.75 22.1444 109.29 18.3162 114.744 18.3162C117.948 18.3162 120.151 19.6446 121.424 21.7035L118.961 23.1587C118.043 21.6129 116.479 20.8762 114.75 20.8762C111.961 20.8762 109.652 22.7481 109.652 26.8418C109.652 30.9354 111.92 32.8556 114.75 32.8556C116.509 32.8556 118.072 32.1068 118.978 30.5309L121.43 31.986L121.424 31.98Z"/>
+        <path data-letter fill="#1C1C1C" d="M124.029 35.3736V11.1979H126.724V20.5687C128.056 19.2705 129.773 18.3045 132.024 18.3045C137.46 18.3045 140 22.1325 140 26.83V35.3736H137.306V26.83C137.306 22.7362 134.795 20.8645 132.024 20.8645C129.252 20.8645 126.724 22.7362 126.724 26.83V35.3736H124.029Z"/>
+      </svg>
+    </div>
+  </div>
+  <div class="mp-progress" data-progress aria-hidden="true">
+    <div class="mp-pct" data-pct>0%</div>
+    <div class="mp-track"><div class="mp-bar" data-bar></div></div>
+  </div>
+  <div class="mp-hero-wipe" data-hero aria-hidden="true"></div>
+</div>
+<!-- MATCH PRELOADER · fin -->
+
+  <main>
+    <section class="hero" id="hero"></section>
+  </main>
+  <script>
+/*!
+ * MATCH · Preloader — vanilla JS, sin dependencias.
+ *
+ * Atributos opcionales en [data-match-preloader]:
+ *   data-speed="1"        multiplicador de velocidad (1 = valor aprobado)
+ *   data-once="session"   mostrarlo solo una vez por sesión
+ *
+ * Al terminar:
+ *   - elimina el preloader del DOM
+ *   - <html> pasa de .match-preloading a .match-loaded
+ *   - dispara window 'match:preloader-done'
+ *
+ * El porcentaje refleja la carga real (imágenes, fuentes, window.load) y nunca
+ * avanza más rápido que la animación. Si la web tarda, el logo se queda en
+ * pantalla hasta que todo cargue y recién ahí pasa al Hero.
+ */
+(function () {
+  'use strict';
+
+  var root = document.querySelector('[data-match-preloader]');
+  var html = document.documentElement;
+  if (!root) { html.classList.remove('match-preloading'); return; }
+
+  var SEEN_KEY = 'matchPreloaderSeen';
+  var once = root.getAttribute('data-once') === 'session';
+
+  function finish() {
+    if (root.parentNode) root.parentNode.removeChild(root);
+    html.classList.remove('match-preloading');
+    html.classList.add('match-loaded');
+    try { if (once) sessionStorage.setItem(SEEN_KEY, '1'); } catch (e) {}
+    window.dispatchEvent(new CustomEvent('match:preloader-done'));
+    window.removeEventListener('resize', onResize);
+  }
+
+  try { if (once && sessionStorage.getItem(SEEN_KEY)) { finish(); return; } } catch (e) {}
+  if (!root.animate) { window.addEventListener('load', finish); return; }
+
+  /* ---------- Línea de tiempo (ms a velocidad 1) ---------- */
+  var T = 6400;          // duración total hasta cubrir con el Hero
+  var HOLD = 5300;       // punto donde espera si la web aún no terminó de cargar
+  var RATE = (parseFloat(root.getAttribute('data-speed')) || 1) * 1.4;
+  var E = 'cubic-bezier(.77,0,.18,1)';
+  var OUT = 'cubic-bezier(.16,1,.3,1)';
+  var IO = 'cubic-bezier(.83,0,.17,1)';
+  var HW = 'cubic-bezier(.76,0,.24,1)';
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var q = function (s) { return root.querySelector(s); };
+  var qa = function (s) { return Array.prototype.slice.call(root.querySelectorAll(s)); };
+  var o = function (ms) { return ms / T; };
+
+  var anims = [];
+  var main = null;
+  var grain = null;
+
+  function add(el, kf) {
+    if (!el) return null;
+    var a = el.animate(kf, { duration: T, iterations: 1, fill: 'both' });
+    a.playbackRate = RATE;
+    anims.push(a);
+    return a;
+  }
+
+  function build(atTime, paused) {
+    anims.forEach(function (a) { a.cancel(); });
+    anims = [];
+
+    var S = function (op, y, sc, bl) {
+      return { opacity: op, transform: 'translateY(' + y + '%) scale(' + sc + ')', filter: 'blur(' + bl + 'px)' };
+    };
+    main = add(q('[data-stage]'), [
+      Object.assign({ offset: 0, easing: OUT }, S(0, 0, .55, 14)),
+      Object.assign({ offset: o(900) }, S(1, 0, 1, 0)),
+      Object.assign({ offset: o(5450), easing: 'cubic-bezier(.7,0,.84,0)' }, S(1, 0, 1, 0)),
+      Object.assign({ offset: o(6150) }, S(0, -6, .94, 6)),
+      Object.assign({ offset: 1 }, S(0, -6, .94, 6))
+    ]);
+
+    add(q('[data-hero]'), [
+      { offset: 0, clipPath: 'inset(100% 0% 0% 0%)' },
+      { offset: o(5500), clipPath: 'inset(100% 0% 0% 0%)', easing: HW },
+      { offset: o(6400), clipPath: 'inset(0% 0% 0% 0%)' },
+      { offset: 1, clipPath: 'inset(0% 0% 0% 0%)' }
+    ]);
+
+    add(q('[data-progress]'), [
+      { offset: 0, opacity: 0 }, { offset: o(500), opacity: 1 },
+      { offset: o(5300), opacity: 1 }, { offset: o(5700), opacity: 0 }, { offset: 1, opacity: 0 }
+    ]);
+
+    // Cubo: cada cara gira sobre el borde compartido (profundidad = mitad del lado)
+    var cube = q('[data-cube]');
+    var u = cube ? (cube.offsetWidth / 36 || 3) : 3;
+    var F = { c: [0, 0], right: [0, 90], left: [0, -90], top: [90, 0], bottom: [-90, 0] };
+    var dep = function (dir) { return (dir === 'top' || dir === 'bottom' ? 11 : 18) * u; };
+    var r2 = function (rot, d) {
+      return 'translateZ(' + (-d) + 'px) rotateX(' + rot[0] + 'deg) rotateY(' + rot[1] + 'deg) translateZ(' + d + 'px)';
+    };
+    function face(name, from, tin, to, tout) {
+      var el = q('[data-face="' + name + '"]');
+      var di = from ? dep(from) : dep(to), dO = to ? dep(to) : di, kf = [];
+      if (from) kf.push({ offset: 0, transform: r2(F[from], di) }, { offset: o(tin), transform: r2(F[from], di), easing: E }, { offset: o(tin + 600), transform: r2(F.c, di) });
+      else kf.push({ offset: 0, transform: r2(F.c, di) });
+      if (to) kf.push({ offset: o(tout), transform: r2(F.c, dO), easing: E }, { offset: o(tout + 600), transform: r2(F[to], dO) }, { offset: 1, transform: r2(F[to], dO) });
+      else kf.push({ offset: 1, transform: r2(F.c, di) });
+      add(el, kf);
+      // Visibilidad explícita: cada cara solo se ve cuando está al frente
+      // (no depende de backface-visibility, que falla en algunos equipos/GPU)
+      if (el) {
+        var ok = [];
+        if (from) ok.push({ offset: 0, opacity: 0 }, { offset: o(tin + 150), opacity: 0, easing: 'cubic-bezier(.3,.6,.6,1)' }, { offset: o(tin + 480), opacity: 1 });
+        else ok.push({ offset: 0, opacity: 1 });
+        if (to) ok.push({ offset: o(tout), opacity: 1, easing: 'cubic-bezier(.4,0,.7,.4)' }, { offset: o(tout + 380), opacity: 0 }, { offset: 1, opacity: 0 });
+        else ok.push({ offset: 1, opacity: 1 });
+        add(el.firstElementChild, ok);
+      }
+    }
+    face('empty', null, 0, 'right', 700);      // vacío
+    face('navy', 'left', 700, 'bottom', 1500);  // azul oscuro · entra por la izquierda
+    face('purple', 'top', 1500, 'left', 2300);  // morado · entra por arriba
+    face('gray', 'right', 2300, 'top', 3100);   // gris · entra por la derecha
+    face('celeste', 'bottom', 3100, null, 0);   // original · entra por abajo
+
+    add(q('[data-lockup]'), [
+      { offset: 0, transform: 'translateX(37.142857%)' },
+      { offset: o(3900), transform: 'translateX(37.142857%)', easing: IO },
+      { offset: o(4950), transform: 'translateX(0%)' },
+      { offset: 1, transform: 'translateX(0%)' }
+    ]);
+    add(q('[data-word]'), [
+      { offset: 0, clipPath: 'inset(0% 100% 0% 0%)' },
+      { offset: o(3950), clipPath: 'inset(0% 100% 0% 0%)', easing: IO },
+      { offset: o(5000), clipPath: 'inset(0% 0% 0% 0%)' },
+      { offset: 1, clipPath: 'inset(0% 0% 0% 0%)' }
+    ]);
+    qa('[data-letter]').forEach(function (el, i) {
+      var s = 4050 + i * 80;
+      add(el, [
+        { offset: 0, opacity: 0, transform: 'translateX(-26px)' },
+        { offset: o(s), opacity: 0, transform: 'translateX(-26px)', easing: OUT },
+        { offset: o(s + 950), opacity: 1, transform: 'translateX(0px)' },
+        { offset: 1, opacity: 1, transform: 'translateX(0px)' }
+      ]);
+    });
+
+    if (atTime != null) anims.forEach(function (a) { a.currentTime = atTime; });
+    if (paused) anims.forEach(function (a) { a.pause(); });
+    if (main) main.finished.then(finish).catch(function () {});
+  }
+
+  /* ---------- Grano animado ---------- */
+  var g = q('.mp-grain');
+  if (g && !reduced) {
+    var pos = [[0, 0], [-8, 4], [5, -6], [-3, 9], [7, 2], [-6, -4], [2, 6], [0, 0]];
+    grain = g.animate(pos.map(function (p) {
+      return { transform: 'translate(' + p[0] + '%, ' + p[1] + '%)', easing: 'steps(1, end)' };
+    }), { duration: 480, iterations: Infinity });
+  }
+
+  /* ---------- Progreso real de carga ---------- */
+  var total = 1, done = 0, pageLoaded = document.readyState === 'complete';
+  var tick1 = function () { done = Math.min(total, done + 1); };
+  Array.prototype.forEach.call(document.images, function (img) {
+    if (root.contains(img)) return;
+    total++;
+    if (img.complete) tick1();
+    else { img.addEventListener('load', tick1, { once: true }); img.addEventListener('error', tick1, { once: true }); }
+  });
+  if (document.fonts && document.fonts.ready) { total++; document.fonts.ready.then(tick1, tick1); }
+  function onLoad() { pageLoaded = true; done = total; }
+  if (pageLoaded) onLoad(); else window.addEventListener('load', onLoad, { once: true });
+  setTimeout(onLoad, 12000); // seguro: nunca bloquear más de 12 s
+
+  var num = q('[data-pct]'), bar = q('[data-bar]'), shown = 0, holding = false;
+
+  function frame() {
+    if (!root.parentNode) { if (grain) grain.cancel(); return; }
+    var ms = main ? (main.effect.getComputedTiming().progress || 0) * T : 0;
+    if (main && main.playState === 'finished') ms = T;
+
+    // Esperar en el logo completo si la web aún no cargó
+    if (!pageLoaded && ms >= HOLD && !holding) { holding = true; anims.forEach(function (a) { a.pause(); }); }
+    if (pageLoaded && holding) { holding = false; anims.forEach(function (a) { a.play(); }); }
+
+    var p = Math.max(0, Math.min(1, (ms - 400) / 4400));
+    var timeP = 1 - Math.pow(1 - p, 2.2);
+    var realP = pageLoaded ? 1 : Math.min(0.99, done / total);
+    var target = Math.min(timeP, realP);
+    shown += (target - shown) * 0.18;
+    if (target >= 1 && shown > 0.995) shown = 1;
+    if (num) num.textContent = Math.round(shown * 100) + '%';
+    if (bar) bar.style.transform = 'scaleX(' + shown + ')';
+    requestAnimationFrame(frame);
+  }
+
+  /* ---------- Resize: recalcula la profundidad del cubo ---------- */
+  var rt;
+  function onResize() {
+    clearTimeout(rt);
+    rt = setTimeout(function () {
+      if (!main || !root.parentNode) return;
+      var t = main.currentTime, wasPaused = main.playState === 'paused';
+      build(t, wasPaused);
+    }, 150);
+  }
+  window.addEventListener('resize', onResize);
+
+  build(reduced ? 5000 : null, false);
+  requestAnimationFrame(frame);
+})();
+
+  </script>
+</body>
+</html>
