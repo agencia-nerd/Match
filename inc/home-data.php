@@ -28,6 +28,8 @@ function match_home_data(): array {
 	);
 
 	return array(
+		// Texto del H1 (no se ve: el hero muestra el logo). Lleva la frase clave SEO.
+		'hero_h1'          => __( 'Match, consultora de recursos humanos y headhunter en Lima', 'match' ),
 		'hero_lead'        => __( 'Somos la consultora de recursos humanos y headhunter en Lima que conecta a profesionales destacados con puestos estratégicos en las empresas líderes de Latinoamérica. Sé parte de nuestra red de ejecutivos.', 'match' ),
 		'hero_lead_strong' => '',
 		'hero_lead_2'      => '',

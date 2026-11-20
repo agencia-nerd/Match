@@ -101,15 +101,18 @@ function match_cta_inner(string $label, bool $arrow = true): string
 /**
  * Wordmark de Match. El texto va en currentColor: negro en la barra y el
  * pie, blanco sobre el hero. El isotipo conserva su celeste.
+ *
+ * $decorative: el SVG queda oculto a lectores de pantalla porque quien lo
+ * llama ya pone el nombre en texto (el H1 del hero).
  */
-function match_logo(string $class = ''): string
+function match_logo(string $class = '', bool $decorative = false): string
 {
 	$file = get_theme_file_path('assets/img/match-logo.svg');
 	if (! file_exists($file)) {
-		return '<span class="match-wordmark">' . esc_html(get_bloginfo('name')) . '</span>';
+		return '<span class="match-wordmark"' . ($decorative ? ' aria-hidden="true"' : '') . '>' . esc_html(get_bloginfo('name')) . '</span>';
 	}
 
-	$attrs = 'role="img" aria-label="' . esc_attr(get_bloginfo('name')) . '"' . ($class ? ' class="' . esc_attr($class) . '"' : '');
+	$attrs = ($decorative ? 'aria-hidden="true" focusable="false"' : 'role="img" aria-label="' . esc_attr(get_bloginfo('name')) . '"') . ($class ? ' class="' . esc_attr($class) . '"' : '');
 	$svg   = (string) file_get_contents($file);
 
 	// El logo se pinta varias veces por página (navbar, hero, pie). Si los id
