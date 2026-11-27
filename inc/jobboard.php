@@ -601,6 +601,10 @@ function match_apply_fill_from_profile(): void {
 	// recorta en silencio (mb_substr), así que se pierde el final.
 	if ( isset( $_POST['cover_letter'] ) ) {
 		$_POST['cover_letter'] = str_replace( array( "\r\n", "\r" ), "\n", (string) $_POST['cover_letter'] );
+		if ( ! match_valid_message( (string) wp_unslash( $_POST['cover_letter'] ) ) ) {
+			wp_safe_redirect( add_query_arg( 'mjb_error', rawurlencode( __( 'La carta solo puede tener letras, números y puntuación común.', 'match' ) ), $job_url ) );
+			exit;
+		}
 	}
 }
 add_action( 'admin_post_mjb_apply', 'match_apply_fill_from_profile', 5 );
@@ -725,6 +729,15 @@ function match_valid_person_name( string $name ): bool {
 
 function match_person_name_error(): string {
 	return __( 'El nombre y el apellido solo pueden tener letras, espacios, apóstrofo o guion.', 'match' );
+}
+
+/**
+ * Mensajes y carta de presentación: letras, números, espacios, saltos de línea
+ * y puntuación común; sin emojis ni símbolos. Máx. 2000 (tope del CRM).
+ * Misma regla que los textarea con data-text-input (assets/js/app.js).
+ */
+function match_valid_message( string $text ): bool {
+	return mb_strlen( $text ) <= 2000 && (bool) preg_match( '/^[\p{L}\p{M}\p{N}\s.,;:¿?¡!\'"“”‘’()\-–—\/@%&+#$€°ºª_]*$/u', $text );
 }
 
 /**
