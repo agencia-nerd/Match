@@ -520,7 +520,7 @@
 
 /* ============ Testimonios ============ */
 .match-testimonios {
-    padding: var(--match-space-120) var(--match-gutter);
+    padding: var(--match-section-y) var(--match-gutter);
     background: var(--match-azul-50);
 }
 

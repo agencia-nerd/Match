@@ -117,6 +117,7 @@
 	--match-container: 1680px;
 	--match-container-narrow: 1180px;
 	--match-gutter: var(--match-space-120);
+	--match-section-y: clamp(60px, 7vw, 100px); /* padding vertical de secciones: 100 px escritorio, 60 px móvil */
 	--match-navbar-h: 80px;
 
 	/* --- Sombras y efectos --- */
