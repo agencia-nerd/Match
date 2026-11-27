@@ -257,10 +257,10 @@ function match_handle_newsletter(): void {
 		exit;
 	}
 
-	$nombre = sanitize_text_field( wp_unslash( $_POST['nombre'] ?? '' ) );
+	$nombre = match_clean_person_name( $_POST['nombre'] ?? '' );
 	$correo = sanitize_email( wp_unslash( $_POST['correo'] ?? '' ) );
 
-	if ( ! is_email( $correo ) ) {
+	if ( ! is_email( $correo ) || ! match_valid_person_name( $nombre ) ) {
 		wp_safe_redirect( add_query_arg( 'newsletter', 'error', $back ) . '#newsletter' );
 		exit;
 	}

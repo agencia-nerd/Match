@@ -59,7 +59,7 @@ $programa   = $from_modal && isset( $_GET['programa'] ) ? sanitize_text_field( w
 		<div class="match-contacto__fields">
 			<label class="match-field">
 				<span class="match-field__label"><?php esc_html_e( 'Nombre completo', 'match' ); ?></span>
-				<input class="match-field__input" type="text" name="nombre" placeholder="<?php esc_attr_e( 'Escribe tu nombre', 'match' ); ?>" required autocomplete="name">
+				<input class="match-field__input" type="text" name="nombre" placeholder="<?php esc_attr_e( 'Escribe tu nombre', 'match' ); ?>" required autocomplete="name" maxlength="50" pattern="\p{L}+(?:[ '\-]\p{L}+)*" title="<?php esc_attr_e( 'Solo letras, espacios, apóstrofo o guion.', 'match' ); ?>" data-name-input>
 			</label>
 			<label class="match-field">
 				<span class="match-field__label"><?php esc_html_e( 'Correo electrónico', 'match' ); ?></span>
@@ -67,7 +67,7 @@ $programa   = $from_modal && isset( $_GET['programa'] ) ? sanitize_text_field( w
 			</label>
 			<label class="match-field">
 				<span class="match-field__label"><?php esc_html_e( 'Mensaje', 'match' ); ?></span>
-				<textarea class="match-field__input" name="mensaje" placeholder="<?php esc_attr_e( 'Cuéntanos sobre tu situación o la de tu equipo.', 'match' ); ?>" required></textarea>
+				<textarea class="match-field__input" name="mensaje" placeholder="<?php esc_attr_e( 'Cuéntanos sobre tu situación o la de tu equipo.', 'match' ); ?>" required maxlength="2000" data-text-input></textarea>
 			</label>
 		</div>
 

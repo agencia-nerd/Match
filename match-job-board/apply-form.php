@@ -122,7 +122,7 @@ $cover_max = 2000;
 		<div class="mjb-field">
 			<label for="mjb-cover"><?php esc_html_e('Carta de presentación', 'match'); ?> <span class="mjb-optional"><?php esc_html_e('(opcional)', 'match'); ?></span></label>
 			<textarea id="mjb-cover" name="cover_letter" rows="3" maxlength="<?php echo esc_attr($cover_max); ?>"
-				aria-describedby="mjb-cover-count" data-count-input
+				aria-describedby="mjb-cover-count" data-text-input data-count-input
 				placeholder="<?php esc_attr_e('Si quieres agregar contexto adicional sobre tu experiencia o motivación...', 'match'); ?>"></textarea>
 			<p class="mjb-field__count" id="mjb-cover-count" data-count-output>
 				<span data-count-value>0</span> / <?php echo esc_html(number_format_i18n($cover_max)); ?>

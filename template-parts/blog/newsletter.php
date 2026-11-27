@@ -34,7 +34,7 @@ $status = isset( $_GET['newsletter'] ) ? sanitize_key( wp_unslash( $_GET['newsle
 
 			<div class="match-newsletter__fields">
 				<label class="screen-reader-text" for="match-nl-nombre"><?php esc_html_e( 'Nombre', 'match' ); ?></label>
-				<input class="match-newsletter__input" id="match-nl-nombre" type="text" name="nombre" autocomplete="name" placeholder="<?php esc_attr_e( 'Tu nombre...', 'match' ); ?>">
+				<input class="match-newsletter__input" id="match-nl-nombre" type="text" name="nombre" autocomplete="name" maxlength="50" pattern="\p{L}+(?:[ '\-]\p{L}+)*" title="<?php esc_attr_e( 'Solo letras, espacios, apóstrofo o guion.', 'match' ); ?>" data-name-input placeholder="<?php esc_attr_e( 'Tu nombre...', 'match' ); ?>">
 				<label class="screen-reader-text" for="match-nl-correo"><?php esc_html_e( 'Correo electrónico', 'match' ); ?></label>
 				<input class="match-newsletter__input" id="match-nl-correo" type="email" name="correo" autocomplete="email" required placeholder="<?php esc_attr_e( 'Tu correo electrónico', 'match' ); ?>">
 			</div>

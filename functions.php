@@ -468,7 +468,7 @@ function match_handle_contact(): void {
 	}
 
 	$perfil   = isset( $_POST['perfil'] ) && 'profesional' === $_POST['perfil'] ? 'profesional' : 'empresa';
-	$nombre   = sanitize_text_field( wp_unslash( $_POST['nombre'] ?? '' ) );
+	$nombre   = match_clean_person_name( $_POST['nombre'] ?? '' );
 	$correo   = sanitize_email( wp_unslash( $_POST['correo'] ?? '' ) );
 	$mensaje  = sanitize_textarea_field( wp_unslash( $_POST['mensaje'] ?? '' ) );
 	$programa = sanitize_text_field( wp_unslash( $_POST['programa'] ?? '' ) );
@@ -482,7 +482,8 @@ function match_handle_contact(): void {
 		)
 	);
 
-	if ( ! $nombre || ! is_email( $correo ) || ! $mensaje ) {
+	// Nombre y mensaje con las mismas reglas que el front (data-name-input / data-text-input).
+	if ( ! $nombre || ! match_valid_person_name( $nombre ) || ! is_email( $correo ) || ! $mensaje || ! match_valid_message( $mensaje ) ) {
 		wp_safe_redirect( add_query_arg( array( 'contacto' => 'error' ) + $estado, $back ) . $anchor );
 		exit;
 	}

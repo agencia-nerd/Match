@@ -898,6 +898,21 @@
 		check();
 	} );
 
+	/* --- Mensajes y carta ([data-text-input]): solo texto normal ---
+	 * Letras, números, espacios, saltos de línea y puntuación común. Quita al vuelo
+	 * emojis y símbolos (< > { } [ ] \ | ^ ~ ` * = …), también al pegar.
+	 * Misma regla que match_valid_message() en inc/jobboard.php. */
+	document.querySelectorAll( '[data-text-input]' ).forEach( function ( field ) {
+		field.addEventListener( 'input', function () {
+			var clean = field.value.replace( /[^\p{L}\p{M}\p{N}\s.,;:¿?¡!'"“”‘’()\-–—\/@%&+#$€°ºª_]/gu, '' );
+			if ( clean !== field.value ) {
+				var pos = Math.max( 0, field.selectionStart - ( field.value.length - clean.length ) );
+				field.value = clean;
+				field.setSelectionRange( pos, pos );
+			}
+		} );
+	} );
+
 	/* --- Mostrar/ocultar contraseña ([data-password-toggle], registro) ---
 	 * El botón empieza oculto: sin JS queda el campo normal. Busca el input
 	 * dentro del mismo .match-field__secret. */
