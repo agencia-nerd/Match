@@ -11,6 +11,7 @@ Thumbs.db
 # Dependencias y builds (no hay proceso de build hoy; por si se agrega)
 node_modules/
 vendor/
+!assets/vendor/
 dist/
 *.log
 

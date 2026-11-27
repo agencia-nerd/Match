@@ -76,7 +76,7 @@
 .match-blog-pill.is-active { border-color: var(--match-neutral-300); background: var(--match-neutral-500); font-weight: 600; line-height: var(--match-lh-nav); color: var(--match-blanco); }
 
 /* ============ Grilla de artículos ============ */
-.match-blog-list { padding: 0 var(--match-space-160) var(--match-space-120); background: var(--match-neutral-100); }
+.match-blog-list { padding: 0 var(--match-space-160) var(--match-section-y); background: var(--match-neutral-100); }
 
 .match-blog-grid { display: grid; grid-template-columns: repeat( 3, minmax( 0, 1fr ) ); gap: var(--match-space-16); }
 

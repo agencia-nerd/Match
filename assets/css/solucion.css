@@ -204,7 +204,7 @@
 
 /* ============ Métricas sobre foto ============ */
 .match-sol-metricas {
-    padding: 0 var(--match-space-160) var(--match-space-120);
+    padding: 0 var(--match-space-160) var(--match-section-y);
     background: var(--match-azul-50);
 }
 .match-sol-metricas__photo {
@@ -590,7 +590,7 @@
 
 /* ============ Perfiles ============ */
 .match-sol-perfiles {
-    padding: var(--match-space-120) var(--match-space-160);
+    padding: var(--match-section-y) var(--match-space-160);
     background: var(--match-azul-50);
 }
 .match-sol-perfiles__card {
@@ -1007,7 +1007,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--match-space-48);
-    padding: var(--match-space-120) var(--match-space-160);
+    padding: var(--match-section-y) var(--match-space-160);
     background: var(--match-azul-50);
 }
 .match-sol-clientes__head {
@@ -1065,7 +1065,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--match-space-80);
-    padding: var(--match-space-120) var(--match-space-160) 100px;
+    padding: var(--match-section-y) var(--match-space-160);
     background: var(--match-azul-50);
 }
 /* Encabezado apilado: eyebrow arriba y titular debajo, ambos a la izquierda

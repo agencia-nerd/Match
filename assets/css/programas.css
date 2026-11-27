@@ -112,7 +112,7 @@
 	--prog-accent-2: #0966ff; /* Figma celeste/500: subtítulos, viñetas y 2.ª línea del titular */
 	--prog-text: #535353;
 
-	padding: var(--match-space-80) var(--match-space-160) var(--match-space-120);
+	padding: var(--match-space-80) var(--match-space-160) var(--match-section-y);
 	background: var(--match-azul-50);
 }
 
@@ -245,7 +245,7 @@
 	--prog-accent-2: #0966ff; /* Figma celeste/500: anillo y 2.ª línea del titular */
 	--prog-deep: #00237f;     /* Figma celeste/800: cifras */
 
-	padding: var(--match-space-80) var(--match-space-160) var(--match-space-120);
+	padding: var(--match-space-80) var(--match-space-160) var(--match-section-y);
 	background: var(--match-neutral-100);
 }
 
@@ -413,7 +413,7 @@
 	--prog-faq-title: #002fac; /* Figma celeste/700 */
 	--prog-accent-2: #0966ff;
 
-	padding: var(--match-space-80) var(--match-space-160) var(--match-space-120);
+	padding: var(--match-space-80) var(--match-space-160) var(--match-section-y);
 	background: var(--match-azul-50);
 }
 
